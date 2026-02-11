@@ -1,9 +1,10 @@
 import os
+
 import pytest
+from fastapi.testclient import TestClient
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
-from fastapi.testclient import TestClient
 
 # Override before importing app modules
 os.environ["DATABASE_URL"] = "sqlite://"
@@ -35,8 +36,10 @@ def db_engine():
 
 @pytest.fixture(scope="function")
 def db_session(db_engine):
-    TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=db_engine)
-    session = TestingSessionLocal()
+    testing_session_local = sessionmaker(autocommit=False,
+                                         autoflush=False,
+                                         bind=db_engine)
+    session = testing_session_local()
     try:
         yield session
     finally:
@@ -45,10 +48,12 @@ def db_session(db_engine):
 
 @pytest.fixture(scope="function")
 def client(db_engine):
-    TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=db_engine)
+    testing_session_local = sessionmaker(autocommit=False,
+                                         autoflush=False,
+                                         bind=db_engine)
 
     def override_get_db():
-        db = TestingSessionLocal()
+        db = testing_session_local()
         try:
             yield db
         finally:
