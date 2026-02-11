@@ -2,6 +2,7 @@ import io
 
 
 class TestTotalsEndpoint:
+
     def test_totals_empty(self, client):
         resp = client.get("/api/totals")
         assert resp.status_code == 200
@@ -11,12 +12,14 @@ class TestTotalsEndpoint:
         assert data["parties"] == []
 
     def test_totals_with_data(self, client):
-        content = (
-            "Bedford,100,C,200,L\n"
-            "Oxford,300,C,150,L\n"
-            "Cambridge,50,C,400,L\n"
-        )
-        client.post("/api/upload", files={"file": ("seed.txt", io.BytesIO(content.encode()), "text/plain")})
+        content = ("Bedford,100,C,200,L\n"
+                   "Oxford,300,C,150,L\n"
+                   "Cambridge,50,C,400,L\n")
+        client.post("/api/upload",
+                    files={
+                        "file": ("seed.txt", io.BytesIO(content.encode()),
+                                 "text/plain")
+                    })
 
         resp = client.get("/api/totals")
         assert resp.status_code == 200
@@ -31,11 +34,15 @@ class TestTotalsEndpoint:
 
     def test_totals_seats(self, client):
         content = (
-            "Bedford,100,C,200,L\n"     # L wins
-            "Oxford,300,C,150,L\n"       # C wins
-            "Cambridge,50,C,400,L\n"     # L wins
+            "Bedford,100,C,200,L\n"  # L wins
+            "Oxford,300,C,150,L\n"  # C wins
+            "Cambridge,50,C,400,L\n"  # L wins
         )
-        client.post("/api/upload", files={"file": ("seed.txt", io.BytesIO(content.encode()), "text/plain")})
+        client.post("/api/upload",
+                    files={
+                        "file": ("seed.txt", io.BytesIO(content.encode()),
+                                 "text/plain")
+                    })
 
         resp = client.get("/api/totals")
         data = resp.json()
@@ -45,10 +52,14 @@ class TestTotalsEndpoint:
 
     def test_totals_tied_constituency_no_seat(self, client):
         content = (
-            "TiedTown,100,C,100,L\n"    # Tied - no seat awarded
-            "Bedford,200,C,100,L\n"      # C wins
+            "TiedTown,100,C,100,L\n"  # Tied - no seat awarded
+            "Bedford,200,C,100,L\n"  # C wins
         )
-        client.post("/api/upload", files={"file": ("seed.txt", io.BytesIO(content.encode()), "text/plain")})
+        client.post("/api/upload",
+                    files={
+                        "file": ("seed.txt", io.BytesIO(content.encode()),
+                                 "text/plain")
+                    })
 
         resp = client.get("/api/totals")
         data = resp.json()
@@ -59,7 +70,11 @@ class TestTotalsEndpoint:
 
     def test_totals_party_names(self, client):
         content = "Bedford,100,C,200,L\n"
-        client.post("/api/upload", files={"file": ("seed.txt", io.BytesIO(content.encode()), "text/plain")})
+        client.post("/api/upload",
+                    files={
+                        "file": ("seed.txt", io.BytesIO(content.encode()),
+                                 "text/plain")
+                    })
 
         resp = client.get("/api/totals")
         data = resp.json()
@@ -69,11 +84,15 @@ class TestTotalsEndpoint:
 
     def test_totals_sorted_by_seats_then_votes(self, client):
         content = (
-            "A,100,C,200,L,300,LD\n"    # LD wins
-            "B,100,C,400,L,200,LD\n"     # L wins
+            "A,100,C,200,L,300,LD\n"  # LD wins
+            "B,100,C,400,L,200,LD\n"  # L wins
             "C_const,500,C,100,L,100,LD\n"  # C wins
         )
-        client.post("/api/upload", files={"file": ("seed.txt", io.BytesIO(content.encode()), "text/plain")})
+        client.post("/api/upload",
+                    files={
+                        "file": ("seed.txt", io.BytesIO(content.encode()),
+                                 "text/plain")
+                    })
 
         resp = client.get("/api/totals")
         data = resp.json()

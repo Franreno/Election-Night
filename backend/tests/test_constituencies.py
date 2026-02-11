@@ -2,13 +2,16 @@ import io
 
 
 class TestConstituenciesEndpoint:
+
     def _seed_data(self, client):
-        content = (
-            "Bedford,6643,C,5276,L,2049,LD,266,Ind,2531,UKIP,2671,G\n"
-            "Oxford,3000,C,8000,L,1500,LD,200,Ind,500,UKIP,1000,G\n"
-            "Cambridge,9789,C,8708,L,410,LD,158,Ind,2054,UKIP,3416,G\n"
-        )
-        client.post("/api/upload", files={"file": ("seed.txt", io.BytesIO(content.encode()), "text/plain")})
+        content = ("Bedford,6643,C,5276,L,2049,LD,266,Ind,2531,UKIP,2671,G\n"
+                   "Oxford,3000,C,8000,L,1500,LD,200,Ind,500,UKIP,1000,G\n"
+                   "Cambridge,9789,C,8708,L,410,LD,158,Ind,2054,UKIP,3416,G\n")
+        client.post("/api/upload",
+                    files={
+                        "file": ("seed.txt", io.BytesIO(content.encode()),
+                                 "text/plain")
+                    })
 
     def test_list_empty(self, client):
         resp = client.get("/api/constituencies")
@@ -82,7 +85,11 @@ class TestConstituenciesEndpoint:
 
     def test_tied_votes_no_winner(self, client):
         content = "TiedTown,100,C,100,L\n"
-        client.post("/api/upload", files={"file": ("tied.txt", io.BytesIO(content.encode()), "text/plain")})
+        client.post("/api/upload",
+                    files={
+                        "file": ("tied.txt", io.BytesIO(content.encode()),
+                                 "text/plain")
+                    })
         resp = client.get("/api/constituencies?search=TiedTown")
         constituency = resp.json()["constituencies"][0]
         assert constituency["winning_party_code"] is None

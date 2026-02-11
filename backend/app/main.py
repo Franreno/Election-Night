@@ -4,13 +4,14 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
-from app.database import engine, Base
-from app.routers import upload, constituencies, totals
+from app.database import Base, engine
+from app.routers import constituencies, totals, upload
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Fallback table creation for development; Alembic handles production migrations
+    # Fallback table creation for development;
+    # Alembic handles production migrations
     Base.metadata.create_all(bind=engine)
     yield
 

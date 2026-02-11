@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, File, Depends, HTTPException
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -10,8 +10,8 @@ router = APIRouter(prefix="/api", tags=["upload"])
 
 @router.post("/upload", response_model=UploadResponse, status_code=201)
 async def upload_results(
-    file: UploadFile = File(...),
-    db: Session = Depends(get_db),
+        file: UploadFile = File(...),
+        db: Session = Depends(get_db),
 ):
     """Upload an election results file for processing.
 
@@ -26,7 +26,8 @@ async def upload_results(
     try:
         text = content.decode("utf-8")
     except UnicodeDecodeError:
-        raise HTTPException(status_code=400, detail="File must be UTF-8 encoded text")
+        raise HTTPException(status_code=400,
+                            detail="File must be UTF-8 encoded text")
 
     if not text.strip():
         raise HTTPException(status_code=400, detail="File is empty")
