@@ -47,5 +47,5 @@ dummy-variable-rgx="^\\*{0,2}(_$|unused_|dummy_)"
 "__init__.py" = ["F401"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["app", "inductiva_api"]
+known-first-party = ["app"]
 
