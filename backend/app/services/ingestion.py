@@ -1,5 +1,6 @@
-from sqlalchemy.orm import Session
 from sqlalchemy import func
+from sqlalchemy.dialects.postgresql import insert as pg_insert
+from sqlalchemy.orm import Session
 
 from app.models.constituency import Constituency
 from app.models.result import Result
@@ -7,7 +8,9 @@ from app.models.upload_log import UploadLog
 from app.services.parser import ParsedConstituencyResult, parse_file
 
 
-def ingest_file(db: Session, content: str, filename: str | None = None) -> UploadLog:
+def ingest_file(db: Session,
+                content: str,
+                filename: str | None = None) -> UploadLog:
     """Parse and ingest an election results file within a single transaction.
 
     Valid lines are applied via upserts. Parse errors are logged but don't
@@ -21,7 +24,10 @@ def ingest_file(db: Session, content: str, filename: str | None = None) -> Uploa
         total_lines=len(results) + len(errors),
         processed_lines=0,
         error_lines=len(errors),
-        errors=[{"line": e.line_number, "error": e.error} for e in errors],
+        errors=[{
+            "line": e.line_number,
+            "error": e.error
+        } for e in errors],
     )
     db.add(upload_log)
     db.flush()
@@ -34,7 +40,7 @@ def ingest_file(db: Session, content: str, filename: str | None = None) -> Uploa
         upload_log.status = "completed"
         upload_log.completed_at = func.now()
         db.commit()
-    except Exception:
+    except Exception:  # noqa: BLE001
         db.rollback()
         # Record the failure in a fresh transaction
         upload_log_fail = UploadLog(
@@ -43,7 +49,10 @@ def ingest_file(db: Session, content: str, filename: str | None = None) -> Uploa
             total_lines=len(results) + len(errors),
             processed_lines=0,
             error_lines=len(errors),
-            errors=[{"line": e.line_number, "error": e.error} for e in errors],
+            errors=[{
+                "line": e.line_number,
+                "error": e.error
+            } for e in errors],
             completed_at=func.now(),
         )
         db.add(upload_log_fail)
@@ -53,7 +62,8 @@ def ingest_file(db: Session, content: str, filename: str | None = None) -> Uploa
     return upload_log
 
 
-def _upsert_constituency_result(db: Session, parsed: ParsedConstituencyResult) -> None:
+def _upsert_constituency_result(db: Session,
+                                parsed: ParsedConstituencyResult) -> None:
     """Upsert a single constituency and its party results.
 
     Uses PostgreSQL ON CONFLICT when available, falls back to
@@ -69,8 +79,6 @@ def _upsert_constituency_result(db: Session, parsed: ParsedConstituencyResult) -
 
 def _upsert_postgresql(db: Session, parsed: ParsedConstituencyResult) -> None:
     """PostgreSQL-specific upsert using INSERT ... ON CONFLICT DO UPDATE."""
-    from sqlalchemy.dialects.postgresql import insert as pg_insert
-
     stmt = pg_insert(Constituency).values(name=parsed.constituency_name)
     stmt = stmt.on_conflict_do_update(
         index_elements=["name"],
@@ -79,9 +87,8 @@ def _upsert_postgresql(db: Session, parsed: ParsedConstituencyResult) -> None:
     db.execute(stmt)
     db.flush()
 
-    constituency = (
-        db.query(Constituency).filter(Constituency.name == parsed.constituency_name).one()
-    )
+    constituency = (db.query(Constituency).filter(
+        Constituency.name == parsed.constituency_name).one())
 
     for party_code, votes in parsed.party_votes.items():
         stmt = pg_insert(Result).values(
@@ -101,25 +108,18 @@ def _upsert_postgresql(db: Session, parsed: ParsedConstituencyResult) -> None:
 
 def _upsert_generic(db: Session, parsed: ParsedConstituencyResult) -> None:
     """Dialect-agnostic upsert using query + merge pattern."""
-    constituency = (
-        db.query(Constituency)
-        .filter(Constituency.name == parsed.constituency_name)
-        .first()
-    )
+    constituency = (db.query(Constituency).filter(
+        Constituency.name == parsed.constituency_name).first())
     if constituency is None:
         constituency = Constituency(name=parsed.constituency_name)
         db.add(constituency)
         db.flush()
 
     for party_code, votes in parsed.party_votes.items():
-        result = (
-            db.query(Result)
-            .filter(
-                Result.constituency_id == constituency.id,
-                Result.party_code == party_code,
-            )
-            .first()
-        )
+        result = (db.query(Result).filter(
+            Result.constituency_id == constituency.id,
+            Result.party_code == party_code,
+        ).first())
         if result is None:
             result = Result(
                 constituency_id=constituency.id,

@@ -1,33 +1,50 @@
-from app.services.parser import parse_line, parse_file, ParsedConstituencyResult, ParseError
+from app.services.parser import (
+    ParsedConstituencyResult,
+    ParseError,
+    parse_file,
+    parse_line,
+)
 
 
 class TestParseLine:
+
     def test_normal_line_six_parties(self):
         line = "Bedford,6643,C,5276,L,2049,LD,266,Ind,2531,UKIP,2671,G"
         result = parse_line(line, 1)
         assert isinstance(result, ParsedConstituencyResult)
         assert result.constituency_name == "Bedford"
-        assert result.party_votes == {"C": 6643, "L": 5276, "LD": 2049, "Ind": 266, "UKIP": 2531, "G": 2671}
+        assert result.party_votes == {
+            "C": 6643,
+            "L": 5276,
+            "LD": 2049,
+            "Ind": 266,
+            "UKIP": 2531,
+            "G": 2671
+        }
 
     def test_line_with_snp_seven_parties(self):
-        line = "Edinburgh East,5678,C,12345,L,1000,LD,500,Ind,300,UKIP,800,G,9000,SNP"
+        line = ("Edinburgh East,5678,C,12345,L,1000,LD,500,Ind,300,UKIP,800,G,"
+                "9000,SNP")
         result = parse_line(line, 1)
         assert isinstance(result, ParsedConstituencyResult)
         assert len(result.party_votes) == 7
         assert result.party_votes["SNP"] == 9000
 
     def test_escaped_comma_single(self):
-        line = "Sheffield\\, Hallam,8788,C,4277,L,2281,LD,211,Ind,1028,UKIP,229,G"
+        line = ("Sheffield\\, Hallam,8788,C,4277,L,2281,LD,211,Ind,1028,UKIP,"
+                "229,G")
         result = parse_line(line, 1)
         assert isinstance(result, ParsedConstituencyResult)
         assert result.constituency_name == "Sheffield, Hallam"
         assert result.party_votes["C"] == 8788
 
     def test_escaped_comma_double(self):
-        line = "Inverness\\, Nairn\\, Badenoch and Strathspey,1000,C,2000,L,300,LD,100,Ind,50,UKIP,400,G,5000,SNP"
+        line = ("Inverness\\, Nairn\\, Badenoch and Strathspey,1000,C,2000,L,"
+                "300,LD,100,Ind,50,UKIP,400,G,5000,SNP")
         result = parse_line(line, 1)
         assert isinstance(result, ParsedConstituencyResult)
-        assert result.constituency_name == "Inverness, Nairn, Badenoch and Strathspey"
+        assert result.constituency_name == ("Inverness, Nairn, Badenoch and "
+                                            "Strathspey")
 
     def test_empty_line(self):
         result = parse_line("", 1)
@@ -82,6 +99,7 @@ class TestParseLine:
 
 
 class TestParseFile:
+
     def test_empty_file(self):
         results, errors = parse_file("")
         assert results == []

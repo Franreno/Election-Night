@@ -1,4 +1,13 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, UniqueConstraint, CheckConstraint, func
+from sqlalchemy import (
+    CheckConstraint,
+    Column,
+    DateTime,
+    ForeignKey,
+    Integer,
+    String,
+    UniqueConstraint,
+    func,
+)
 from sqlalchemy.orm import relationship
 
 from app.database import Base
@@ -17,11 +26,15 @@ class Result(Base):
     party_code = Column(String(10), nullable=False, index=True)
     votes = Column(Integer, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    updated_at = Column(DateTime(timezone=True),
+                        server_default=func.now(),
+                        onupdate=func.now())
 
     constituency = relationship("Constituency", back_populates="results")
 
     __table_args__ = (
-        UniqueConstraint("constituency_id", "party_code", name="uq_constituency_party"),
+        UniqueConstraint("constituency_id",
+                         "party_code",
+                         name="uq_constituency_party"),
         CheckConstraint("votes >= 0", name="ck_votes_non_negative"),
     )

@@ -35,8 +35,8 @@ def parse_line(raw_line: str,
     if len(fields) < 3:
         return ParseError(
             line_number, raw_line,
-            "Too few fields: need at least constituency name and one vote/party pair"
-        )
+            "Too few fields: need at least constituency name and one "
+            "vote/party pair")
 
     constituency_name = fields[0]
     if not constituency_name:
@@ -47,7 +47,8 @@ def parse_line(raw_line: str,
         return ParseError(
             line_number,
             raw_line,
-            f"Odd number of vote/party fields ({len(remaining)}); expected pairs of votes and party codes",
+            f"Odd number of vote/party fields ({len(remaining)}); expected "
+            "pairs of votes and party codes",
         )
 
     party_votes: dict[str, int] = {}
