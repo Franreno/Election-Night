@@ -214,8 +214,10 @@ class TestConstituencySummary:
     def test_summary_winning_party(self, client):
         self._seed_data(client)
         resp = client.get("/api/constituencies/summary")
-        data = {c["name"]: c["winning_party_code"]
-                for c in resp.json()["constituencies"]}
+        data = {
+            c["name"]: c["winning_party_code"]
+            for c in resp.json()["constituencies"]
+        }
         assert data["Bedford"] == "C"
         assert data["Oxford"] == "L"
         assert data["Cambridge"] == "C"

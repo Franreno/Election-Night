@@ -39,7 +39,6 @@ app.include_router(upload.router)
 app.include_router(constituencies.router)
 app.include_router(totals.router)
 
-
 if STATIC_DIR.is_dir():
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 

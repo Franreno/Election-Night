@@ -46,7 +46,8 @@ def get_all_constituencies(
     # Count before pagination (on the base query without joinedload for accuracy)
     count_query = db.query(Constituency)
     if search:
-        count_query = count_query.filter(Constituency.name.ilike(f"%{search}%"))
+        count_query = count_query.filter(
+            Constituency.name.ilike(f"%{search}%"))
     total = count_query.count()
 
     order = _build_sort_clause(sort_by, sort_dir)
@@ -64,12 +65,9 @@ def get_all_constituencies(
 
 def get_all_constituencies_summary(db: Session) -> dict:
     """Return all constituencies with just id, name, and winning party code."""
-    constituencies = (
-        db.query(Constituency)
-        .options(joinedload(Constituency.results))
-        .order_by(Constituency.name.asc())
-        .all()
-    )
+    constituencies = (db.query(Constituency).options(
+        joinedload(Constituency.results)).order_by(
+            Constituency.name.asc()).all())
 
     summaries = []
     for c in constituencies:
@@ -119,10 +117,14 @@ def _format_constituency(constituency: Constituency) -> dict:
         pct = round(
             (r.votes / total_votes * 100), 2) if total_votes > 0 else 0.0
         parties.append({
-            "party_code": r.party_code,
-            "party_name": PARTY_CODE_MAP.get(r.party_code, r.party_code),
-            "votes": r.votes,
-            "percentage": pct,
+            "party_code":
+            r.party_code,
+            "party_name":
+            PARTY_CODE_MAP.get(r.party_code, r.party_code),
+            "votes":
+            r.votes,
+            "percentage":
+            pct,
         })
         if r.votes > max_votes:
             max_votes = r.votes
@@ -139,16 +141,15 @@ def _format_constituency(constituency: Constituency) -> dict:
 
     return {
         "id":
-            constituency.id,
+        constituency.id,
         "name":
-            constituency.name,
+        constituency.name,
         "total_votes":
-            total_votes,
+        total_votes,
         "winning_party_code":
-            winner_code,
+        winner_code,
         "winning_party_name":
-            PARTY_CODE_MAP.get(winner_code, winner_code)
-            if winner_code else None,
+        PARTY_CODE_MAP.get(winner_code, winner_code) if winner_code else None,
         "parties":
-            parties,
+        parties,
     }

@@ -24,8 +24,8 @@ def list_constituencies(
                                    description="Search constituency by name"),
         page: int = Query(1, ge=1),
         page_size: int = Query(50, ge=1, le=200),
-        sort_by: Literal["name", "total_votes", "winning_party"] | None = Query(
-            None, description="Sort field"),
+        sort_by: Literal["name", "total_votes", "winning_party"]
+    | None = Query(None, description="Sort field"),
         sort_dir: Literal["asc", "desc"] = Query("asc",
                                                  description="Sort direction"),
         db: Session = Depends(get_db),

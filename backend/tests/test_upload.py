@@ -164,8 +164,8 @@ class TestListUploadsEndpoint:
             client.post(
                 "/api/upload",
                 files={
-                    "file": (f"r{i}.txt",
-                             io.BytesIO(b"Bedford,100,C,200,L"), "text/plain")
+                    "file": (f"r{i}.txt", io.BytesIO(b"Bedford,100,C,200,L"),
+                             "text/plain")
                 },
             )
         resp = client.get("/api/uploads?page=1&page_size=2")
@@ -178,8 +178,8 @@ class TestListUploadsEndpoint:
             client.post(
                 "/api/upload",
                 files={
-                    "file": (f"r{i}.txt",
-                             io.BytesIO(b"Bedford,100,C,200,L"), "text/plain")
+                    "file": (f"r{i}.txt", io.BytesIO(b"Bedford,100,C,200,L"),
+                             "text/plain")
                 },
             )
         resp = client.get("/api/uploads")
