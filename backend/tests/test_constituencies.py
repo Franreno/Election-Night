@@ -94,3 +94,74 @@ class TestConstituenciesEndpoint:
         constituency = resp.json()["constituencies"][0]
         assert constituency["winning_party_code"] is None
         assert constituency["winning_party_name"] is None
+
+
+class TestConstituencySorting:
+
+    def _seed_data(self, client):
+        # Bedford: C wins (6643), total=19436
+        # Oxford: L wins (8000), total=14200
+        # Cambridge: C wins (9789), total=24535
+        content = ("Bedford,6643,C,5276,L,2049,LD,266,Ind,2531,UKIP,2671,G\n"
+                   "Oxford,3000,C,8000,L,1500,LD,200,Ind,500,UKIP,1000,G\n"
+                   "Cambridge,9789,C,8708,L,410,LD,158,Ind,2054,UKIP,3416,G\n")
+        client.post("/api/upload",
+                    files={
+                        "file": ("seed.txt", io.BytesIO(content.encode()),
+                                 "text/plain")
+                    })
+
+    def test_sort_by_name_asc(self, client):
+        self._seed_data(client)
+        resp = client.get("/api/constituencies?sort_by=name&sort_dir=asc")
+        names = [c["name"] for c in resp.json()["constituencies"]]
+        assert names == ["Bedford", "Cambridge", "Oxford"]
+
+    def test_sort_by_name_desc(self, client):
+        self._seed_data(client)
+        resp = client.get("/api/constituencies?sort_by=name&sort_dir=desc")
+        names = [c["name"] for c in resp.json()["constituencies"]]
+        assert names == ["Oxford", "Cambridge", "Bedford"]
+
+    def test_sort_by_total_votes_desc(self, client):
+        self._seed_data(client)
+        resp = client.get(
+            "/api/constituencies?sort_by=total_votes&sort_dir=desc")
+        names = [c["name"] for c in resp.json()["constituencies"]]
+        # Cambridge 24535 > Bedford 19436 > Oxford 14200
+        assert names == ["Cambridge", "Bedford", "Oxford"]
+
+    def test_sort_by_total_votes_asc(self, client):
+        self._seed_data(client)
+        resp = client.get(
+            "/api/constituencies?sort_by=total_votes&sort_dir=asc")
+        names = [c["name"] for c in resp.json()["constituencies"]]
+        assert names == ["Oxford", "Bedford", "Cambridge"]
+
+    def test_sort_by_winning_party(self, client):
+        self._seed_data(client)
+        resp = client.get(
+            "/api/constituencies?sort_by=winning_party&sort_dir=asc")
+        data = resp.json()["constituencies"]
+        parties = [c["winning_party_code"] for c in data]
+        # C comes before L alphabetically by party_code
+        assert parties == ["C", "C", "L"]
+
+    def test_sort_with_pagination(self, client):
+        self._seed_data(client)
+        resp = client.get(
+            "/api/constituencies?sort_by=name&sort_dir=asc&page=1&page_size=2")
+        data = resp.json()
+        names = [c["name"] for c in data["constituencies"]]
+        assert names == ["Bedford", "Cambridge"]
+        assert data["total"] == 3
+
+    def test_default_sort_is_name_asc(self, client):
+        self._seed_data(client)
+        resp = client.get("/api/constituencies")
+        names = [c["name"] for c in resp.json()["constituencies"]]
+        assert names == ["Bedford", "Cambridge", "Oxford"]
+
+    def test_invalid_sort_by_rejected(self, client):
+        resp = client.get("/api/constituencies?sort_by=invalid")
+        assert resp.status_code == 422

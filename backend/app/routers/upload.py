@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.schemas.upload import UploadResponse
+from app.models.upload_log import UploadLog
+from app.schemas.upload import UploadListResponse, UploadLogEntry, UploadResponse
 from app.services.ingestion import ingest_file
 
 router = APIRouter(prefix="/api", tags=["upload"])
@@ -47,4 +48,28 @@ async def upload_results(
         processed_lines=upload_log.processed_lines,
         error_lines=upload_log.error_lines,
         errors=upload_log.errors,
+    )
+
+
+@router.get("/uploads", response_model=UploadListResponse)
+def list_uploads(
+        page: int = Query(default=1, ge=1),
+        page_size: int = Query(default=20, ge=1, le=100),
+        db: Session = Depends(get_db),
+):
+    """List all upload logs, ordered newest first."""
+    total = db.query(UploadLog).count()
+    offset = (page - 1) * page_size
+    uploads = (
+        db.query(UploadLog)
+        .order_by(UploadLog.id.desc())
+        .offset(offset)
+        .limit(page_size)
+        .all()
+    )
+    return UploadListResponse(
+        total=total,
+        page=page,
+        page_size=page_size,
+        uploads=[UploadLogEntry.model_validate(u) for u in uploads],
     )
