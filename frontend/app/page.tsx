@@ -5,6 +5,7 @@ import { useTotals } from "@/hooks/use-totals";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { SeatDistributionChart } from "@/components/dashboard/seat-distribution-chart";
 import { VoteShareChart } from "@/components/dashboard/vote-share-chart";
+import { ConstituencyMap } from "@/components/map/constituency-map";
 import { EmptyState } from "@/components/shared/empty-state";
 import {
   StatCardSkeleton,
@@ -81,6 +82,10 @@ export default function DashboardPage() {
       <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
         <SeatDistributionChart parties={data.parties} />
         <VoteShareChart parties={data.parties} />
+      </div>
+
+      <div className="mt-6">
+        <ConstituencyMap />
       </div>
     </div>
   );

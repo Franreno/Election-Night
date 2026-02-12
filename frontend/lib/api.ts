@@ -3,6 +3,7 @@ import type {
   TotalResultsResponse,
   ConstituencyListResponse,
   ConstituencyResponse,
+  ConstituencySummaryListResponse,
   UploadResponse,
   UploadListResponse,
 } from "./types";
@@ -57,6 +58,9 @@ export const uploadFile = async (file: File): Promise<UploadResponse> => {
 
   return res.json();
 };
+
+export const fetchConstituenciesSummary = () =>
+  apiFetch<ConstituencySummaryListResponse>("/api/constituencies/summary");
 
 export const fetchHealth = () =>
   apiFetch<{ status: string }>("/api/health");

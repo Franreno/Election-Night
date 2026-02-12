@@ -34,6 +34,17 @@ export interface TotalResultsResponse {
   parties: PartyTotals[];
 }
 
+export interface ConstituencySummary {
+  id: number;
+  name: string;
+  winning_party_code: string | null;
+}
+
+export interface ConstituencySummaryListResponse {
+  total: number;
+  constituencies: ConstituencySummary[];
+}
+
 export interface UploadResponse {
   upload_id: number;
   status: string;
