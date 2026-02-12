@@ -1,3 +1,5 @@
+from typing import Literal
+
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
@@ -20,17 +22,23 @@ def list_constituencies(
                                    description="Search constituency by name"),
         page: int = Query(1, ge=1),
         page_size: int = Query(50, ge=1, le=200),
+        sort_by: Literal["name", "total_votes", "winning_party"] | None = Query(
+            None, description="Sort field"),
+        sort_dir: Literal["asc", "desc"] = Query("asc",
+                                                 description="Sort direction"),
         db: Session = Depends(get_db),
 ):
     """List all constituencies with their party results.
 
-    Supports pagination and optional name search 
-    (case-insensitive partial match).
+    Supports pagination, optional name search
+    (case-insensitive partial match), and sorting.
     """
     return get_all_constituencies(db,
                                   search=search,
                                   page=page,
-                                  page_size=page_size)
+                                  page_size=page_size,
+                                  sort_by=sort_by,
+                                  sort_dir=sort_dir)
 
 
 @router.get("/{constituency_id}", response_model=ConstituencyResponse)

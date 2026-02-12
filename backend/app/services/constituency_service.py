@@ -1,7 +1,33 @@
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session, joinedload
 
 from app.constants import PARTY_CODE_MAP
 from app.models.constituency import Constituency
+from app.models.result import Result
+
+
+def _build_sort_clause(sort_by: str | None, sort_dir: str):
+    """Return an ORDER BY clause for the given sort field."""
+    is_desc = sort_dir == "desc"
+
+    if sort_by == "total_votes":
+        sub = (select(func.coalesce(
+            func.sum(Result.votes),
+            0)).where(Result.constituency_id == Constituency.id).correlate(
+                Constituency).scalar_subquery())
+        return sub.desc() if is_desc else sub.asc()
+
+    if sort_by == "winning_party":
+        # Subquery: party_code of the result with the most votes
+        sub = (select(Result.party_code).where(
+            Result.constituency_id == Constituency.id).correlate(
+                Constituency).order_by(
+                    Result.votes.desc()).limit(1).scalar_subquery())
+        return sub.desc() if is_desc else sub.asc()
+
+    # Default: sort by name
+    col = Constituency.name
+    return col.desc() if is_desc else col.asc()
 
 
 def get_all_constituencies(
@@ -9,6 +35,8 @@ def get_all_constituencies(
     search: str | None = None,
     page: int = 1,
     page_size: int = 50,
+    sort_by: str | None = None,
+    sort_dir: str = "asc",
 ) -> dict:
     query = db.query(Constituency).options(joinedload(Constituency.results))
 
@@ -18,11 +46,12 @@ def get_all_constituencies(
     # Count before pagination (on the base query without joinedload for accuracy)
     count_query = db.query(Constituency)
     if search:
-        count_query = count_query.filter(
-            Constituency.name.ilike(f"%{search}%"))
+        count_query = count_query.filter(Constituency.name.ilike(f"%{search}%"))
     total = count_query.count()
 
-    constituencies = (query.order_by(Constituency.name).offset(
+    order = _build_sort_clause(sort_by, sort_dir)
+
+    constituencies = (query.order_by(order).offset(
         (page - 1) * page_size).limit(page_size).all())
 
     return {
@@ -55,14 +84,10 @@ def _format_constituency(constituency: Constituency) -> dict:
         pct = round(
             (r.votes / total_votes * 100), 2) if total_votes > 0 else 0.0
         parties.append({
-            "party_code":
-            r.party_code,
-            "party_name":
-            PARTY_CODE_MAP.get(r.party_code, r.party_code),
-            "votes":
-            r.votes,
-            "percentage":
-            pct,
+            "party_code": r.party_code,
+            "party_name": PARTY_CODE_MAP.get(r.party_code, r.party_code),
+            "votes": r.votes,
+            "percentage": pct,
         })
         if r.votes > max_votes:
             max_votes = r.votes
@@ -79,15 +104,16 @@ def _format_constituency(constituency: Constituency) -> dict:
 
     return {
         "id":
-        constituency.id,
+            constituency.id,
         "name":
-        constituency.name,
+            constituency.name,
         "total_votes":
-        total_votes,
+            total_votes,
         "winning_party_code":
-        winner_code,
+            winner_code,
         "winning_party_name":
-        PARTY_CODE_MAP.get(winner_code, winner_code) if winner_code else None,
+            PARTY_CODE_MAP.get(winner_code, winner_code)
+            if winner_code else None,
         "parties":
-        parties,
+            parties,
     }

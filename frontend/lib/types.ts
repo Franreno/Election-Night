@@ -1,0 +1,63 @@
+export interface PartyResult {
+  party_code: string;
+  party_name: string;
+  votes: number;
+  percentage: number;
+}
+
+export interface ConstituencyResponse {
+  id: number;
+  name: string;
+  total_votes: number;
+  winning_party_code: string | null;
+  winning_party_name: string | null;
+  parties: PartyResult[];
+}
+
+export interface ConstituencyListResponse {
+  total: number;
+  page: number;
+  page_size: number;
+  constituencies: ConstituencyResponse[];
+}
+
+export interface PartyTotals {
+  party_code: string;
+  party_name: string;
+  total_votes: number;
+  seats: number;
+}
+
+export interface TotalResultsResponse {
+  total_constituencies: number;
+  total_votes: number;
+  parties: PartyTotals[];
+}
+
+export interface UploadResponse {
+  upload_id: number;
+  status: string;
+  total_lines: number | null;
+  processed_lines: number | null;
+  error_lines: number | null;
+  errors: Array<{ line: number; error: string }> | null;
+}
+
+export interface UploadLogEntry {
+  id: number;
+  filename: string | null;
+  status: string;
+  total_lines: number | null;
+  processed_lines: number | null;
+  error_lines: number | null;
+  errors: Array<{ line: number; error: string }> | null;
+  started_at: string;
+  completed_at: string | null;
+}
+
+export interface UploadListResponse {
+  total: number;
+  page: number;
+  page_size: number;
+  uploads: UploadLogEntry[];
+}

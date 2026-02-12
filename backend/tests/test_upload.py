@@ -134,3 +134,54 @@ class TestUploadEndpoint:
         assert votes_by_party["C"] == 150
         assert votes_by_party["L"] == 200
         assert votes_by_party["LD"] == 300
+
+
+class TestListUploadsEndpoint:
+
+    def test_list_uploads_empty(self, client):
+        resp = client.get("/api/uploads")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["total"] == 0
+        assert data["uploads"] == []
+
+    def test_list_uploads_after_upload(self, client):
+        client.post(
+            "/api/upload",
+            files={
+                "file":
+                ("r.txt", io.BytesIO(b"Bedford,100,C,200,L"), "text/plain")
+            },
+        )
+        resp = client.get("/api/uploads")
+        data = resp.json()
+        assert data["total"] == 1
+        assert data["uploads"][0]["status"] == "completed"
+        assert data["uploads"][0]["filename"] == "r.txt"
+
+    def test_list_uploads_pagination(self, client):
+        for i in range(3):
+            client.post(
+                "/api/upload",
+                files={
+                    "file": (f"r{i}.txt",
+                             io.BytesIO(b"Bedford,100,C,200,L"), "text/plain")
+                },
+            )
+        resp = client.get("/api/uploads?page=1&page_size=2")
+        data = resp.json()
+        assert data["total"] == 3
+        assert len(data["uploads"]) == 2
+
+    def test_list_uploads_ordered_by_id_descending(self, client):
+        for i in range(3):
+            client.post(
+                "/api/upload",
+                files={
+                    "file": (f"r{i}.txt",
+                             io.BytesIO(b"Bedford,100,C,200,L"), "text/plain")
+                },
+            )
+        resp = client.get("/api/uploads")
+        ids = [u["id"] for u in resp.json()["uploads"]]
+        assert ids == sorted(ids, reverse=True)
