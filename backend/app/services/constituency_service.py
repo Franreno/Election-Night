@@ -62,6 +62,41 @@ def get_all_constituencies(
     }
 
 
+def get_all_constituencies_summary(db: Session) -> dict:
+    """Return all constituencies with just id, name, and winning party code."""
+    constituencies = (
+        db.query(Constituency)
+        .options(joinedload(Constituency.results))
+        .order_by(Constituency.name.asc())
+        .all()
+    )
+
+    summaries = []
+    for c in constituencies:
+        winner_code = None
+        max_votes = -1
+        is_tied = False
+        for r in c.results:
+            if r.votes > max_votes:
+                max_votes = r.votes
+                winner_code = r.party_code
+                is_tied = False
+            elif r.votes == max_votes:
+                is_tied = True
+        if is_tied:
+            winner_code = None
+        summaries.append({
+            "id": c.id,
+            "name": c.name,
+            "winning_party_code": winner_code,
+        })
+
+    return {
+        "total": len(summaries),
+        "constituencies": summaries,
+    }
+
+
 def get_constituency_by_id(db: Session, constituency_id: int) -> dict | None:
     constituency = (db.query(Constituency).options(
         joinedload(Constituency.results)).filter(

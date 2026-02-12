@@ -165,3 +165,69 @@ class TestConstituencySorting:
     def test_invalid_sort_by_rejected(self, client):
         resp = client.get("/api/constituencies?sort_by=invalid")
         assert resp.status_code == 422
+
+
+class TestConstituencySummary:
+
+    def _seed_data(self, client):
+        content = ("Bedford,6643,C,5276,L,2049,LD,266,Ind,2531,UKIP,2671,G\n"
+                   "Oxford,3000,C,8000,L,1500,LD,200,Ind,500,UKIP,1000,G\n"
+                   "Cambridge,9789,C,8708,L,410,LD,158,Ind,2054,UKIP,3416,G\n")
+        client.post("/api/upload",
+                    files={
+                        "file": ("seed.txt", io.BytesIO(content.encode()),
+                                 "text/plain")
+                    })
+
+    def test_summary_empty(self, client):
+        resp = client.get("/api/constituencies/summary")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["total"] == 0
+        assert data["constituencies"] == []
+
+    def test_summary_with_data(self, client):
+        self._seed_data(client)
+        resp = client.get("/api/constituencies/summary")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["total"] == 3
+        assert len(data["constituencies"]) == 3
+
+    def test_summary_has_correct_fields(self, client):
+        self._seed_data(client)
+        resp = client.get("/api/constituencies/summary")
+        c = resp.json()["constituencies"][0]
+        assert "id" in c
+        assert "name" in c
+        assert "winning_party_code" in c
+        # Should NOT have full party details
+        assert "parties" not in c
+        assert "total_votes" not in c
+
+    def test_summary_sorted_by_name(self, client):
+        self._seed_data(client)
+        resp = client.get("/api/constituencies/summary")
+        names = [c["name"] for c in resp.json()["constituencies"]]
+        assert names == ["Bedford", "Cambridge", "Oxford"]
+
+    def test_summary_winning_party(self, client):
+        self._seed_data(client)
+        resp = client.get("/api/constituencies/summary")
+        data = {c["name"]: c["winning_party_code"]
+                for c in resp.json()["constituencies"]}
+        assert data["Bedford"] == "C"
+        assert data["Oxford"] == "L"
+        assert data["Cambridge"] == "C"
+
+    def test_summary_tied_no_winner(self, client):
+        content = "TiedTown,100,C,100,L\n"
+        client.post("/api/upload",
+                    files={
+                        "file": ("tied.txt", io.BytesIO(content.encode()),
+                                 "text/plain")
+                    })
+        resp = client.get("/api/constituencies/summary")
+        c = resp.json()["constituencies"][0]
+        assert c["name"] == "TiedTown"
+        assert c["winning_party_code"] is None
