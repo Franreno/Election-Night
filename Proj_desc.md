@@ -177,3 +177,64 @@ The following mappings apply:
 | G | Green Party |
 | Ind | Independent |
 | SNP | SN  |
+
+---
+
+## Additions — Planned Enhancements
+
+The following features are planned to further improve the election results dashboard. They go beyond the core requirements and are designed to provide a richer, more interactive experience.
+
+### 1. England Choropleth Interactive Map
+
+**Goal**: Provide a geographic visualization of election results overlaid on a constituency boundary map.
+
+**Dashboard Overview Map**
+- A full England/Wales/Scotland choropleth map on the Dashboard page showing all constituencies.
+- Each constituency polygon is coloured by the winning party's colour.
+- Hovering over a constituency shows a tooltip with: constituency name, winning party, vote margin.
+- Clicking a constituency navigates to its detail page (`/constituencies/[id]`).
+- Constituencies without results are shown in a neutral grey.
+
+**Constituency Detail Map**
+- On the `/constituencies/[id]` page, a zoomed-in map centred on the selected constituency.
+- The selected constituency is highlighted; surrounding constituencies are shown with reduced opacity.
+- This provides geographic context for where the constituency sits within its region.
+
+**Technical Approach**
+- Use **GeoJSON boundary data** from the ONS (Office for National Statistics) Open Geography Portal, which provides parliamentary constituency boundary files.
+- Render the map using a lightweight library such as **react-simple-maps** (built on D3-geo) or **Leaflet with react-leaflet**.
+- GeoJSON file served as a static asset from `/public` or fetched on demand.
+- The constituency `name` field in the GeoJSON properties is matched against the database constituency names for colouring.
+- Projection: British National Grid (EPSG:27700) or Albers Equal-Area for a clean visual.
+
+**Considerations**
+- GeoJSON file size: UK parliamentary boundary files are ~5–10 MB. Consider TopoJSON compression (reduces to ~1–2 MB) or simplification with mapshaper.
+- Matching: Constituency names in the data file may not exactly match ONS names. A normalisation/mapping layer may be needed.
+- Performance: For 650 constituency polygons, react-simple-maps or an SVG-based approach performs well. Canvas-based rendering (Leaflet) is an alternative for smoother zoom/pan.
+
+### 2. Parliamentary Seats Diagram (Hemicycle)
+
+**Goal**: Display a hemicycle (semicircle) diagram showing the distribution of parliamentary seats by party, similar to the visualisations used by the BBC and Wikipedia for UK elections.
+
+**Placement**: Dashboard page, alongside or replacing the existing seat distribution bar chart.
+
+**Design**
+- A semicircular arrangement of dots/circles, one per constituency (up to 650).
+- Dots are coloured by the winning party.
+- Dots are grouped by party, arranged from left to right in traditional political spectrum order (or by seat count descending).
+- A legend below maps each colour to the party name and seat count.
+- The centre of the hemicycle can display the "magic number" (326 for a majority) and which party, if any, has crossed it.
+
+**Technical Approach**
+- Render as an **SVG** generated in a React component.
+- Each dot is positioned using polar coordinates on concentric semicircular arcs.
+- Algorithm: distribute N seats across R rows of a semicircle, with each row having proportionally more seats than inner rows (similar to the European Parliament hemicycle layout).
+- The component receives `parties: { party_code: string; seats: number }[]` and generates the layout.
+- Consider using **D3** for the layout calculation only (d3-shape arc generator) while React handles the rendering.
+- Alternatively, use an existing open-source hemicycle library if one fits.
+
+**Considerations**
+- Responsive sizing: the SVG should scale cleanly with `viewBox` and percentage-based width.
+- Animation: optionally animate dots appearing as results come in (using CSS transitions on opacity).
+- Accessibility: include an `aria-label` describing the seat distribution in text form.
+- The hemicycle is a read-only visualisation; interactivity is limited to tooltips on hover (party name + seat count for that segment).
