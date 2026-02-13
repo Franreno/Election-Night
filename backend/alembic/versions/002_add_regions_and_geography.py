@@ -18,11 +18,8 @@ down_revision: str = "001"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 
-CONFIG_PATH = (
-    Path(__file__).resolve().parent.parent.parent
-    / "static"
-    / "itl1_constituencies_config.json"
-)
+CONFIG_PATH = (Path(__file__).resolve().parent.parent.parent / "static" /
+               "itl1_constituencies_config.json")
 
 
 def upgrade() -> None:
@@ -52,53 +49,58 @@ def upgrade() -> None:
     op.create_index("ix_constituencies_pcon24_code",
                     "constituencies", ["pcon24_code"],
                     unique=True)
-    op.create_index("ix_constituencies_region_id",
-                    "constituencies", ["region_id"])
+    op.create_index("ix_constituencies_region_id", "constituencies",
+                    ["region_id"])
 
     # 3. Seed regions and populate constituency geography from config JSON
-    if CONFIG_PATH.exists():
-        config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
-        region_order = config.get("region_order", [])
-        regions = config.get("regions", {})
+    if not CONFIG_PATH.exists():
+        raise FileNotFoundError(
+            f"Config file not found at {CONFIG_PATH}. "
+            "Ensure itl1_constituencies_config.json is in backend/static/.")
 
-        conn = op.get_bind()
+    config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+    region_order = config.get("region_order", [])
+    regions = config.get("regions", {})
 
-        # Insert regions
-        regions_table = sa.table(
-            "regions",
-            sa.column("id", sa.Integer),
-            sa.column("name", sa.String),
-            sa.column("sort_order", sa.Integer),
-        )
-        for i, region_name in enumerate(region_order):
-            conn.execute(
-                regions_table.insert().values(
-                    id=i + 1,
-                    name=region_name,
-                    sort_order=i,
-                ))
+    conn = op.get_bind()
 
-        # Update constituencies with pcon24_code and region_id
-        constituencies_table = sa.table(
-            "constituencies",
-            sa.column("name", sa.String),
-            sa.column("pcon24_code", sa.String),
-            sa.column("region_id", sa.Integer),
-        )
-        for i, region_name in enumerate(region_order):
-            region_id = i + 1
-            for constituency in regions.get(region_name, []):
-                conn.execute(
-                    constituencies_table.update()
-                    .where(constituencies_table.c.name
-                           == constituency["name"])
-                    .values(
-                        pcon24_code=constituency["pcon24_code"],
-                        region_id=region_id,
-                    ))
+    # Insert regions
+    regions_table = sa.table(
+        "regions",
+        sa.column("id", sa.Integer),
+        sa.column("name", sa.String),
+        sa.column("sort_order", sa.Integer),
+    )
+    for i, region_name in enumerate(region_order):
+        conn.execute(regions_table.insert().values(
+            id=i + 1,
+            name=region_name,
+            sort_order=i,
+        ))
+
+    # Pre-seed all constituencies with geography data
+    constituencies_table = sa.table(
+        "constituencies",
+        sa.column("name", sa.String),
+        sa.column("pcon24_code", sa.String),
+        sa.column("region_id", sa.Integer),
+    )
+    for i, region_name in enumerate(region_order):
+        region_id = i + 1
+        for constituency in regions.get(region_name, []):
+            conn.execute(constituencies_table.insert().values(
+                name=constituency["name"],
+                pcon24_code=constituency["pcon24_code"],
+                region_id=region_id,
+            ))
 
 
 def downgrade() -> None:
+    # Remove seeded constituencies (those with a pcon24_code from migration)
+    conn = op.get_bind()
+    conn.execute(
+        sa.text("DELETE FROM constituencies WHERE pcon24_code IS NOT NULL"))
+
     op.drop_index("ix_constituencies_region_id", table_name="constituencies")
     op.drop_index("ix_constituencies_pcon24_code", table_name="constituencies")
     op.drop_column("constituencies", "region_id")

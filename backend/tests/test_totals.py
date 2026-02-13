@@ -1,5 +1,7 @@
 import io
 
+from tests.conftest import seed_constituencies
+
 
 class TestTotalsEndpoint:
 
@@ -11,7 +13,8 @@ class TestTotalsEndpoint:
         assert data["total_votes"] == 0
         assert data["parties"] == []
 
-    def test_totals_with_data(self, client):
+    def test_totals_with_data(self, client, db_session):
+        seed_constituencies(db_session, ["Bedford", "Oxford", "Cambridge"])
         content = ("Bedford,100,C,200,L\n"
                    "Oxford,300,C,150,L\n"
                    "Cambridge,50,C,400,L\n")
@@ -32,7 +35,8 @@ class TestTotalsEndpoint:
         assert totals_by_party["C"]["total_votes"] == 100 + 300 + 50
         assert totals_by_party["L"]["total_votes"] == 200 + 150 + 400
 
-    def test_totals_seats(self, client):
+    def test_totals_seats(self, client, db_session):
+        seed_constituencies(db_session, ["Bedford", "Oxford", "Cambridge"])
         content = (
             "Bedford,100,C,200,L\n"  # L wins
             "Oxford,300,C,150,L\n"  # C wins
@@ -50,7 +54,8 @@ class TestTotalsEndpoint:
         assert totals_by_party["L"]["seats"] == 2
         assert totals_by_party["C"]["seats"] == 1
 
-    def test_totals_tied_constituency_no_seat(self, client):
+    def test_totals_tied_constituency_no_seat(self, client, db_session):
+        seed_constituencies(db_session, ["TiedTown", "Bedford"])
         content = (
             "TiedTown,100,C,100,L\n"  # Tied - no seat awarded
             "Bedford,200,C,100,L\n"  # C wins
@@ -68,7 +73,8 @@ class TestTotalsEndpoint:
         assert totals_by_party["C"]["seats"] == 1
         assert totals_by_party["L"]["seats"] == 0
 
-    def test_totals_party_names(self, client):
+    def test_totals_party_names(self, client, db_session):
+        seed_constituencies(db_session, ["Bedford"])
         content = "Bedford,100,C,200,L\n"
         client.post("/api/upload",
                     files={
@@ -82,7 +88,8 @@ class TestTotalsEndpoint:
         assert totals_by_party["C"]["party_name"] == "Conservative Party"
         assert totals_by_party["L"]["party_name"] == "Labour Party"
 
-    def test_totals_sorted_by_seats_then_votes(self, client):
+    def test_totals_sorted_by_seats_then_votes(self, client, db_session):
+        seed_constituencies(db_session, ["A", "B", "C_const"])
         content = (
             "A,100,C,200,L,300,LD\n"  # LD wins
             "B,100,C,400,L,200,LD\n"  # L wins

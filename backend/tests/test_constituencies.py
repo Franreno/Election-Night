@@ -1,9 +1,12 @@
 import io
 
+from tests.conftest import seed_constituencies
+
 
 class TestConstituenciesEndpoint:
 
-    def _seed_data(self, client):
+    def _seed_data(self, client, db_session):
+        seed_constituencies(db_session, ["Bedford", "Oxford", "Cambridge"])
         content = ("Bedford,6643,C,5276,L,2049,LD,266,Ind,2531,UKIP,2671,G\n"
                    "Oxford,3000,C,8000,L,1500,LD,200,Ind,500,UKIP,1000,G\n"
                    "Cambridge,9789,C,8708,L,410,LD,158,Ind,2054,UKIP,3416,G\n")
@@ -20,16 +23,16 @@ class TestConstituenciesEndpoint:
         assert data["total"] == 0
         assert data["constituencies"] == []
 
-    def test_list_with_data(self, client):
-        self._seed_data(client)
+    def test_list_with_data(self, client, db_session):
+        self._seed_data(client, db_session)
         resp = client.get("/api/constituencies")
         assert resp.status_code == 200
         data = resp.json()
         assert data["total"] == 3
         assert len(data["constituencies"]) == 3
 
-    def test_list_pagination(self, client):
-        self._seed_data(client)
+    def test_list_pagination(self, client, db_session):
+        self._seed_data(client, db_session)
         resp = client.get("/api/constituencies?page=1&page_size=2")
         data = resp.json()
         assert data["total"] == 3
@@ -37,15 +40,15 @@ class TestConstituenciesEndpoint:
         assert data["page"] == 1
         assert data["page_size"] == 2
 
-    def test_list_search(self, client):
-        self._seed_data(client)
+    def test_list_search(self, client, db_session):
+        self._seed_data(client, db_session)
         resp = client.get("/api/constituencies?search=bed")
         data = resp.json()
         assert data["total"] == 1
         assert data["constituencies"][0]["name"] == "Bedford"
 
-    def test_get_single_constituency(self, client):
-        self._seed_data(client)
+    def test_get_single_constituency(self, client, db_session):
+        self._seed_data(client, db_session)
         # Get the list to find an ID
         list_resp = client.get("/api/constituencies?search=Bedford")
         constituency_id = list_resp.json()["constituencies"][0]["id"]
@@ -61,29 +64,30 @@ class TestConstituenciesEndpoint:
         resp = client.get("/api/constituencies/99999")
         assert resp.status_code == 404
 
-    def test_constituency_has_winning_party(self, client):
-        self._seed_data(client)
+    def test_constituency_has_winning_party(self, client, db_session):
+        self._seed_data(client, db_session)
         resp = client.get("/api/constituencies?search=Bedford")
         constituency = resp.json()["constituencies"][0]
         # Bedford: C has 6643 (highest)
         assert constituency["winning_party_code"] == "C"
         assert constituency["winning_party_name"] == "Conservative Party"
 
-    def test_constituency_percentages_sum_to_100(self, client):
-        self._seed_data(client)
+    def test_constituency_percentages_sum_to_100(self, client, db_session):
+        self._seed_data(client, db_session)
         resp = client.get("/api/constituencies?search=Bedford")
         constituency = resp.json()["constituencies"][0]
         total_pct = sum(p["percentage"] for p in constituency["parties"])
         assert 99.9 <= total_pct <= 100.1  # Allow small rounding variance
 
-    def test_parties_sorted_by_votes_descending(self, client):
-        self._seed_data(client)
+    def test_parties_sorted_by_votes_descending(self, client, db_session):
+        self._seed_data(client, db_session)
         resp = client.get("/api/constituencies?search=Bedford")
         constituency = resp.json()["constituencies"][0]
         votes = [p["votes"] for p in constituency["parties"]]
         assert votes == sorted(votes, reverse=True)
 
-    def test_tied_votes_no_winner(self, client):
+    def test_tied_votes_no_winner(self, client, db_session):
+        seed_constituencies(db_session, ["TiedTown"])
         content = "TiedTown,100,C,100,L\n"
         client.post("/api/upload",
                     files={
@@ -98,7 +102,8 @@ class TestConstituenciesEndpoint:
 
 class TestConstituencySorting:
 
-    def _seed_data(self, client):
+    def _seed_data(self, client, db_session):
+        seed_constituencies(db_session, ["Bedford", "Oxford", "Cambridge"])
         # Bedford: C wins (6643), total=19436
         # Oxford: L wins (8000), total=14200
         # Cambridge: C wins (9789), total=24535
@@ -111,35 +116,35 @@ class TestConstituencySorting:
                                  "text/plain")
                     })
 
-    def test_sort_by_name_asc(self, client):
-        self._seed_data(client)
+    def test_sort_by_name_asc(self, client, db_session):
+        self._seed_data(client, db_session)
         resp = client.get("/api/constituencies?sort_by=name&sort_dir=asc")
         names = [c["name"] for c in resp.json()["constituencies"]]
         assert names == ["Bedford", "Cambridge", "Oxford"]
 
-    def test_sort_by_name_desc(self, client):
-        self._seed_data(client)
+    def test_sort_by_name_desc(self, client, db_session):
+        self._seed_data(client, db_session)
         resp = client.get("/api/constituencies?sort_by=name&sort_dir=desc")
         names = [c["name"] for c in resp.json()["constituencies"]]
         assert names == ["Oxford", "Cambridge", "Bedford"]
 
-    def test_sort_by_total_votes_desc(self, client):
-        self._seed_data(client)
+    def test_sort_by_total_votes_desc(self, client, db_session):
+        self._seed_data(client, db_session)
         resp = client.get(
             "/api/constituencies?sort_by=total_votes&sort_dir=desc")
         names = [c["name"] for c in resp.json()["constituencies"]]
         # Cambridge 24535 > Bedford 19436 > Oxford 14200
         assert names == ["Cambridge", "Bedford", "Oxford"]
 
-    def test_sort_by_total_votes_asc(self, client):
-        self._seed_data(client)
+    def test_sort_by_total_votes_asc(self, client, db_session):
+        self._seed_data(client, db_session)
         resp = client.get(
             "/api/constituencies?sort_by=total_votes&sort_dir=asc")
         names = [c["name"] for c in resp.json()["constituencies"]]
         assert names == ["Oxford", "Bedford", "Cambridge"]
 
-    def test_sort_by_winning_party(self, client):
-        self._seed_data(client)
+    def test_sort_by_winning_party(self, client, db_session):
+        self._seed_data(client, db_session)
         resp = client.get(
             "/api/constituencies?sort_by=winning_party&sort_dir=asc")
         data = resp.json()["constituencies"]
@@ -147,8 +152,8 @@ class TestConstituencySorting:
         # C comes before L alphabetically by party_code
         assert parties == ["C", "C", "L"]
 
-    def test_sort_with_pagination(self, client):
-        self._seed_data(client)
+    def test_sort_with_pagination(self, client, db_session):
+        self._seed_data(client, db_session)
         resp = client.get(
             "/api/constituencies?sort_by=name&sort_dir=asc&page=1&page_size=2")
         data = resp.json()
@@ -156,8 +161,8 @@ class TestConstituencySorting:
         assert names == ["Bedford", "Cambridge"]
         assert data["total"] == 3
 
-    def test_default_sort_is_name_asc(self, client):
-        self._seed_data(client)
+    def test_default_sort_is_name_asc(self, client, db_session):
+        self._seed_data(client, db_session)
         resp = client.get("/api/constituencies")
         names = [c["name"] for c in resp.json()["constituencies"]]
         assert names == ["Bedford", "Cambridge", "Oxford"]
@@ -169,7 +174,8 @@ class TestConstituencySorting:
 
 class TestConstituencySummary:
 
-    def _seed_data(self, client):
+    def _seed_data(self, client, db_session):
+        seed_constituencies(db_session, ["Bedford", "Oxford", "Cambridge"])
         content = ("Bedford,6643,C,5276,L,2049,LD,266,Ind,2531,UKIP,2671,G\n"
                    "Oxford,3000,C,8000,L,1500,LD,200,Ind,500,UKIP,1000,G\n"
                    "Cambridge,9789,C,8708,L,410,LD,158,Ind,2054,UKIP,3416,G\n")
@@ -186,16 +192,16 @@ class TestConstituencySummary:
         assert data["total"] == 0
         assert data["constituencies"] == []
 
-    def test_summary_with_data(self, client):
-        self._seed_data(client)
+    def test_summary_with_data(self, client, db_session):
+        self._seed_data(client, db_session)
         resp = client.get("/api/constituencies/summary")
         assert resp.status_code == 200
         data = resp.json()
         assert data["total"] == 3
         assert len(data["constituencies"]) == 3
 
-    def test_summary_has_correct_fields(self, client):
-        self._seed_data(client)
+    def test_summary_has_correct_fields(self, client, db_session):
+        self._seed_data(client, db_session)
         resp = client.get("/api/constituencies/summary")
         c = resp.json()["constituencies"][0]
         assert "id" in c
@@ -205,14 +211,14 @@ class TestConstituencySummary:
         assert "parties" not in c
         assert "total_votes" not in c
 
-    def test_summary_sorted_by_name(self, client):
-        self._seed_data(client)
+    def test_summary_sorted_by_name(self, client, db_session):
+        self._seed_data(client, db_session)
         resp = client.get("/api/constituencies/summary")
         names = [c["name"] for c in resp.json()["constituencies"]]
         assert names == ["Bedford", "Cambridge", "Oxford"]
 
-    def test_summary_winning_party(self, client):
-        self._seed_data(client)
+    def test_summary_winning_party(self, client, db_session):
+        self._seed_data(client, db_session)
         resp = client.get("/api/constituencies/summary")
         data = {
             c["name"]: c["winning_party_code"]
@@ -222,7 +228,8 @@ class TestConstituencySummary:
         assert data["Oxford"] == "L"
         assert data["Cambridge"] == "C"
 
-    def test_summary_tied_no_winner(self, client):
+    def test_summary_tied_no_winner(self, client, db_session):
+        seed_constituencies(db_session, ["TiedTown"])
         content = "TiedTown,100,C,100,L\n"
         client.post("/api/upload",
                     files={

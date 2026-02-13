@@ -1,6 +1,9 @@
 import io
 
+from app.models.constituency import Constituency
 from app.models.region import Region
+
+from tests.conftest import seed_constituencies
 
 
 class TestGeographyRegions:
@@ -32,7 +35,8 @@ class TestGeographyRegions:
 
     def test_list_regions_constituency_count(self, client, db_session):
         self._seed_regions(db_session)
-        # Upload constituencies that match region names
+        seed_constituencies(db_session, ["Bedford", "Oxford"])
+        # Upload results
         content = "Bedford,6643,C,5276,L\nOxford,3000,C,8000,L\n"
         client.post("/api/upload",
                     files={
@@ -40,7 +44,6 @@ class TestGeographyRegions:
                                  "text/plain")
                     })
         # Manually assign constituencies to regions
-        from app.models.constituency import Constituency
         bedford = db_session.query(Constituency).filter_by(
             name="Bedford").first()
         oxford = db_session.query(Constituency).filter_by(
@@ -73,6 +76,7 @@ class TestGeographyRegionDetail:
         db_session.add(region)
         db_session.commit()
 
+        seed_constituencies(db_session, ["Bedford", "Oxford"])
         content = "Bedford,6643,C,5276,L\nOxford,3000,C,8000,L\n"
         client.post("/api/upload",
                     files={
@@ -80,7 +84,6 @@ class TestGeographyRegionDetail:
                                  "text/plain")
                     })
 
-        from app.models.constituency import Constituency
         for c in db_session.query(Constituency).all():
             c.region_id = 1
             c.pcon24_code = f"E14001{c.id:03d}"
@@ -137,6 +140,7 @@ class TestConstituencyGeographyFields:
         db_session.add(region)
         db_session.commit()
 
+        seed_constituencies(db_session, ["Bedford"])
         content = "Bedford,6643,C,5276,L\n"
         client.post("/api/upload",
                     files={
@@ -144,7 +148,6 @@ class TestConstituencyGeographyFields:
                                  "text/plain")
                     })
 
-        from app.models.constituency import Constituency
         bedford = db_session.query(Constituency).filter_by(
             name="Bedford").first()
         bedford.pcon24_code = "E14001084"
@@ -153,7 +156,6 @@ class TestConstituencyGeographyFields:
 
     def test_constituency_detail_includes_geography(self, client, db_session):
         self._seed_with_geography(client, db_session)
-        from app.models.constituency import Constituency
         c = db_session.query(Constituency).first()
         resp = client.get(f"/api/constituencies/{c.id}")
         assert resp.status_code == 200
@@ -169,7 +171,8 @@ class TestConstituencyGeographyFields:
         c = data["constituencies"][0]
         assert c["pcon24_code"] == "E14001084"
 
-    def test_constituency_without_geography(self, client):
+    def test_constituency_without_geography(self, client, db_session):
+        seed_constituencies(db_session, ["Bedford"])
         content = "Bedford,6643,C,5276,L\n"
         client.post("/api/upload",
                     files={

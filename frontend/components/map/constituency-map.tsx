@@ -101,8 +101,8 @@ export function ConstituencyMap() {
 
   const findMatch = useCallback(
     (feat: Feature<Geometry>) => {
-      const code = feat.properties?.PCON24CD ?? "";
-      const name = feat.properties?.PCON24NM ?? "";
+      const code = feat.properties?.pcon19cd ?? "";
+      const name = feat.properties?.pcon19nm ?? "";
       return lookup.get(code) ?? matchConstituency(name, lookup);
     },
     [lookup],
@@ -110,7 +110,7 @@ export function ConstituencyMap() {
 
   const handleMouseEnter = useCallback(
     (e: React.MouseEvent, feat: Feature<Geometry>) => {
-      const name = feat.properties?.PCON24NM ?? "Unknown";
+      const name = feat.properties?.pcon19nm ?? "Unknown";
       const match = findMatch(feat);
       setTooltip({
         x: e.clientX,
@@ -183,7 +183,7 @@ export function ConstituencyMap() {
               const color = getConstituencyColor(match?.winning_party_code);
               return (
                 <path
-                  key={feat.properties?.PCON24CD ?? i}
+                  key={feat.properties?.pcon19cd ?? i}
                   d={d}
                   fill={color}
                   stroke="#1a1a1e"

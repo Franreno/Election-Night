@@ -73,7 +73,7 @@ export function ConstituencyMiniMap({
       topology.objects[layerName],
     ) as FeatureCollection;
     const filtered = full.features.filter((f) =>
-      regionCodes.has(f.properties?.PCON24CD ?? ""),
+      regionCodes.has(f.properties?.pcon19cd ?? ""),
     );
     if (filtered.length === 0) return null;
     return { type: "FeatureCollection", features: filtered };
@@ -126,7 +126,7 @@ export function ConstituencyMiniMap({
           className="max-w-full"
         >
           {paths.map(({ feat, d }, i) => {
-            const code = feat.properties?.PCON24CD ?? "";
+            const code = feat.properties?.pcon19cd ?? "";
             const isCurrent = code === pcon24Code;
             const partyCode = partyLookup.get(code) ?? null;
             const color = getConstituencyColor(partyCode);
