@@ -74,8 +74,7 @@ class TestUploadEndpoint:
         response = client.post(
             "/api/upload",
             files={
-                "file":
-                ("bad.txt", io.BytesIO(content.encode()), "text/plain")
+                "file": ("bad.txt", io.BytesIO(content.encode()), "text/plain")
             },
         )
         assert response.status_code == 201
@@ -166,8 +165,7 @@ class TestUploadEndpoint:
         response = client.post(
             "/api/upload",
             files={
-                "file":
-                ("r.txt", io.BytesIO(content.encode()), "text/plain")
+                "file": ("r.txt", io.BytesIO(content.encode()), "text/plain")
             },
         )
         assert response.status_code == 201
@@ -189,8 +187,7 @@ class TestUploadEndpoint:
         response = client.post(
             "/api/upload",
             files={
-                "file":
-                ("r.txt", io.BytesIO(content.encode()), "text/plain")
+                "file": ("r.txt", io.BytesIO(content.encode()), "text/plain")
             },
         )
         data = response.json()
@@ -204,8 +201,7 @@ class TestUploadEndpoint:
         response = client.post(
             "/api/upload",
             files={
-                "file":
-                ("r.txt", io.BytesIO(content.encode()), "text/plain")
+                "file": ("r.txt", io.BytesIO(content.encode()), "text/plain")
             },
         )
         data = response.json()
@@ -214,14 +210,12 @@ class TestUploadEndpoint:
 
     def test_upload_comma_stripped_matching(self, client, db_session):
         """'Birmingham, Hall Green' matches 'Birmingham Hall Green and Moseley'."""
-        seed_constituencies(
-            db_session, ["Birmingham Hall Green and Moseley"])
+        seed_constituencies(db_session, ["Birmingham Hall Green and Moseley"])
         content = "Birmingham\\, Hall Green,500,C,300,L\n"
         response = client.post(
             "/api/upload",
             files={
-                "file":
-                ("r.txt", io.BytesIO(content.encode()), "text/plain")
+                "file": ("r.txt", io.BytesIO(content.encode()), "text/plain")
             },
         )
         data = response.json()
@@ -235,8 +229,7 @@ class TestUploadEndpoint:
         response = client.post(
             "/api/upload",
             files={
-                "file":
-                ("r.txt", io.BytesIO(content.encode()), "text/plain")
+                "file": ("r.txt", io.BytesIO(content.encode()), "text/plain")
             },
         )
         data = response.json()
@@ -253,8 +246,7 @@ class TestUploadEndpoint:
         response = client.post(
             "/api/upload",
             files={
-                "file":
-                ("r.txt", io.BytesIO(content.encode()), "text/plain")
+                "file": ("r.txt", io.BytesIO(content.encode()), "text/plain")
             },
         )
         data = response.json()

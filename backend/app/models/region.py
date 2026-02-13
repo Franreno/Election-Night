@@ -12,5 +12,4 @@ class Region(Base):
     sort_order = Column(Integer, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
-    constituencies = relationship("Constituency",
-                                  back_populates="region")
+    constituencies = relationship("Constituency", back_populates="region")

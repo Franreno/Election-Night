@@ -6,41 +6,27 @@ from app.models.region import Region
 
 
 def get_all_regions(db: Session) -> dict:
-    rows = (
-        db.query(
-            Region.id,
-            Region.name,
-            Region.sort_order,
-            func.count(Constituency.id).label("constituency_count"),
-        )
-        .outerjoin(Constituency, Constituency.region_id == Region.id)
-        .group_by(Region.id)
-        .order_by(Region.sort_order.asc())
-        .all()
-    )
+    rows = (db.query(
+        Region.id,
+        Region.name,
+        Region.sort_order,
+        func.count(Constituency.id).label("constituency_count"),
+    ).outerjoin(Constituency, Constituency.region_id == Region.id).group_by(
+        Region.id).order_by(Region.sort_order.asc()).all())
     return {
-        "regions": [
-            {
-                "id": r.id,
-                "name": r.name,
-                "sort_order": r.sort_order,
-                "constituency_count": r.constituency_count,
-            }
-            for r in rows
-        ]
+        "regions": [{
+            "id": r.id,
+            "name": r.name,
+            "sort_order": r.sort_order,
+            "constituency_count": r.constituency_count,
+        } for r in rows]
     }
 
 
 def get_region_detail(db: Session, region_id: int) -> dict | None:
-    region = (
-        db.query(Region)
-        .options(
-            joinedload(Region.constituencies)
-            .joinedload(Constituency.results)
-        )
-        .filter(Region.id == region_id)
-        .first()
-    )
+    region = (db.query(Region).options(
+        joinedload(Region.constituencies).joinedload(
+            Constituency.results)).filter(Region.id == region_id).first())
     if not region:
         return None
 

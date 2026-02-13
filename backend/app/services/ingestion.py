@@ -60,17 +60,14 @@ class ConstituencyMatcher:
 
         # 3. Official name starts with uploaded name + space
         candidates = [
-            c for c in self._all
-            if c.name.lower().startswith(normalized + " ")
+            c for c in self._all if c.name.lower().startswith(normalized + " ")
         ]
         if len(candidates) == 1:
             return candidates[0]
 
         # 4. Official name ends with " " + uploaded name
         suffix = " " + normalized
-        candidates = [
-            c for c in self._all if c.name.lower().endswith(suffix)
-        ]
+        candidates = [c for c in self._all if c.name.lower().endswith(suffix)]
         if len(candidates) == 1:
             return candidates[0]
 

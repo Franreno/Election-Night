@@ -2,7 +2,6 @@ import io
 
 from app.models.constituency import Constituency
 from app.models.region import Region
-
 from tests.conftest import seed_constituencies
 
 
