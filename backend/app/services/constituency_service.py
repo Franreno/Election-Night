@@ -38,7 +38,10 @@ def get_all_constituencies(
     sort_by: str | None = None,
     sort_dir: str = "asc",
 ) -> dict:
-    query = db.query(Constituency).options(joinedload(Constituency.results))
+    query = db.query(Constituency).options(
+        joinedload(Constituency.results),
+        joinedload(Constituency.region),
+    )
 
     if search:
         query = query.filter(Constituency.name.ilike(f"%{search}%"))
@@ -66,8 +69,9 @@ def get_all_constituencies(
 def get_all_constituencies_summary(db: Session) -> dict:
     """Return all constituencies with just id, name, and winning party code."""
     constituencies = (db.query(Constituency).options(
-        joinedload(Constituency.results)).order_by(
-            Constituency.name.asc()).all())
+        joinedload(Constituency.results),
+        joinedload(Constituency.region),
+    ).order_by(Constituency.name.asc()).all())
 
     summaries = []
     for c in constituencies:
@@ -86,6 +90,8 @@ def get_all_constituencies_summary(db: Session) -> dict:
         summaries.append({
             "id": c.id,
             "name": c.name,
+            "pcon24_code": c.pcon24_code,
+            "region_name": c.region.name if c.region else None,
             "winning_party_code": winner_code,
         })
 
@@ -97,8 +103,9 @@ def get_all_constituencies_summary(db: Session) -> dict:
 
 def get_constituency_by_id(db: Session, constituency_id: int) -> dict | None:
     constituency = (db.query(Constituency).options(
-        joinedload(Constituency.results)).filter(
-            Constituency.id == constituency_id).first())
+        joinedload(Constituency.results),
+        joinedload(Constituency.region),
+    ).filter(Constituency.id == constituency_id).first())
     if not constituency:
         return None
     return _format_constituency(constituency)
@@ -144,6 +151,12 @@ def _format_constituency(constituency: Constituency) -> dict:
         constituency.id,
         "name":
         constituency.name,
+        "pcon24_code":
+        constituency.pcon24_code,
+        "region_id":
+        constituency.region_id,
+        "region_name":
+        constituency.region.name if constituency.region else None,
         "total_votes":
         total_votes,
         "winning_party_code":

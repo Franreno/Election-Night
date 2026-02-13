@@ -5,9 +5,16 @@ interface MapTooltipProps {
   y: number;
   name: string;
   partyCode: string | null;
+  regionName?: string | null;
 }
 
-export function MapTooltip({ x, y, name, partyCode }: MapTooltipProps) {
+export function MapTooltip({
+  x,
+  y,
+  name,
+  partyCode,
+  regionName,
+}: MapTooltipProps) {
   return (
     <div
       className="pointer-events-none fixed z-50 rounded-md border border-border bg-popover px-3 py-2 shadow-md"
@@ -20,6 +27,9 @@ export function MapTooltip({ x, y, name, partyCode }: MapTooltipProps) {
         </div>
       ) : (
         <p className="mt-0.5 text-xs text-muted-foreground">No data</p>
+      )}
+      {regionName && (
+        <p className="mt-0.5 text-xs text-muted-foreground">{regionName}</p>
       )}
     </div>
   );

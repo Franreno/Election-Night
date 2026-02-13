@@ -5,6 +5,7 @@ export interface ConstituencyMapEntry {
   id: number;
   name: string;
   winning_party_code: string | null;
+  region_name: string | null;
 }
 
 const NO_DATA_COLOR = "#2a2a2e";
@@ -18,18 +19,23 @@ function normalizeName(name: string): string {
 }
 
 /**
- * Build a lookup map from normalized constituency name to summary data.
+ * Build a lookup map indexed by both normalized name AND pcon24_code.
  */
 export function buildConstituencyLookup(
   constituencies: ConstituencySummary[],
 ): Map<string, ConstituencyMapEntry> {
   const lookup = new Map<string, ConstituencyMapEntry>();
   for (const c of constituencies) {
-    lookup.set(normalizeName(c.name), {
+    const entry: ConstituencyMapEntry = {
       id: c.id,
       name: c.name,
       winning_party_code: c.winning_party_code,
-    });
+      region_name: c.region_name,
+    };
+    lookup.set(normalizeName(c.name), entry);
+    if (c.pcon24_code) {
+      lookup.set(c.pcon24_code, entry);
+    }
   }
   return lookup;
 }

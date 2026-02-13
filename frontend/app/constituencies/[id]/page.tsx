@@ -12,8 +12,10 @@ import {
   ChartSkeleton,
   TableSkeleton,
 } from "@/components/shared/loading-skeleton";
+import { ConstituencyMiniMap } from "@/components/constituency-detail/constituency-mini-map";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { ArrowLeft, MapPin } from "lucide-react";
 
 export default function ConstituencyDetailPage({
   params,
@@ -23,6 +25,7 @@ export default function ConstituencyDetailPage({
   const { id } = use(params);
   const constituencyId = Number(id);
   const { data, isLoading, error } = useConstituency(constituencyId);
+
 
   if (isLoading) {
     return (
@@ -68,6 +71,8 @@ export default function ConstituencyDetailPage({
     );
   }
 
+
+  console.log(data)
   return (
     <div>
       <div className="flex items-center gap-3">
@@ -81,11 +86,38 @@ export default function ConstituencyDetailPage({
       </div>
 
       <div className="mt-6 space-y-6">
+        {data.region_name && (
+          <Card>
+            <CardContent className="flex items-center gap-6 py-4">
+              <div className="flex items-center gap-2">
+                <MapPin className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm text-muted-foreground">Region:</span>
+                <span className="font-medium">{data.region_name}</span>
+              </div>
+              {data.pcon24_code && (
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground">Code:</span>
+                  <span className="font-mono text-sm">{data.pcon24_code}</span>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
         <WinnerBanner
           winningPartyCode={data.winning_party_code}
           winningPartyName={data.winning_party_name}
           parties={data.parties}
         />
+
+        {data.pcon24_code && (
+          <ConstituencyMiniMap
+            pcon24Code={data.pcon24_code}
+            constituencyName={data.name}
+            winningPartyCode={data.winning_party_code}
+          />
+        )}
+
         <VoteBarChart parties={data.parties} />
         <PartyResultsTable
           parties={data.parties}

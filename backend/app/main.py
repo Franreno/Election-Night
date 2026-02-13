@@ -7,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app.config import settings
 from app.database import Base, engine
-from app.routers import constituencies, totals, upload
+from app.routers import constituencies, geography, totals, upload
 
 STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
 
@@ -38,6 +38,7 @@ app.add_middleware(
 app.include_router(upload.router)
 app.include_router(constituencies.router)
 app.include_router(totals.router)
+app.include_router(geography.router)
 
 if STATIC_DIR.is_dir():
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
