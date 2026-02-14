@@ -134,7 +134,7 @@ e2e-down: ## Stop E2E services
 .PHONY: e2e-reset
 e2e-reset: ## Reset E2E database (destroy volume + recreate)
 	$(E2E_COMPOSE) down -v
-	$(E2E_COMPOSE) up -d
+	$(E2E_COMPOSE) up -d --build
 	@$(MAKE) _wait-services WAIT_API=$(E2E_API_URL) WAIT_FE=$(E2E_FRONTEND_URL)
 	@echo "✅ E2E database reset complete"
 
@@ -168,7 +168,7 @@ test-e2e-headed: e2e-up ## Run E2E tests with visible browser
 
 .PHONY: test-e2e-ui
 test-e2e-ui: e2e-up ## Open Playwright UI mode
-	cd frontend && E2E_BASE_URL=$(E2E_FRONTEND_URL) npx playwright test --ui
+	cd frontend && E2E_DB=seeded E2E_BASE_URL=$(E2E_FRONTEND_URL) npx playwright test --ui
 
 .PHONY: test-e2e-clean
 test-e2e-clean: e2e-reset ## Run E2E tests against a clean (empty) E2E database

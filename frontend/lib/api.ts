@@ -17,6 +17,7 @@ export const fetchTotals = () =>
 
 export const fetchConstituencies = (params: {
   search?: string;
+  region_ids?: string;
   page?: number;
   page_size?: number;
   sort_by?: string;
@@ -24,6 +25,7 @@ export const fetchConstituencies = (params: {
 }) => {
   const qs = new URLSearchParams();
   if (params.search) qs.set("search", params.search);
+  if (params.region_ids) qs.set("region_ids", params.region_ids);
   if (params.page) qs.set("page", String(params.page));
   if (params.page_size) qs.set("page_size", String(params.page_size));
   if (params.sort_by) qs.set("sort_by", params.sort_by);

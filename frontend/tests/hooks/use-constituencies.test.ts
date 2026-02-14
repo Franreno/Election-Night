@@ -27,7 +27,7 @@ describe("useConstituencies", () => {
     mockFetchConstituencies.mockResolvedValue(mockData);
 
     const { result } = renderHook(() =>
-      useConstituencies("bedford", 1, 50, "name", "asc"),
+      useConstituencies("bedford", null, 1, 50, "name", "asc"),
     );
 
     await waitFor(() => {
@@ -36,6 +36,7 @@ describe("useConstituencies", () => {
 
     expect(mockFetchConstituencies).toHaveBeenCalledWith({
       search: "bedford",
+      region_ids: undefined,
       page: 1,
       page_size: 50,
       sort_by: "name",
@@ -46,7 +47,7 @@ describe("useConstituencies", () => {
   it("uses default page size of 50", async () => {
     mockFetchConstituencies.mockResolvedValue({ constituencies: [] });
 
-    renderHook(() => useConstituencies("test-default", 1));
+    renderHook(() => useConstituencies("test-default", null, 1));
 
     await waitFor(() => {
       expect(mockFetchConstituencies).toHaveBeenCalledWith(
@@ -58,16 +59,41 @@ describe("useConstituencies", () => {
   it("passes sort parameters when provided", async () => {
     mockFetchConstituencies.mockResolvedValue({ constituencies: [] });
 
-    renderHook(() => useConstituencies("test-sort", 1, 20, "total_votes", "desc"));
+    renderHook(() => useConstituencies("test-sort", null, 1, 20, "total_votes", "desc"));
 
     await waitFor(() => {
       expect(mockFetchConstituencies).toHaveBeenCalledWith({
         search: "test-sort",
+        region_ids: undefined,
         page: 1,
         page_size: 20,
         sort_by: "total_votes",
         sort_dir: "desc",
       });
+    });
+  });
+
+  it("passes region_ids as comma-separated string", async () => {
+    mockFetchConstituencies.mockResolvedValue({ constituencies: [] });
+
+    renderHook(() => useConstituencies("", [1, 3, 5], 1, 20));
+
+    await waitFor(() => {
+      expect(mockFetchConstituencies).toHaveBeenCalledWith(
+        expect.objectContaining({ region_ids: "1,3,5" }),
+      );
+    });
+  });
+
+  it("passes region_ids as undefined when null", async () => {
+    mockFetchConstituencies.mockResolvedValue({ constituencies: [] });
+
+    renderHook(() => useConstituencies("", null, 1, 20));
+
+    await waitFor(() => {
+      expect(mockFetchConstituencies).toHaveBeenCalledWith(
+        expect.objectContaining({ region_ids: undefined }),
+      );
     });
   });
 });

@@ -42,6 +42,7 @@ export interface ConstituencySummary {
   name: string;
   winning_party_code: string | null;
   pcon24_code: string | null;
+  region_id: number | null;
   region_name: string | null;
 }
 

@@ -22,6 +22,8 @@ router = APIRouter(prefix="/api/constituencies", tags=["constituencies"])
 def list_constituencies(
         search: str | None = Query(None,
                                    description="Search constituency by name"),
+        region_ids: str | None = Query(None,
+                                       description="Comma-separated region IDs to filter by"),
         page: int = Query(1, ge=1),
         page_size: int = Query(50, ge=1, le=200),
         sort_by: Literal["name", "total_votes", "winning_party"]
@@ -33,10 +35,19 @@ def list_constituencies(
     """List all constituencies with their party results.
 
     Supports pagination, optional name search
-    (case-insensitive partial match), and sorting.
+    (case-insensitive partial match), region filtering, and sorting.
     """
+    # Parse region_ids from comma-separated string
+    parsed_region_ids = None
+    if region_ids:
+        try:
+            parsed_region_ids = [int(id.strip()) for id in region_ids.split(",") if id.strip()]
+        except ValueError:
+            parsed_region_ids = None
+
     return get_all_constituencies(db,
                                   search=search,
+                                  region_ids=parsed_region_ids,
                                   page=page,
                                   page_size=page_size,
                                   sort_by=sort_by,

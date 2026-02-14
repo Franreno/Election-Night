@@ -26,6 +26,7 @@ class ConstituencySummary(BaseModel):
     id: int
     name: str
     pcon24_code: str | None
+    region_id: int | None
     region_name: str | None
     winning_party_code: str | None
 
