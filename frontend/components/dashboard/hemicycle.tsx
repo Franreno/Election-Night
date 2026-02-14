@@ -49,11 +49,24 @@ export function Hemicycle({ parties }: HemicycleProps) {
       partyCode: party.party_code,
     }));
 
-    // Aggressive sizing for mobile to fit all 650 seats
+    // Progressive responsive sizing to fit all 650 seats at any container width
+    const getResponsiveParams = (width: number) => {
+      if (width < 400) {
+        return { seatRadius: 2, rowHeight: 6, sectionGap: 25 };
+      } else if (width < 550) {
+        return { seatRadius: 3, rowHeight: 7.5, sectionGap: 35 };
+      } else if (width < 700) {
+        return { seatRadius: 3.5, rowHeight: 8.5, sectionGap: 45 };
+      } else {
+        return { seatRadius: 4.0, rowHeight: 10, sectionGap: 55 };
+      }
+    };
+
+    const params = getResponsiveParams(chartWidth);
+    const seatRadius = params.seatRadius;
+    const rowHeight = params.rowHeight;
+    const sectionGap = params.sectionGap;
     const isMobile = chartWidth < 500;
-    const seatRadius = isMobile ? 2.2 : 4.5;
-    const rowHeight = isMobile ? 7 : 11;
-    const sectionGap = isMobile ? 30 : 60;
 
     // Create parliament chart with responsive width
     const chart = parliamentChart(chartData, chartWidth)
@@ -181,29 +194,30 @@ export function Hemicycle({ parties }: HemicycleProps) {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="text-lg">Parliamentary Seats</CardTitle>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base font-medium">
+          Parliamentary Seats
+        </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pb-3">
         <div ref={containerRef} className="flex flex-col items-center">
           <svg
             ref={svgRef}
-            viewBox={`0 0 ${containerWidth} ${containerWidth / 2 + 60}`}
+            viewBox={`0 0 ${containerWidth} ${containerWidth / 2 + 40}`}
             aria-label={`Hemicycle diagram showing seat distribution: ${description}`}
             role="img"
             className="w-full h-auto"
-            style={{ maxHeight: "400px" }}
           />
 
           {/* Legend */}
-          <div className="mt-4 flex flex-wrap justify-center gap-2 sm:gap-3 max-w-full px-2">
+          <div className="mt-2 flex flex-wrap justify-center gap-x-3 gap-y-1.5 max-w-full px-2">
             {parties.map((party) => (
               <div
                 key={party.party_code}
                 className="flex items-center gap-1.5 min-w-0"
               >
                 <div
-                  className="h-3 w-3 rounded-full border border-gray-700 flex-shrink-0"
+                  className="h-2.5 w-2.5 rounded-full border border-gray-700 flex-shrink-0"
                   style={{
                     backgroundColor:
                       PARTY_COLORS[party.party_code] ?? "#2a2a2e",
