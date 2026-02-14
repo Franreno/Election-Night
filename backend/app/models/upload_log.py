@@ -1,4 +1,5 @@
 from sqlalchemy import JSON, Column, DateTime, Integer, String, func
+from sqlalchemy.orm import relationship
 
 from app.database import Base
 
@@ -15,3 +16,6 @@ class UploadLog(Base):
     errors = Column(JSON, default=list)
     started_at = Column(DateTime(timezone=True), server_default=func.now())
     completed_at = Column(DateTime(timezone=True))
+    deleted_at = Column(DateTime(timezone=True), nullable=True, index=True)
+
+    results = relationship("Result", back_populates="upload_log")

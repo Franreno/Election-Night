@@ -2,7 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
-import { useUploads } from "@/hooks/use-uploads";
+import { useUploads, type UploadFilters } from "@/hooks/use-uploads";
+import { useDeleteUpload } from "@/hooks/use-delete-upload";
 import {
   Table,
   TableBody,
@@ -13,6 +14,7 @@ import {
 } from "@/components/ui/table";
 import { UploadStatusBadge } from "./upload-status-badge";
 import { ErrorDetails } from "./error-details";
+import { DeleteUploadDialog } from "./delete-upload-dialog";
 import { TableSkeleton } from "@/components/shared/loading-skeleton";
 import { EmptyState } from "@/components/shared/empty-state";
 import type { UploadLogEntry } from "@/lib/types";
@@ -57,8 +59,13 @@ function sortUploads(uploads: UploadLogEntry[], field: SortField, dir: SortDir):
   return list;
 }
 
-export function UploadHistoryTable() {
-  const { data, isLoading, error } = useUploads();
+interface UploadHistoryTableProps {
+  filters?: UploadFilters;
+}
+
+export function UploadHistoryTable({ filters }: UploadHistoryTableProps) {
+  const { data, isLoading, error } = useUploads(1, 20, filters);
+  const { deleteUpload } = useDeleteUpload();
   const [sortField, setSortField] = useState<SortField | null>(null);
   const [sortDir, setSortDir] = useState<SortDir>("asc");
 
@@ -79,8 +86,16 @@ export function UploadHistoryTable() {
 
   const showGroupSeparator = sortField === "status";
 
+  const handleDelete = async (uploadId: number) => {
+    try {
+      await deleteUpload(uploadId);
+    } catch {
+      // Error is handled in the hook
+    }
+  };
+
   if (isLoading) {
-    return <TableSkeleton rows={3} columns={5} />;
+    return <TableSkeleton rows={3} columns={6} />;
   }
 
   if (error) {
@@ -141,6 +156,7 @@ export function UploadHistoryTable() {
               Timestamp
               <SortIcon field="timestamp" active={sortField} dir={sortDir} />
             </TableHead>
+            <TableHead className="w-12" />
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -173,6 +189,14 @@ export function UploadHistoryTable() {
                   {upload.started_at
                     ? new Date(upload.started_at).toLocaleString("en-GB")
                     : "—"}
+                </TableCell>
+                <TableCell>
+                  <DeleteUploadDialog
+                    uploadId={upload.id}
+                    filename={upload.filename}
+                    disabled={upload.status === "processing"}
+                    onConfirm={handleDelete}
+                  />
                 </TableCell>
               </TableRow>
             );

@@ -95,6 +95,7 @@ export interface UploadLogEntry {
   errors: Array<{ line: number; error: string }> | null;
   started_at: string;
   completed_at: string | null;
+  deleted_at: string | null;
 }
 
 export interface UploadListResponse {
@@ -102,4 +103,12 @@ export interface UploadListResponse {
   page: number;
   page_size: number;
   uploads: UploadLogEntry[];
+}
+
+export interface UploadStatsResponse {
+  total_uploads: number;
+  completed: number;
+  failed: number;
+  success_rate: number;
+  total_lines_processed: number;
 }

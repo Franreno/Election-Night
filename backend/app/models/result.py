@@ -30,7 +30,15 @@ class Result(Base):
                         server_default=func.now(),
                         onupdate=func.now())
 
+    upload_id = Column(
+        Integer,
+        ForeignKey("upload_logs.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+
     constituency = relationship("Constituency", back_populates="results")
+    upload_log = relationship("UploadLog", back_populates="results")
 
     __table_args__ = (
         UniqueConstraint("constituency_id",
