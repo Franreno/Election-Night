@@ -5,6 +5,7 @@ import { useTotals } from "@/hooks/use-totals";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { SeatDistributionChart } from "@/components/dashboard/seat-distribution-chart";
 import { VoteShareChart } from "@/components/dashboard/vote-share-chart";
+import { Hemicycle } from "@/components/dashboard/hemicycle";
 import { ConstituencyMap } from "@/components/map/constituency-map";
 import { EmptyState } from "@/components/shared/empty-state";
 import {
@@ -27,6 +28,9 @@ export default function DashboardPage() {
           <StatCardSkeleton />
           <StatCardSkeleton />
           <StatCardSkeleton />
+        </div>
+        <div className="mt-6">
+          <ChartSkeleton />
         </div>
         <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
           <ChartSkeleton />
@@ -77,6 +81,10 @@ export default function DashboardPage() {
             ) : undefined
           }
         />
+      </div>
+
+      <div className="mt-6">
+        <Hemicycle parties={data.parties} />
       </div>
 
       <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">

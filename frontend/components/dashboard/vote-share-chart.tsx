@@ -68,8 +68,8 @@ export function VoteShareChart({ parties }: VoteShareChartProps) {
               data={data}
               dataKey="value"
               nameKey="name"
-              innerRadius={60}
-              outerRadius={100}
+              innerRadius={50}
+              outerRadius={90}
               strokeWidth={2}
               stroke="var(--background)"
             >
@@ -77,9 +77,23 @@ export function VoteShareChart({ parties }: VoteShareChartProps) {
                 <Cell key={entry.name} fill={entry.fill} />
               ))}
             </Pie>
-            <ChartLegend content={<ChartLegendContent nameKey="name" />} />
           </PieChart>
         </ChartContainer>
+
+        {/* Custom legend with wrapping */}
+        <div className="mt-3 flex flex-wrap justify-center gap-x-4 gap-y-2 px-2">
+          {data.map((entry) => (
+            <div key={entry.name} className="flex items-center gap-1.5 min-w-0">
+              <div
+                className="h-2.5 w-2.5 rounded-[2px] flex-shrink-0"
+                style={{ backgroundColor: entry.fill }}
+              />
+              <span className="text-xs text-muted-foreground truncate max-w-[150px]">
+                {entry.partyName}
+              </span>
+            </div>
+          ))}
+        </div>
       </CardContent>
     </Card>
   );
