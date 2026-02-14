@@ -12,7 +12,7 @@ def _seed_constituencies(db_session, names):
 
 
 class TestConstituencyMatcher:
-    """Test the 5-strategy matching approach."""
+    """Test the matching approach: exact, case-insensitive, and normalized."""
 
     def test_exact_match(self, db_session):
         _seed_constituencies(db_session, ["Bedford"])
@@ -28,62 +28,44 @@ class TestConstituencyMatcher:
         assert result is not None
         assert result.name == "City of Durham"
 
-    def test_prefix_match(self, db_session):
-        """Official name starts with uploaded name."""
-        _seed_constituencies(db_session, ["Broadland and Fakenham"])
-        matcher = ConstituencyMatcher(db_session)
-        result = matcher.find("Broadland")
-        assert result is not None
-        assert result.name == "Broadland and Fakenham"
-
-    def test_suffix_match(self, db_session):
-        """Official name ends with uploaded name."""
-        _seed_constituencies(db_session, ["Chester South and Eddisbury"])
-        matcher = ConstituencyMatcher(db_session)
-        result = matcher.find("Eddisbury")
-        assert result is not None
-        assert result.name == "Chester South and Eddisbury"
-
-    def test_shire_variant_match(self, db_session):
-        """Official name starts with uploaded name + 'shire'."""
-        _seed_constituencies(db_session, ["Monmouthshire"])
-        matcher = ConstituencyMatcher(db_session)
-        result = matcher.find("Monmouth")
-        assert result is not None
-        assert result.name == "Monmouthshire"
-
     def test_comma_stripping(self, db_session):
-        """Commas in uploaded names are stripped for fuzzy matching."""
-        _seed_constituencies(db_session, ["Birmingham Hall Green and Moseley"])
+        """Commas in uploaded names are stripped for normalized matching."""
+        _seed_constituencies(db_session, ["Birmingham, Hall Green"])
         matcher = ConstituencyMatcher(db_session)
-        result = matcher.find("Birmingham, Hall Green")
+        # Input without comma should match DB name with comma
+        result = matcher.find("Birmingham Hall Green")
         assert result is not None
-        assert result.name == "Birmingham Hall Green and Moseley"
+        assert result.name == "Birmingham, Hall Green"
+
+    def test_comma_stripping_case_insensitive(self, db_session):
+        """Comma stripping combined with case-insensitive matching."""
+        _seed_constituencies(db_session, ["Birmingham, Hall Green"])
+        matcher = ConstituencyMatcher(db_session)
+        result = matcher.find("BIRMINGHAM, HALL GREEN")
+        assert result is not None
+        assert result.name == "Birmingham, Hall Green"
+
+    def test_diacritic_normalization(self, db_session):
+        """Diacritics in DB names are stripped for matching."""
+        _seed_constituencies(db_session, ["Ynys Môn"])
+        matcher = ConstituencyMatcher(db_session)
+        # Input without diacritic should match DB name with diacritic
+        result = matcher.find("Ynys Mon")
+        assert result is not None
+        assert result.name == "Ynys Môn"
+
+    def test_diacritic_exact_match_preserved(self, db_session):
+        """Input with diacritics still matches exactly."""
+        _seed_constituencies(db_session, ["Ynys Môn"])
+        matcher = ConstituencyMatcher(db_session)
+        result = matcher.find("Ynys Môn")
+        assert result is not None
+        assert result.name == "Ynys Môn"
 
     def test_no_match_returns_none(self, db_session):
         _seed_constituencies(db_session, ["Bedford"])
         matcher = ConstituencyMatcher(db_session)
         result = matcher.find("Nonexistent Place")
-        assert result is None
-
-    def test_ambiguous_prefix_match_rejected(self, db_session):
-        """Multiple prefix matches should return None."""
-        _seed_constituencies(db_session, [
-            "Sherwood Forest",
-            "Sherwood Park",
-        ])
-        matcher = ConstituencyMatcher(db_session)
-        result = matcher.find("Sherwood")
-        assert result is None
-
-    def test_ambiguous_suffix_match_rejected(self, db_session):
-        """Multiple suffix matches should return None."""
-        _seed_constituencies(db_session, [
-            "North Workington",
-            "South Workington",
-        ])
-        matcher = ConstituencyMatcher(db_session)
-        result = matcher.find("Workington")
         assert result is None
 
 

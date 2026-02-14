@@ -1,3 +1,5 @@
+import unicodedata
+
 from sqlalchemy import func
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.orm import Session
@@ -9,40 +11,42 @@ from app.models.upload_log import UploadLog
 from app.services.parser import ParsedConstituencyResult, parse_file
 
 
+def _normalize(name: str) -> str:
+    """Normalize a constituency name for matching.
+
+    Lowercases, strips commas, and removes Unicode diacritics
+    (e.g. ô → o, â → a) so that "Ynys Mon" matches "Ynys Môn".
+    """
+    s = name.lower().replace(",", "").replace("  ", " ").strip()
+    # NFD decomposes characters: ô → o + combining circumflex
+    # Then we strip the combining marks (category "Mn")
+    decomposed = unicodedata.normalize("NFD", s)
+    return "".join(ch for ch in decomposed if unicodedata.category(ch) != "Mn")
+
+
 class ConstituencyMatcher:
     """Matches uploaded constituency names to pre-seeded DB records.
 
-    The upload .txt file often uses abbreviated or differently-cased names
-    compared to the official 2024 constituency names. This matcher handles:
+    The upload .txt file may use differently-cased names, omit commas, or
+    lack Unicode diacritics compared to the official constituency names.
 
+    Matching strategy:
     1. Exact match (case-sensitive)
     2. Case-insensitive exact match
-       "City Of Durham" → "City of Durham"
-    3. Official name starts with uploaded name (word boundary)
-       "Broadland" → "Broadland and Fakenham"
-       "Sherwood" → "Sherwood Forest"
-    4. Official name ends with uploaded name (word boundary)
-       "Eddisbury" → "Chester South and Eddisbury"
-       "Workington" → "Whitehaven and Workington"
-    5. Official name starts with uploaded name + "shire"
-       "Monmouth" → "Monmouthshire"
-
-    Commas in uploaded names are stripped before fuzzy matching (steps 3-5),
-    e.g. "Birmingham, Hall Green" → "Birmingham Hall Green" which then
-    matches "Birmingham Hall Green and Moseley" via starts-with.
-
-    Only single matches are accepted; ambiguous matches are rejected.
+    3. Normalized match: lowercase + strip commas + strip diacritics
+       e.g. "Ynys Mon" → "Ynys Môn", "BIRMINGHAM HALL GREEN" → "Birmingham, Hall Green"
     """
 
     def __init__(self, db: Session):
         all_constituencies = db.query(Constituency).all()
         self._exact: dict[str, Constituency] = {}
         self._lower: dict[str, Constituency] = {}
-        self._all: list[Constituency] = list(all_constituencies)
+        self._normalized: dict[str, Constituency] = {}
 
         for c in all_constituencies:
             self._exact[c.name] = c
             self._lower[c.name.lower()] = c
+            self._normalized[_normalize(c.name)] = c
 
     def find(self, name: str) -> Constituency | None:
         # 1. Exact match (case-sensitive)
@@ -54,35 +58,10 @@ class ConstituencyMatcher:
         if lower in self._lower:
             return self._lower[lower]
 
-        # Strip commas for fuzzy matching (steps 3-5)
-        # e.g. "Birmingham, Hall Green" → "birmingham hall green"
-        normalized = lower.replace(",", "").replace("  ", " ").strip()
-
-        # 3. Official name starts with uploaded name + space
-        candidates = [
-            c for c in self._all if c.name.lower().startswith(normalized + " ")
-        ]
-        if len(candidates) == 1:
-            return candidates[0]
-
-        # 4. Official name ends with " " + uploaded name
-        suffix = " " + normalized
-        candidates = [c for c in self._all if c.name.lower().endswith(suffix)]
-        if len(candidates) == 1:
-            return candidates[0]
-
-        # 5. Official name starts with uploaded name + "shire"
-        #    e.g. "Monmouth" → "Monmouthshire"
-        candidates = [
-            c for c in self._all
-            if c.name.lower().startswith(normalized + "shire")
-        ]
-        if len(candidates) == 1:
-            return candidates[0]
-
-        # 6. Case-insensitive match after stripping commas
-        if normalized != lower and normalized in self._lower:
-            return self._lower[normalized]
+        # 3. Normalized match (lowercase + strip commas + strip diacritics)
+        normalized = _normalize(name)
+        if normalized in self._normalized:
+            return self._normalized[normalized]
 
         return None
 
