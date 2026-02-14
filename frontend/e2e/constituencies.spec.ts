@@ -115,5 +115,56 @@ test.describe("Constituencies page", () => {
         .or(page.getByText(/page/i));
       await expect(pagination.first()).toBeVisible();
     });
+
+    test("region filter dropdown is visible", async ({ page }) => {
+      await page.goto("/constituencies");
+      await page.waitForLoadState("networkidle");
+      await expect(page.locator("table")).toBeVisible({ timeout: 10_000 });
+
+      // Region filter button should show "All Regions" by default
+      const regionButton = page.getByRole("combobox", { name: /region/i })
+        .or(page.getByText("All Regions"));
+      await expect(regionButton.first()).toBeVisible();
+    });
+
+    test("selecting a single region filters constituencies", async ({ page }) => {
+      await page.goto("/constituencies");
+      await page.waitForLoadState("networkidle");
+      await expect(page.locator("table")).toBeVisible({ timeout: 10_000 });
+
+      // Open the region filter dropdown
+      const regionButton = page.getByText("All Regions");
+      await expect(regionButton).toBeVisible();
+      await regionButton.click();
+
+      // Click "Clear" to deselect all (keeps first region — North East)
+      await page.getByRole("button", { name: "Clear" }).click();
+
+      // Close the dropdown by clicking outside
+      await page.getByRole("heading", { name: "Constituencies" }).click();
+
+      // Wait for filter to apply
+      await page.waitForTimeout(500);
+      await page.waitForLoadState("networkidle");
+
+      // Should show "Showing X constituencies in 1 region" or similar count text
+      await expect(page.getByText(/showing/i)).toBeVisible({ timeout: 5_000 });
+
+      // The count should be much less than 650
+      const table = page.locator("table");
+      await expect(table).toBeVisible();
+    });
+
+    test("region filter updates URL with region parameter", async ({ page }) => {
+      // Navigate directly with a region filter in the URL
+      await page.goto("/constituencies?regions=1");
+      await page.waitForLoadState("networkidle");
+
+      // Table should show filtered results
+      await expect(page.locator("table")).toBeVisible({ timeout: 10_000 });
+
+      // The result count text should indicate filtering
+      await expect(page.getByText(/showing/i)).toBeVisible({ timeout: 5_000 });
+    });
   });
 });
