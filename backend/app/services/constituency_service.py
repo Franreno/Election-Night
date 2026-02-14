@@ -33,6 +33,7 @@ def _build_sort_clause(sort_by: str | None, sort_dir: str):
 def get_all_constituencies(
     db: Session,
     search: str | None = None,
+    region_ids: list[int] | None = None,
     page: int = 1,
     page_size: int = 50,
     sort_by: str | None = None,
@@ -46,11 +47,16 @@ def get_all_constituencies(
     if search:
         query = query.filter(Constituency.name.ilike(f"%{search}%"))
 
+    if region_ids:
+        query = query.filter(Constituency.region_id.in_(region_ids))
+
     # Count before pagination (on the base query without joinedload for accuracy)
     count_query = db.query(Constituency)
     if search:
         count_query = count_query.filter(
             Constituency.name.ilike(f"%{search}%"))
+    if region_ids:
+        count_query = count_query.filter(Constituency.region_id.in_(region_ids))
     total = count_query.count()
 
     order = _build_sort_clause(sort_by, sort_dir)
@@ -91,6 +97,7 @@ def get_all_constituencies_summary(db: Session) -> dict:
             "id": c.id,
             "name": c.name,
             "pcon24_code": c.pcon24_code,
+            "region_id": c.region_id,
             "region_name": c.region.name if c.region else None,
             "winning_party_code": winner_code,
         })
