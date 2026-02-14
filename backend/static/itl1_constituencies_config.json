@@ -1,0 +1,2644 @@
+{
+  "schema_version": "2019-12",
+  "source": "ONS PCON19-EER19 lookup (Dec 2019)",
+  "region_order": [
+    "North East",
+    "North West",
+    "Yorkshire and the Humber",
+    "East Midlands",
+    "West Midlands",
+    "East of England",
+    "London",
+    "South East",
+    "South West",
+    "Wales",
+    "Scotland",
+    "Northern Ireland"
+  ],
+  "regions": {
+    "North East": [
+      {
+        "pcon24_code": "E14000554",
+        "name": "Berwick-upon-Tweed"
+      },
+      {
+        "pcon24_code": "E14000569",
+        "name": "Bishop Auckland"
+      },
+      {
+        "pcon24_code": "E14000574",
+        "name": "Blaydon"
+      },
+      {
+        "pcon24_code": "E14000575",
+        "name": "Blyth Valley"
+      },
+      {
+        "pcon24_code": "E14000641",
+        "name": "City of Durham"
+      },
+      {
+        "pcon24_code": "E14000658",
+        "name": "Darlington"
+      },
+      {
+        "pcon24_code": "E14000677",
+        "name": "Easington"
+      },
+      {
+        "pcon24_code": "E14000709",
+        "name": "Gateshead"
+      },
+      {
+        "pcon24_code": "E14000733",
+        "name": "Hartlepool"
+      },
+      {
+        "pcon24_code": "E14000746",
+        "name": "Hexham"
+      },
+      {
+        "pcon24_code": "E14000754",
+        "name": "Houghton and Sunderland South"
+      },
+      {
+        "pcon24_code": "E14000765",
+        "name": "Jarrow"
+      },
+      {
+        "pcon24_code": "E14000819",
+        "name": "Middlesbrough"
+      },
+      {
+        "pcon24_code": "E14000820",
+        "name": "Middlesbrough South and East Cleveland"
+      },
+      {
+        "pcon24_code": "E14000831",
+        "name": "Newcastle upon Tyne Central"
+      },
+      {
+        "pcon24_code": "E14000832",
+        "name": "Newcastle upon Tyne East"
+      },
+      {
+        "pcon24_code": "E14000833",
+        "name": "Newcastle upon Tyne North"
+      },
+      {
+        "pcon24_code": "E14000840",
+        "name": "North Durham"
+      },
+      {
+        "pcon24_code": "E14000853",
+        "name": "North Tyneside"
+      },
+      {
+        "pcon24_code": "E14000856",
+        "name": "North West Durham"
+      },
+      {
+        "pcon24_code": "E14000891",
+        "name": "Redcar"
+      },
+      {
+        "pcon24_code": "E14000915",
+        "name": "Sedgefield"
+      },
+      {
+        "pcon24_code": "E14000944",
+        "name": "South Shields"
+      },
+      {
+        "pcon24_code": "E14000970",
+        "name": "Stockton North"
+      },
+      {
+        "pcon24_code": "E14000971",
+        "name": "Stockton South"
+      },
+      {
+        "pcon24_code": "E14000982",
+        "name": "Sunderland Central"
+      },
+      {
+        "pcon24_code": "E14001006",
+        "name": "Tynemouth"
+      },
+      {
+        "pcon24_code": "E14001014",
+        "name": "Wansbeck"
+      },
+      {
+        "pcon24_code": "E14001020",
+        "name": "Washington and Sunderland West"
+      }
+    ],
+    "North West": [
+      {
+        "pcon24_code": "E14000532",
+        "name": "Altrincham and Sale West"
+      },
+      {
+        "pcon24_code": "E14000537",
+        "name": "Ashton-under-Lyne"
+      },
+      {
+        "pcon24_code": "E14000543",
+        "name": "Barrow and Furness"
+      },
+      {
+        "pcon24_code": "E14000559",
+        "name": "Birkenhead"
+      },
+      {
+        "pcon24_code": "E14000570",
+        "name": "Blackburn"
+      },
+      {
+        "pcon24_code": "E14000571",
+        "name": "Blackley and Broughton"
+      },
+      {
+        "pcon24_code": "E14000572",
+        "name": "Blackpool North and Cleveleys"
+      },
+      {
+        "pcon24_code": "E14000573",
+        "name": "Blackpool South"
+      },
+      {
+        "pcon24_code": "E14000578",
+        "name": "Bolton North East"
+      },
+      {
+        "pcon24_code": "E14000579",
+        "name": "Bolton South East"
+      },
+      {
+        "pcon24_code": "E14000580",
+        "name": "Bolton West"
+      },
+      {
+        "pcon24_code": "E14000581",
+        "name": "Bootle"
+      },
+      {
+        "pcon24_code": "E14000609",
+        "name": "Burnley"
+      },
+      {
+        "pcon24_code": "E14000611",
+        "name": "Bury North"
+      },
+      {
+        "pcon24_code": "E14000612",
+        "name": "Bury South"
+      },
+      {
+        "pcon24_code": "E14000620",
+        "name": "Carlisle"
+      },
+      {
+        "pcon24_code": "E14000627",
+        "name": "Cheadle"
+      },
+      {
+        "pcon24_code": "E14000637",
+        "name": "Chorley"
+      },
+      {
+        "pcon24_code": "E14000640",
+        "name": "City of Chester"
+      },
+      {
+        "pcon24_code": "E14000646",
+        "name": "Congleton"
+      },
+      {
+        "pcon24_code": "E14000647",
+        "name": "Copeland"
+      },
+      {
+        "pcon24_code": "E14000653",
+        "name": "Crewe and Nantwich"
+      },
+      {
+        "pcon24_code": "E14000661",
+        "name": "Denton and Reddish"
+      },
+      {
+        "pcon24_code": "E14000686",
+        "name": "Eddisbury"
+      },
+      {
+        "pcon24_code": "E14000688",
+        "name": "Ellesmere Port and Neston"
+      },
+      {
+        "pcon24_code": "E14000706",
+        "name": "Fylde"
+      },
+      {
+        "pcon24_code": "E14000708",
+        "name": "Garston and Halewood"
+      },
+      {
+        "pcon24_code": "E14000725",
+        "name": "Halton"
+      },
+      {
+        "pcon24_code": "E14000738",
+        "name": "Hazel Grove"
+      },
+      {
+        "pcon24_code": "E14000747",
+        "name": "Heywood and Middleton"
+      },
+      {
+        "pcon24_code": "E14000758",
+        "name": "Hyndburn"
+      },
+      {
+        "pcon24_code": "E14000775",
+        "name": "Knowsley"
+      },
+      {
+        "pcon24_code": "E14000776",
+        "name": "Lancaster and Fleetwood"
+      },
+      {
+        "pcon24_code": "E14000785",
+        "name": "Leigh"
+      },
+      {
+        "pcon24_code": "E14000793",
+        "name": "Liverpool, Riverside"
+      },
+      {
+        "pcon24_code": "E14000794",
+        "name": "Liverpool, Walton"
+      },
+      {
+        "pcon24_code": "E14000795",
+        "name": "Liverpool, Wavertree"
+      },
+      {
+        "pcon24_code": "E14000796",
+        "name": "Liverpool, West Derby"
+      },
+      {
+        "pcon24_code": "E14000802",
+        "name": "Macclesfield"
+      },
+      {
+        "pcon24_code": "E14000805",
+        "name": "Makerfield"
+      },
+      {
+        "pcon24_code": "E14000807",
+        "name": "Manchester Central"
+      },
+      {
+        "pcon24_code": "E14000808",
+        "name": "Manchester, Gorton"
+      },
+      {
+        "pcon24_code": "E14000809",
+        "name": "Manchester, Withington"
+      },
+      {
+        "pcon24_code": "E14000825",
+        "name": "Morecambe and Lunesdale"
+      },
+      {
+        "pcon24_code": "E14000870",
+        "name": "Oldham East and Saddleworth"
+      },
+      {
+        "pcon24_code": "E14000871",
+        "name": "Oldham West and Royton"
+      },
+      {
+        "pcon24_code": "E14000875",
+        "name": "Pendle"
+      },
+      {
+        "pcon24_code": "E14000877",
+        "name": "Penrith and The Border"
+      },
+      {
+        "pcon24_code": "E14000885",
+        "name": "Preston"
+      },
+      {
+        "pcon24_code": "E14000894",
+        "name": "Ribble Valley"
+      },
+      {
+        "pcon24_code": "E14000897",
+        "name": "Rochdale"
+      },
+      {
+        "pcon24_code": "E14000902",
+        "name": "Rossendale and Darwen"
+      },
+      {
+        "pcon24_code": "E14000911",
+        "name": "Salford and Eccles"
+      },
+      {
+        "pcon24_code": "E14000916",
+        "name": "Sefton Central"
+      },
+      {
+        "pcon24_code": "E14000943",
+        "name": "South Ribble"
+      },
+      {
+        "pcon24_code": "E14000958",
+        "name": "Southport"
+      },
+      {
+        "pcon24_code": "E14000962",
+        "name": "St Helens North"
+      },
+      {
+        "pcon24_code": "E14000963",
+        "name": "St Helens South and Whiston"
+      },
+      {
+        "pcon24_code": "E14000967",
+        "name": "Stalybridge and Hyde"
+      },
+      {
+        "pcon24_code": "E14000969",
+        "name": "Stockport"
+      },
+      {
+        "pcon24_code": "E14000979",
+        "name": "Stretford and Urmston"
+      },
+      {
+        "pcon24_code": "E14000987",
+        "name": "Tatton"
+      },
+      {
+        "pcon24_code": "E14001010",
+        "name": "Wallasey"
+      },
+      {
+        "pcon24_code": "E14001017",
+        "name": "Warrington North"
+      },
+      {
+        "pcon24_code": "E14001018",
+        "name": "Warrington South"
+      },
+      {
+        "pcon24_code": "E14001024",
+        "name": "Weaver Vale"
+      },
+      {
+        "pcon24_code": "E14001033",
+        "name": "West Lancashire"
+      },
+      {
+        "pcon24_code": "E14001037",
+        "name": "Westmorland and Lonsdale"
+      },
+      {
+        "pcon24_code": "E14001039",
+        "name": "Wigan"
+      },
+      {
+        "pcon24_code": "E14001043",
+        "name": "Wirral South"
+      },
+      {
+        "pcon24_code": "E14001044",
+        "name": "Wirral West"
+      },
+      {
+        "pcon24_code": "E14001053",
+        "name": "Workington"
+      },
+      {
+        "pcon24_code": "E14001054",
+        "name": "Worsley and Eccles South"
+      },
+      {
+        "pcon24_code": "E14001057",
+        "name": "Wyre and Preston North"
+      },
+      {
+        "pcon24_code": "E14001059",
+        "name": "Wythenshawe and Sale East"
+      }
+    ],
+    "Yorkshire and the Humber": [
+      {
+        "pcon24_code": "E14000541",
+        "name": "Barnsley Central"
+      },
+      {
+        "pcon24_code": "E14000542",
+        "name": "Barnsley East"
+      },
+      {
+        "pcon24_code": "E14000548",
+        "name": "Batley and Spen"
+      },
+      {
+        "pcon24_code": "E14000556",
+        "name": "Beverley and Holderness"
+      },
+      {
+        "pcon24_code": "E14000587",
+        "name": "Bradford East"
+      },
+      {
+        "pcon24_code": "E14000588",
+        "name": "Bradford South"
+      },
+      {
+        "pcon24_code": "E14000589",
+        "name": "Bradford West"
+      },
+      {
+        "pcon24_code": "E14000596",
+        "name": "Brigg and Goole"
+      },
+      {
+        "pcon24_code": "E14000614",
+        "name": "Calder Valley"
+      },
+      {
+        "pcon24_code": "E14000643",
+        "name": "Cleethorpes"
+      },
+      {
+        "pcon24_code": "E14000645",
+        "name": "Colne Valley"
+      },
+      {
+        "pcon24_code": "E14000666",
+        "name": "Dewsbury"
+      },
+      {
+        "pcon24_code": "E14000667",
+        "name": "Don Valley"
+      },
+      {
+        "pcon24_code": "E14000668",
+        "name": "Doncaster Central"
+      },
+      {
+        "pcon24_code": "E14000669",
+        "name": "Doncaster North"
+      },
+      {
+        "pcon24_code": "E14000683",
+        "name": "East Yorkshire"
+      },
+      {
+        "pcon24_code": "E14000689",
+        "name": "Elmet and Rothwell"
+      },
+      {
+        "pcon24_code": "E14000716",
+        "name": "Great Grimsby"
+      },
+      {
+        "pcon24_code": "E14000723",
+        "name": "Halifax"
+      },
+      {
+        "pcon24_code": "E14000724",
+        "name": "Haltemprice and Howden"
+      },
+      {
+        "pcon24_code": "E14000730",
+        "name": "Harrogate and Knaresborough"
+      },
+      {
+        "pcon24_code": "E14000740",
+        "name": "Hemsworth"
+      },
+      {
+        "pcon24_code": "E14000756",
+        "name": "Huddersfield"
+      },
+      {
+        "pcon24_code": "E14000766",
+        "name": "Keighley"
+      },
+      {
+        "pcon24_code": "E14000771",
+        "name": "Kingston upon Hull East"
+      },
+      {
+        "pcon24_code": "E14000772",
+        "name": "Kingston upon Hull North"
+      },
+      {
+        "pcon24_code": "E14000773",
+        "name": "Kingston upon Hull West and Hessle"
+      },
+      {
+        "pcon24_code": "E14000777",
+        "name": "Leeds Central"
+      },
+      {
+        "pcon24_code": "E14000778",
+        "name": "Leeds East"
+      },
+      {
+        "pcon24_code": "E14000779",
+        "name": "Leeds North East"
+      },
+      {
+        "pcon24_code": "E14000780",
+        "name": "Leeds North West"
+      },
+      {
+        "pcon24_code": "E14000781",
+        "name": "Leeds West"
+      },
+      {
+        "pcon24_code": "E14000826",
+        "name": "Morley and Outwood"
+      },
+      {
+        "pcon24_code": "E14000836",
+        "name": "Normanton, Pontefract and Castleford"
+      },
+      {
+        "pcon24_code": "E14000876",
+        "name": "Penistone and Stocksbridge"
+      },
+      {
+        "pcon24_code": "E14000886",
+        "name": "Pudsey"
+      },
+      {
+        "pcon24_code": "E14000895",
+        "name": "Richmond (Yorks)"
+      },
+      {
+        "pcon24_code": "E14000903",
+        "name": "Rother Valley"
+      },
+      {
+        "pcon24_code": "E14000904",
+        "name": "Rotherham"
+      },
+      {
+        "pcon24_code": "E14000913",
+        "name": "Scarborough and Whitby"
+      },
+      {
+        "pcon24_code": "E14000914",
+        "name": "Scunthorpe"
+      },
+      {
+        "pcon24_code": "E14000917",
+        "name": "Selby and Ainsty"
+      },
+      {
+        "pcon24_code": "E14000919",
+        "name": "Sheffield Central"
+      },
+      {
+        "pcon24_code": "E14000920",
+        "name": "Sheffield South East"
+      },
+      {
+        "pcon24_code": "E14000921",
+        "name": "Sheffield, Brightside and Hillsborough"
+      },
+      {
+        "pcon24_code": "E14000922",
+        "name": "Sheffield, Hallam"
+      },
+      {
+        "pcon24_code": "E14000923",
+        "name": "Sheffield, Heeley"
+      },
+      {
+        "pcon24_code": "E14000925",
+        "name": "Shipley"
+      },
+      {
+        "pcon24_code": "E14000928",
+        "name": "Skipton and Ripon"
+      },
+      {
+        "pcon24_code": "E14000993",
+        "name": "Thirsk and Malton"
+      },
+      {
+        "pcon24_code": "E14001009",
+        "name": "Wakefield"
+      },
+      {
+        "pcon24_code": "E14001028",
+        "name": "Wentworth and Dearne"
+      },
+      {
+        "pcon24_code": "E14001061",
+        "name": "York Central"
+      },
+      {
+        "pcon24_code": "E14001062",
+        "name": "York Outer"
+      }
+    ],
+    "East Midlands": [
+      {
+        "pcon24_code": "E14000533",
+        "name": "Amber Valley"
+      },
+      {
+        "pcon24_code": "E14000535",
+        "name": "Ashfield"
+      },
+      {
+        "pcon24_code": "E14000546",
+        "name": "Bassetlaw"
+      },
+      {
+        "pcon24_code": "E14000577",
+        "name": "Bolsover"
+      },
+      {
+        "pcon24_code": "E14000582",
+        "name": "Boston and Skegness"
+      },
+      {
+        "pcon24_code": "E14000583",
+        "name": "Bosworth"
+      },
+      {
+        "pcon24_code": "E14000607",
+        "name": "Broxtowe"
+      },
+      {
+        "pcon24_code": "E14000625",
+        "name": "Charnwood"
+      },
+      {
+        "pcon24_code": "E14000632",
+        "name": "Chesterfield"
+      },
+      {
+        "pcon24_code": "E14000648",
+        "name": "Corby"
+      },
+      {
+        "pcon24_code": "E14000660",
+        "name": "Daventry"
+      },
+      {
+        "pcon24_code": "E14000662",
+        "name": "Derby North"
+      },
+      {
+        "pcon24_code": "E14000663",
+        "name": "Derby South"
+      },
+      {
+        "pcon24_code": "E14000664",
+        "name": "Derbyshire Dales"
+      },
+      {
+        "pcon24_code": "E14000695",
+        "name": "Erewash"
+      },
+      {
+        "pcon24_code": "E14000707",
+        "name": "Gainsborough"
+      },
+      {
+        "pcon24_code": "E14000710",
+        "name": "Gedling"
+      },
+      {
+        "pcon24_code": "E14000714",
+        "name": "Grantham and Stamford"
+      },
+      {
+        "pcon24_code": "E14000728",
+        "name": "Harborough"
+      },
+      {
+        "pcon24_code": "E14000748",
+        "name": "High Peak"
+      },
+      {
+        "pcon24_code": "E14000769",
+        "name": "Kettering"
+      },
+      {
+        "pcon24_code": "E14000782",
+        "name": "Leicester East"
+      },
+      {
+        "pcon24_code": "E14000783",
+        "name": "Leicester South"
+      },
+      {
+        "pcon24_code": "E14000784",
+        "name": "Leicester West"
+      },
+      {
+        "pcon24_code": "E14000792",
+        "name": "Lincoln"
+      },
+      {
+        "pcon24_code": "E14000797",
+        "name": "Loughborough"
+      },
+      {
+        "pcon24_code": "E14000798",
+        "name": "Louth and Horncastle"
+      },
+      {
+        "pcon24_code": "E14000810",
+        "name": "Mansfield"
+      },
+      {
+        "pcon24_code": "E14000814",
+        "name": "Mid Derbyshire"
+      },
+      {
+        "pcon24_code": "E14000829",
+        "name": "Newark"
+      },
+      {
+        "pcon24_code": "E14000843",
+        "name": "North East Derbyshire"
+      },
+      {
+        "pcon24_code": "E14000858",
+        "name": "North West Leicestershire"
+      },
+      {
+        "pcon24_code": "E14000861",
+        "name": "Northampton North"
+      },
+      {
+        "pcon24_code": "E14000862",
+        "name": "Northampton South"
+      },
+      {
+        "pcon24_code": "E14000865",
+        "name": "Nottingham East"
+      },
+      {
+        "pcon24_code": "E14000866",
+        "name": "Nottingham North"
+      },
+      {
+        "pcon24_code": "E14000867",
+        "name": "Nottingham South"
+      },
+      {
+        "pcon24_code": "E14000908",
+        "name": "Rushcliffe"
+      },
+      {
+        "pcon24_code": "E14000909",
+        "name": "Rutland and Melton"
+      },
+      {
+        "pcon24_code": "E14000924",
+        "name": "Sherwood"
+      },
+      {
+        "pcon24_code": "E14000929",
+        "name": "Sleaford and North Hykeham"
+      },
+      {
+        "pcon24_code": "E14000935",
+        "name": "South Derbyshire"
+      },
+      {
+        "pcon24_code": "E14000939",
+        "name": "South Holland and The Deepings"
+      },
+      {
+        "pcon24_code": "E14000940",
+        "name": "South Leicestershire"
+      },
+      {
+        "pcon24_code": "E14000942",
+        "name": "South Northamptonshire"
+      },
+      {
+        "pcon24_code": "E14001025",
+        "name": "Wellingborough"
+      }
+    ],
+    "West Midlands": [
+      {
+        "pcon24_code": "E14000531",
+        "name": "Aldridge-Brownhills"
+      },
+      {
+        "pcon24_code": "E14000560",
+        "name": "Birmingham, Edgbaston"
+      },
+      {
+        "pcon24_code": "E14000561",
+        "name": "Birmingham, Erdington"
+      },
+      {
+        "pcon24_code": "E14000562",
+        "name": "Birmingham, Hall Green"
+      },
+      {
+        "pcon24_code": "E14000563",
+        "name": "Birmingham, Hodge Hill"
+      },
+      {
+        "pcon24_code": "E14000564",
+        "name": "Birmingham, Ladywood"
+      },
+      {
+        "pcon24_code": "E14000565",
+        "name": "Birmingham, Northfield"
+      },
+      {
+        "pcon24_code": "E14000566",
+        "name": "Birmingham, Perry Barr"
+      },
+      {
+        "pcon24_code": "E14000567",
+        "name": "Birmingham, Selly Oak"
+      },
+      {
+        "pcon24_code": "E14000568",
+        "name": "Birmingham, Yardley"
+      },
+      {
+        "pcon24_code": "E14000605",
+        "name": "Bromsgrove"
+      },
+      {
+        "pcon24_code": "E14000610",
+        "name": "Burton"
+      },
+      {
+        "pcon24_code": "E14000618",
+        "name": "Cannock Chase"
+      },
+      {
+        "pcon24_code": "E14000649",
+        "name": "Coventry North East"
+      },
+      {
+        "pcon24_code": "E14000650",
+        "name": "Coventry North West"
+      },
+      {
+        "pcon24_code": "E14000651",
+        "name": "Coventry South"
+      },
+      {
+        "pcon24_code": "E14000671",
+        "name": "Dudley North"
+      },
+      {
+        "pcon24_code": "E14000672",
+        "name": "Dudley South"
+      },
+      {
+        "pcon24_code": "E14000722",
+        "name": "Halesowen and Rowley Regis"
+      },
+      {
+        "pcon24_code": "E14000743",
+        "name": "Hereford and South Herefordshire"
+      },
+      {
+        "pcon24_code": "E14000767",
+        "name": "Kenilworth and Southam"
+      },
+      {
+        "pcon24_code": "E14000791",
+        "name": "Lichfield"
+      },
+      {
+        "pcon24_code": "E14000799",
+        "name": "Ludlow"
+      },
+      {
+        "pcon24_code": "E14000812",
+        "name": "Meriden"
+      },
+      {
+        "pcon24_code": "E14000818",
+        "name": "Mid Worcestershire"
+      },
+      {
+        "pcon24_code": "E14000834",
+        "name": "Newcastle-under-Lyme"
+      },
+      {
+        "pcon24_code": "E14000847",
+        "name": "North Herefordshire"
+      },
+      {
+        "pcon24_code": "E14000849",
+        "name": "North Shropshire"
+      },
+      {
+        "pcon24_code": "E14000854",
+        "name": "North Warwickshire"
+      },
+      {
+        "pcon24_code": "E14000868",
+        "name": "Nuneaton"
+      },
+      {
+        "pcon24_code": "E14000892",
+        "name": "Redditch"
+      },
+      {
+        "pcon24_code": "E14000905",
+        "name": "Rugby"
+      },
+      {
+        "pcon24_code": "E14000926",
+        "name": "Shrewsbury and Atcham"
+      },
+      {
+        "pcon24_code": "E14000931",
+        "name": "Solihull"
+      },
+      {
+        "pcon24_code": "E14000945",
+        "name": "South Staffordshire"
+      },
+      {
+        "pcon24_code": "E14000965",
+        "name": "Stafford"
+      },
+      {
+        "pcon24_code": "E14000966",
+        "name": "Staffordshire Moorlands"
+      },
+      {
+        "pcon24_code": "E14000972",
+        "name": "Stoke-on-Trent Central"
+      },
+      {
+        "pcon24_code": "E14000973",
+        "name": "Stoke-on-Trent North"
+      },
+      {
+        "pcon24_code": "E14000974",
+        "name": "Stoke-on-Trent South"
+      },
+      {
+        "pcon24_code": "E14000975",
+        "name": "Stone"
+      },
+      {
+        "pcon24_code": "E14000976",
+        "name": "Stourbridge"
+      },
+      {
+        "pcon24_code": "E14000977",
+        "name": "Stratford-on-Avon"
+      },
+      {
+        "pcon24_code": "E14000985",
+        "name": "Sutton Coldfield"
+      },
+      {
+        "pcon24_code": "E14000986",
+        "name": "Tamworth"
+      },
+      {
+        "pcon24_code": "E14000989",
+        "name": "Telford"
+      },
+      {
+        "pcon24_code": "E14000992",
+        "name": "The Wrekin"
+      },
+      {
+        "pcon24_code": "E14001011",
+        "name": "Walsall North"
+      },
+      {
+        "pcon24_code": "E14001012",
+        "name": "Walsall South"
+      },
+      {
+        "pcon24_code": "E14001016",
+        "name": "Warley"
+      },
+      {
+        "pcon24_code": "E14001019",
+        "name": "Warwick and Leamington"
+      },
+      {
+        "pcon24_code": "E14001029",
+        "name": "West Bromwich East"
+      },
+      {
+        "pcon24_code": "E14001030",
+        "name": "West Bromwich West"
+      },
+      {
+        "pcon24_code": "E14001035",
+        "name": "West Worcestershire"
+      },
+      {
+        "pcon24_code": "E14001049",
+        "name": "Wolverhampton North East"
+      },
+      {
+        "pcon24_code": "E14001050",
+        "name": "Wolverhampton South East"
+      },
+      {
+        "pcon24_code": "E14001051",
+        "name": "Wolverhampton South West"
+      },
+      {
+        "pcon24_code": "E14001052",
+        "name": "Worcester"
+      },
+      {
+        "pcon24_code": "E14001058",
+        "name": "Wyre Forest"
+      }
+    ],
+    "East of England": [
+      {
+        "pcon24_code": "E14000544",
+        "name": "Basildon and Billericay"
+      },
+      {
+        "pcon24_code": "E14000552",
+        "name": "Bedford"
+      },
+      {
+        "pcon24_code": "E14000590",
+        "name": "Braintree"
+      },
+      {
+        "pcon24_code": "E14000594",
+        "name": "Brentwood and Ongar"
+      },
+      {
+        "pcon24_code": "E14000603",
+        "name": "Broadland"
+      },
+      {
+        "pcon24_code": "E14000606",
+        "name": "Broxbourne"
+      },
+      {
+        "pcon24_code": "E14000613",
+        "name": "Bury St Edmunds"
+      },
+      {
+        "pcon24_code": "E14000617",
+        "name": "Cambridge"
+      },
+      {
+        "pcon24_code": "E14000622",
+        "name": "Castle Point"
+      },
+      {
+        "pcon24_code": "E14000624",
+        "name": "Central Suffolk and North Ipswich"
+      },
+      {
+        "pcon24_code": "E14000628",
+        "name": "Chelmsford"
+      },
+      {
+        "pcon24_code": "E14000642",
+        "name": "Clacton"
+      },
+      {
+        "pcon24_code": "E14000644",
+        "name": "Colchester"
+      },
+      {
+        "pcon24_code": "E14000693",
+        "name": "Epping Forest"
+      },
+      {
+        "pcon24_code": "E14000717",
+        "name": "Great Yarmouth"
+      },
+      {
+        "pcon24_code": "E14000729",
+        "name": "Harlow"
+      },
+      {
+        "pcon24_code": "E14000734",
+        "name": "Harwich and North Essex"
+      },
+      {
+        "pcon24_code": "E14000739",
+        "name": "Hemel Hempstead"
+      },
+      {
+        "pcon24_code": "E14000744",
+        "name": "Hertford and Stortford"
+      },
+      {
+        "pcon24_code": "E14000745",
+        "name": "Hertsmere"
+      },
+      {
+        "pcon24_code": "E14000749",
+        "name": "Hitchin and Harpenden"
+      },
+      {
+        "pcon24_code": "E14000757",
+        "name": "Huntingdon"
+      },
+      {
+        "pcon24_code": "E14000761",
+        "name": "Ipswich"
+      },
+      {
+        "pcon24_code": "E14000800",
+        "name": "Luton North"
+      },
+      {
+        "pcon24_code": "E14000801",
+        "name": "Luton South"
+      },
+      {
+        "pcon24_code": "E14000806",
+        "name": "Maldon"
+      },
+      {
+        "pcon24_code": "E14000813",
+        "name": "Mid Bedfordshire"
+      },
+      {
+        "pcon24_code": "E14000816",
+        "name": "Mid Norfolk"
+      },
+      {
+        "pcon24_code": "E14000841",
+        "name": "North East Bedfordshire"
+      },
+      {
+        "pcon24_code": "E14000842",
+        "name": "North East Cambridgeshire"
+      },
+      {
+        "pcon24_code": "E14000845",
+        "name": "North East Hertfordshire"
+      },
+      {
+        "pcon24_code": "E14000848",
+        "name": "North Norfolk"
+      },
+      {
+        "pcon24_code": "E14000855",
+        "name": "North West Cambridgeshire"
+      },
+      {
+        "pcon24_code": "E14000859",
+        "name": "North West Norfolk"
+      },
+      {
+        "pcon24_code": "E14000863",
+        "name": "Norwich North"
+      },
+      {
+        "pcon24_code": "E14000864",
+        "name": "Norwich South"
+      },
+      {
+        "pcon24_code": "E14000878",
+        "name": "Peterborough"
+      },
+      {
+        "pcon24_code": "E14000888",
+        "name": "Rayleigh and Wickford"
+      },
+      {
+        "pcon24_code": "E14000899",
+        "name": "Rochford and Southend East"
+      },
+      {
+        "pcon24_code": "E14000910",
+        "name": "Saffron Walden"
+      },
+      {
+        "pcon24_code": "E14000933",
+        "name": "South Basildon and East Thurrock"
+      },
+      {
+        "pcon24_code": "E14000934",
+        "name": "South Cambridgeshire"
+      },
+      {
+        "pcon24_code": "E14000937",
+        "name": "South East Cambridgeshire"
+      },
+      {
+        "pcon24_code": "E14000941",
+        "name": "South Norfolk"
+      },
+      {
+        "pcon24_code": "E14000946",
+        "name": "South Suffolk"
+      },
+      {
+        "pcon24_code": "E14000949",
+        "name": "South West Bedfordshire"
+      },
+      {
+        "pcon24_code": "E14000951",
+        "name": "South West Hertfordshire"
+      },
+      {
+        "pcon24_code": "E14000952",
+        "name": "South West Norfolk"
+      },
+      {
+        "pcon24_code": "E14000957",
+        "name": "Southend West"
+      },
+      {
+        "pcon24_code": "E14000960",
+        "name": "St Albans"
+      },
+      {
+        "pcon24_code": "E14000968",
+        "name": "Stevenage"
+      },
+      {
+        "pcon24_code": "E14000981",
+        "name": "Suffolk Coastal"
+      },
+      {
+        "pcon24_code": "E14000995",
+        "name": "Thurrock"
+      },
+      {
+        "pcon24_code": "E14001021",
+        "name": "Watford"
+      },
+      {
+        "pcon24_code": "E14001022",
+        "name": "Waveney"
+      },
+      {
+        "pcon24_code": "E14001027",
+        "name": "Welwyn Hatfield"
+      },
+      {
+        "pcon24_code": "E14001034",
+        "name": "West Suffolk"
+      },
+      {
+        "pcon24_code": "E14001045",
+        "name": "Witham"
+      }
+    ],
+    "London": [
+      {
+        "pcon24_code": "E14000540",
+        "name": "Barking"
+      },
+      {
+        "pcon24_code": "E14000549",
+        "name": "Battersea"
+      },
+      {
+        "pcon24_code": "E14000551",
+        "name": "Beckenham"
+      },
+      {
+        "pcon24_code": "E14000553",
+        "name": "Bermondsey and Old Southwark"
+      },
+      {
+        "pcon24_code": "E14000555",
+        "name": "Bethnal Green and Bow"
+      },
+      {
+        "pcon24_code": "E14000558",
+        "name": "Bexleyheath and Crayford"
+      },
+      {
+        "pcon24_code": "E14000591",
+        "name": "Brent Central"
+      },
+      {
+        "pcon24_code": "E14000592",
+        "name": "Brent North"
+      },
+      {
+        "pcon24_code": "E14000593",
+        "name": "Brentford and Isleworth"
+      },
+      {
+        "pcon24_code": "E14000604",
+        "name": "Bromley and Chislehurst"
+      },
+      {
+        "pcon24_code": "E14000615",
+        "name": "Camberwell and Peckham"
+      },
+      {
+        "pcon24_code": "E14000621",
+        "name": "Carshalton and Wallington"
+      },
+      {
+        "pcon24_code": "E14000629",
+        "name": "Chelsea and Fulham"
+      },
+      {
+        "pcon24_code": "E14000634",
+        "name": "Chingford and Woodford Green"
+      },
+      {
+        "pcon24_code": "E14000636",
+        "name": "Chipping Barnet"
+      },
+      {
+        "pcon24_code": "E14000639",
+        "name": "Cities of London and Westminster"
+      },
+      {
+        "pcon24_code": "E14000654",
+        "name": "Croydon Central"
+      },
+      {
+        "pcon24_code": "E14000655",
+        "name": "Croydon North"
+      },
+      {
+        "pcon24_code": "E14000656",
+        "name": "Croydon South"
+      },
+      {
+        "pcon24_code": "E14000657",
+        "name": "Dagenham and Rainham"
+      },
+      {
+        "pcon24_code": "E14000673",
+        "name": "Dulwich and West Norwood"
+      },
+      {
+        "pcon24_code": "E14000674",
+        "name": "Ealing Central and Acton"
+      },
+      {
+        "pcon24_code": "E14000675",
+        "name": "Ealing North"
+      },
+      {
+        "pcon24_code": "E14000676",
+        "name": "Ealing, Southall"
+      },
+      {
+        "pcon24_code": "E14000679",
+        "name": "East Ham"
+      },
+      {
+        "pcon24_code": "E14000687",
+        "name": "Edmonton"
+      },
+      {
+        "pcon24_code": "E14000690",
+        "name": "Eltham"
+      },
+      {
+        "pcon24_code": "E14000691",
+        "name": "Enfield North"
+      },
+      {
+        "pcon24_code": "E14000692",
+        "name": "Enfield, Southgate"
+      },
+      {
+        "pcon24_code": "E14000696",
+        "name": "Erith and Thamesmead"
+      },
+      {
+        "pcon24_code": "E14000701",
+        "name": "Feltham and Heston"
+      },
+      {
+        "pcon24_code": "E14000703",
+        "name": "Finchley and Golders Green"
+      },
+      {
+        "pcon24_code": "E14000718",
+        "name": "Greenwich and Woolwich"
+      },
+      {
+        "pcon24_code": "E14000720",
+        "name": "Hackney North and Stoke Newington"
+      },
+      {
+        "pcon24_code": "E14000721",
+        "name": "Hackney South and Shoreditch"
+      },
+      {
+        "pcon24_code": "E14000726",
+        "name": "Hammersmith"
+      },
+      {
+        "pcon24_code": "E14000727",
+        "name": "Hampstead and Kilburn"
+      },
+      {
+        "pcon24_code": "E14000731",
+        "name": "Harrow East"
+      },
+      {
+        "pcon24_code": "E14000732",
+        "name": "Harrow West"
+      },
+      {
+        "pcon24_code": "E14000737",
+        "name": "Hayes and Harlington"
+      },
+      {
+        "pcon24_code": "E14000741",
+        "name": "Hendon"
+      },
+      {
+        "pcon24_code": "E14000750",
+        "name": "Holborn and St Pancras"
+      },
+      {
+        "pcon24_code": "E14000751",
+        "name": "Hornchurch and Upminster"
+      },
+      {
+        "pcon24_code": "E14000752",
+        "name": "Hornsey and Wood Green"
+      },
+      {
+        "pcon24_code": "E14000759",
+        "name": "Ilford North"
+      },
+      {
+        "pcon24_code": "E14000760",
+        "name": "Ilford South"
+      },
+      {
+        "pcon24_code": "E14000763",
+        "name": "Islington North"
+      },
+      {
+        "pcon24_code": "E14000764",
+        "name": "Islington South and Finsbury"
+      },
+      {
+        "pcon24_code": "E14000768",
+        "name": "Kensington"
+      },
+      {
+        "pcon24_code": "E14000770",
+        "name": "Kingston and Surbiton"
+      },
+      {
+        "pcon24_code": "E14000787",
+        "name": "Lewisham East"
+      },
+      {
+        "pcon24_code": "E14000788",
+        "name": "Lewisham West and Penge"
+      },
+      {
+        "pcon24_code": "E14000789",
+        "name": "Lewisham, Deptford"
+      },
+      {
+        "pcon24_code": "E14000790",
+        "name": "Leyton and Wanstead"
+      },
+      {
+        "pcon24_code": "E14000823",
+        "name": "Mitcham and Morden"
+      },
+      {
+        "pcon24_code": "E14000869",
+        "name": "Old Bexley and Sidcup"
+      },
+      {
+        "pcon24_code": "E14000872",
+        "name": "Orpington"
+      },
+      {
+        "pcon24_code": "E14000882",
+        "name": "Poplar and Limehouse"
+      },
+      {
+        "pcon24_code": "E14000887",
+        "name": "Putney"
+      },
+      {
+        "pcon24_code": "E14000896",
+        "name": "Richmond Park"
+      },
+      {
+        "pcon24_code": "E14000900",
+        "name": "Romford"
+      },
+      {
+        "pcon24_code": "E14000906",
+        "name": "Ruislip, Northwood and Pinner"
+      },
+      {
+        "pcon24_code": "E14000978",
+        "name": "Streatham"
+      },
+      {
+        "pcon24_code": "E14000984",
+        "name": "Sutton and Cheam"
+      },
+      {
+        "pcon24_code": "E14000998",
+        "name": "Tooting"
+      },
+      {
+        "pcon24_code": "E14001002",
+        "name": "Tottenham"
+      },
+      {
+        "pcon24_code": "E14001005",
+        "name": "Twickenham"
+      },
+      {
+        "pcon24_code": "E14001007",
+        "name": "Uxbridge and South Ruislip"
+      },
+      {
+        "pcon24_code": "E14001008",
+        "name": "Vauxhall"
+      },
+      {
+        "pcon24_code": "E14001013",
+        "name": "Walthamstow"
+      },
+      {
+        "pcon24_code": "E14001032",
+        "name": "West Ham"
+      },
+      {
+        "pcon24_code": "E14001036",
+        "name": "Westminster North"
+      },
+      {
+        "pcon24_code": "E14001040",
+        "name": "Wimbledon"
+      }
+    ],
+    "South East": [
+      {
+        "pcon24_code": "E14000530",
+        "name": "Aldershot"
+      },
+      {
+        "pcon24_code": "E14000534",
+        "name": "Arundel and South Downs"
+      },
+      {
+        "pcon24_code": "E14000536",
+        "name": "Ashford"
+      },
+      {
+        "pcon24_code": "E14000538",
+        "name": "Aylesbury"
+      },
+      {
+        "pcon24_code": "E14000539",
+        "name": "Banbury"
+      },
+      {
+        "pcon24_code": "E14000545",
+        "name": "Basingstoke"
+      },
+      {
+        "pcon24_code": "E14000550",
+        "name": "Beaconsfield"
+      },
+      {
+        "pcon24_code": "E14000557",
+        "name": "Bexhill and Battle"
+      },
+      {
+        "pcon24_code": "E14000576",
+        "name": "Bognor Regis and Littlehampton"
+      },
+      {
+        "pcon24_code": "E14000586",
+        "name": "Bracknell"
+      },
+      {
+        "pcon24_code": "E14000597",
+        "name": "Brighton, Kemptown"
+      },
+      {
+        "pcon24_code": "E14000598",
+        "name": "Brighton, Pavilion"
+      },
+      {
+        "pcon24_code": "E14000608",
+        "name": "Buckingham"
+      },
+      {
+        "pcon24_code": "E14000619",
+        "name": "Canterbury"
+      },
+      {
+        "pcon24_code": "E14000626",
+        "name": "Chatham and Aylesford"
+      },
+      {
+        "pcon24_code": "E14000631",
+        "name": "Chesham and Amersham"
+      },
+      {
+        "pcon24_code": "E14000633",
+        "name": "Chichester"
+      },
+      {
+        "pcon24_code": "E14000652",
+        "name": "Crawley"
+      },
+      {
+        "pcon24_code": "E14000659",
+        "name": "Dartford"
+      },
+      {
+        "pcon24_code": "E14000670",
+        "name": "Dover"
+      },
+      {
+        "pcon24_code": "E14000680",
+        "name": "East Hampshire"
+      },
+      {
+        "pcon24_code": "E14000681",
+        "name": "East Surrey"
+      },
+      {
+        "pcon24_code": "E14000682",
+        "name": "East Worthing and Shoreham"
+      },
+      {
+        "pcon24_code": "E14000684",
+        "name": "Eastbourne"
+      },
+      {
+        "pcon24_code": "E14000685",
+        "name": "Eastleigh"
+      },
+      {
+        "pcon24_code": "E14000694",
+        "name": "Epsom and Ewell"
+      },
+      {
+        "pcon24_code": "E14000697",
+        "name": "Esher and Walton"
+      },
+      {
+        "pcon24_code": "E14000699",
+        "name": "Fareham"
+      },
+      {
+        "pcon24_code": "E14000700",
+        "name": "Faversham and Mid Kent"
+      },
+      {
+        "pcon24_code": "E14000704",
+        "name": "Folkestone and Hythe"
+      },
+      {
+        "pcon24_code": "E14000711",
+        "name": "Gillingham and Rainham"
+      },
+      {
+        "pcon24_code": "E14000713",
+        "name": "Gosport"
+      },
+      {
+        "pcon24_code": "E14000715",
+        "name": "Gravesham"
+      },
+      {
+        "pcon24_code": "E14000719",
+        "name": "Guildford"
+      },
+      {
+        "pcon24_code": "E14000735",
+        "name": "Hastings and Rye"
+      },
+      {
+        "pcon24_code": "E14000736",
+        "name": "Havant"
+      },
+      {
+        "pcon24_code": "E14000742",
+        "name": "Henley"
+      },
+      {
+        "pcon24_code": "E14000753",
+        "name": "Horsham"
+      },
+      {
+        "pcon24_code": "E14000755",
+        "name": "Hove"
+      },
+      {
+        "pcon24_code": "E14000762",
+        "name": "Isle of Wight"
+      },
+      {
+        "pcon24_code": "E14000786",
+        "name": "Lewes"
+      },
+      {
+        "pcon24_code": "E14000803",
+        "name": "Maidenhead"
+      },
+      {
+        "pcon24_code": "E14000804",
+        "name": "Maidstone and The Weald"
+      },
+      {
+        "pcon24_code": "E14000811",
+        "name": "Meon Valley"
+      },
+      {
+        "pcon24_code": "E14000817",
+        "name": "Mid Sussex"
+      },
+      {
+        "pcon24_code": "E14000821",
+        "name": "Milton Keynes North"
+      },
+      {
+        "pcon24_code": "E14000822",
+        "name": "Milton Keynes South"
+      },
+      {
+        "pcon24_code": "E14000824",
+        "name": "Mole Valley"
+      },
+      {
+        "pcon24_code": "E14000827",
+        "name": "New Forest East"
+      },
+      {
+        "pcon24_code": "E14000828",
+        "name": "New Forest West"
+      },
+      {
+        "pcon24_code": "E14000830",
+        "name": "Newbury"
+      },
+      {
+        "pcon24_code": "E14000844",
+        "name": "North East Hampshire"
+      },
+      {
+        "pcon24_code": "E14000852",
+        "name": "North Thanet"
+      },
+      {
+        "pcon24_code": "E14000857",
+        "name": "North West Hampshire"
+      },
+      {
+        "pcon24_code": "E14000873",
+        "name": "Oxford East"
+      },
+      {
+        "pcon24_code": "E14000874",
+        "name": "Oxford West and Abingdon"
+      },
+      {
+        "pcon24_code": "E14000883",
+        "name": "Portsmouth North"
+      },
+      {
+        "pcon24_code": "E14000884",
+        "name": "Portsmouth South"
+      },
+      {
+        "pcon24_code": "E14000889",
+        "name": "Reading East"
+      },
+      {
+        "pcon24_code": "E14000890",
+        "name": "Reading West"
+      },
+      {
+        "pcon24_code": "E14000893",
+        "name": "Reigate"
+      },
+      {
+        "pcon24_code": "E14000898",
+        "name": "Rochester and Strood"
+      },
+      {
+        "pcon24_code": "E14000901",
+        "name": "Romsey and Southampton North"
+      },
+      {
+        "pcon24_code": "E14000907",
+        "name": "Runnymede and Weybridge"
+      },
+      {
+        "pcon24_code": "E14000918",
+        "name": "Sevenoaks"
+      },
+      {
+        "pcon24_code": "E14000927",
+        "name": "Sittingbourne and Sheppey"
+      },
+      {
+        "pcon24_code": "E14000930",
+        "name": "Slough"
+      },
+      {
+        "pcon24_code": "E14000948",
+        "name": "South Thanet"
+      },
+      {
+        "pcon24_code": "E14000953",
+        "name": "South West Surrey"
+      },
+      {
+        "pcon24_code": "E14000955",
+        "name": "Southampton, Itchen"
+      },
+      {
+        "pcon24_code": "E14000956",
+        "name": "Southampton, Test"
+      },
+      {
+        "pcon24_code": "E14000959",
+        "name": "Spelthorne"
+      },
+      {
+        "pcon24_code": "E14000983",
+        "name": "Surrey Heath"
+      },
+      {
+        "pcon24_code": "E14000997",
+        "name": "Tonbridge and Malling"
+      },
+      {
+        "pcon24_code": "E14001004",
+        "name": "Tunbridge Wells"
+      },
+      {
+        "pcon24_code": "E14001015",
+        "name": "Wantage"
+      },
+      {
+        "pcon24_code": "E14001023",
+        "name": "Wealden"
+      },
+      {
+        "pcon24_code": "E14001041",
+        "name": "Winchester"
+      },
+      {
+        "pcon24_code": "E14001042",
+        "name": "Windsor"
+      },
+      {
+        "pcon24_code": "E14001046",
+        "name": "Witney"
+      },
+      {
+        "pcon24_code": "E14001047",
+        "name": "Woking"
+      },
+      {
+        "pcon24_code": "E14001048",
+        "name": "Wokingham"
+      },
+      {
+        "pcon24_code": "E14001055",
+        "name": "Worthing West"
+      },
+      {
+        "pcon24_code": "E14001056",
+        "name": "Wycombe"
+      }
+    ],
+    "South West": [
+      {
+        "pcon24_code": "E14000547",
+        "name": "Bath"
+      },
+      {
+        "pcon24_code": "E14000584",
+        "name": "Bournemouth East"
+      },
+      {
+        "pcon24_code": "E14000585",
+        "name": "Bournemouth West"
+      },
+      {
+        "pcon24_code": "E14000595",
+        "name": "Bridgwater and West Somerset"
+      },
+      {
+        "pcon24_code": "E14000599",
+        "name": "Bristol East"
+      },
+      {
+        "pcon24_code": "E14000600",
+        "name": "Bristol North West"
+      },
+      {
+        "pcon24_code": "E14000601",
+        "name": "Bristol South"
+      },
+      {
+        "pcon24_code": "E14000602",
+        "name": "Bristol West"
+      },
+      {
+        "pcon24_code": "E14000616",
+        "name": "Camborne and Redruth"
+      },
+      {
+        "pcon24_code": "E14000623",
+        "name": "Central Devon"
+      },
+      {
+        "pcon24_code": "E14000630",
+        "name": "Cheltenham"
+      },
+      {
+        "pcon24_code": "E14000635",
+        "name": "Chippenham"
+      },
+      {
+        "pcon24_code": "E14000638",
+        "name": "Christchurch"
+      },
+      {
+        "pcon24_code": "E14000665",
+        "name": "Devizes"
+      },
+      {
+        "pcon24_code": "E14000678",
+        "name": "East Devon"
+      },
+      {
+        "pcon24_code": "E14000698",
+        "name": "Exeter"
+      },
+      {
+        "pcon24_code": "E14000702",
+        "name": "Filton and Bradley Stoke"
+      },
+      {
+        "pcon24_code": "E14000705",
+        "name": "Forest of Dean"
+      },
+      {
+        "pcon24_code": "E14000712",
+        "name": "Gloucester"
+      },
+      {
+        "pcon24_code": "E14000774",
+        "name": "Kingswood"
+      },
+      {
+        "pcon24_code": "E14000815",
+        "name": "Mid Dorset and North Poole"
+      },
+      {
+        "pcon24_code": "E14000835",
+        "name": "Newton Abbot"
+      },
+      {
+        "pcon24_code": "E14000837",
+        "name": "North Cornwall"
+      },
+      {
+        "pcon24_code": "E14000838",
+        "name": "North Devon"
+      },
+      {
+        "pcon24_code": "E14000839",
+        "name": "North Dorset"
+      },
+      {
+        "pcon24_code": "E14000846",
+        "name": "North East Somerset"
+      },
+      {
+        "pcon24_code": "E14000850",
+        "name": "North Somerset"
+      },
+      {
+        "pcon24_code": "E14000851",
+        "name": "North Swindon"
+      },
+      {
+        "pcon24_code": "E14000860",
+        "name": "North Wiltshire"
+      },
+      {
+        "pcon24_code": "E14000879",
+        "name": "Plymouth, Moor View"
+      },
+      {
+        "pcon24_code": "E14000880",
+        "name": "Plymouth, Sutton and Devonport"
+      },
+      {
+        "pcon24_code": "E14000881",
+        "name": "Poole"
+      },
+      {
+        "pcon24_code": "E14000912",
+        "name": "Salisbury"
+      },
+      {
+        "pcon24_code": "E14000932",
+        "name": "Somerton and Frome"
+      },
+      {
+        "pcon24_code": "E14000936",
+        "name": "South Dorset"
+      },
+      {
+        "pcon24_code": "E14000938",
+        "name": "South East Cornwall"
+      },
+      {
+        "pcon24_code": "E14000947",
+        "name": "South Swindon"
+      },
+      {
+        "pcon24_code": "E14000950",
+        "name": "South West Devon"
+      },
+      {
+        "pcon24_code": "E14000954",
+        "name": "South West Wiltshire"
+      },
+      {
+        "pcon24_code": "E14000961",
+        "name": "St Austell and Newquay"
+      },
+      {
+        "pcon24_code": "E14000964",
+        "name": "St Ives"
+      },
+      {
+        "pcon24_code": "E14000980",
+        "name": "Stroud"
+      },
+      {
+        "pcon24_code": "E14000988",
+        "name": "Taunton Deane"
+      },
+      {
+        "pcon24_code": "E14000990",
+        "name": "Tewkesbury"
+      },
+      {
+        "pcon24_code": "E14000991",
+        "name": "The Cotswolds"
+      },
+      {
+        "pcon24_code": "E14000994",
+        "name": "Thornbury and Yate"
+      },
+      {
+        "pcon24_code": "E14000996",
+        "name": "Tiverton and Honiton"
+      },
+      {
+        "pcon24_code": "E14000999",
+        "name": "Torbay"
+      },
+      {
+        "pcon24_code": "E14001000",
+        "name": "Torridge and West Devon"
+      },
+      {
+        "pcon24_code": "E14001001",
+        "name": "Totnes"
+      },
+      {
+        "pcon24_code": "E14001003",
+        "name": "Truro and Falmouth"
+      },
+      {
+        "pcon24_code": "E14001026",
+        "name": "Wells"
+      },
+      {
+        "pcon24_code": "E14001031",
+        "name": "West Dorset"
+      },
+      {
+        "pcon24_code": "E14001038",
+        "name": "Weston-Super-Mare"
+      },
+      {
+        "pcon24_code": "E14001060",
+        "name": "Yeovil"
+      }
+    ],
+    "Wales": [
+      {
+        "pcon24_code": "W07000049",
+        "name": "Aberavon"
+      },
+      {
+        "pcon24_code": "W07000058",
+        "name": "Aberconwy"
+      },
+      {
+        "pcon24_code": "W07000043",
+        "name": "Alyn and Deeside"
+      },
+      {
+        "pcon24_code": "W07000057",
+        "name": "Arfon"
+      },
+      {
+        "pcon24_code": "W07000072",
+        "name": "Blaenau Gwent"
+      },
+      {
+        "pcon24_code": "W07000068",
+        "name": "Brecon and Radnorshire"
+      },
+      {
+        "pcon24_code": "W07000073",
+        "name": "Bridgend"
+      },
+      {
+        "pcon24_code": "W07000076",
+        "name": "Caerphilly"
+      },
+      {
+        "pcon24_code": "W07000050",
+        "name": "Cardiff Central"
+      },
+      {
+        "pcon24_code": "W07000051",
+        "name": "Cardiff North"
+      },
+      {
+        "pcon24_code": "W07000080",
+        "name": "Cardiff South and Penarth"
+      },
+      {
+        "pcon24_code": "W07000079",
+        "name": "Cardiff West"
+      },
+      {
+        "pcon24_code": "W07000067",
+        "name": "Carmarthen East and Dinefwr"
+      },
+      {
+        "pcon24_code": "W07000066",
+        "name": "Carmarthen West and South Pembrokeshire"
+      },
+      {
+        "pcon24_code": "W07000064",
+        "name": "Ceredigion"
+      },
+      {
+        "pcon24_code": "W07000062",
+        "name": "Clwyd South"
+      },
+      {
+        "pcon24_code": "W07000059",
+        "name": "Clwyd West"
+      },
+      {
+        "pcon24_code": "W07000070",
+        "name": "Cynon Valley"
+      },
+      {
+        "pcon24_code": "W07000042",
+        "name": "Delyn"
+      },
+      {
+        "pcon24_code": "W07000061",
+        "name": "Dwyfor Meirionnydd"
+      },
+      {
+        "pcon24_code": "W07000046",
+        "name": "Gower"
+      },
+      {
+        "pcon24_code": "W07000077",
+        "name": "Islwyn"
+      },
+      {
+        "pcon24_code": "W07000045",
+        "name": "Llanelli"
+      },
+      {
+        "pcon24_code": "W07000071",
+        "name": "Merthyr Tydfil and Rhymney"
+      },
+      {
+        "pcon24_code": "W07000054",
+        "name": "Monmouth"
+      },
+      {
+        "pcon24_code": "W07000063",
+        "name": "Montgomeryshire"
+      },
+      {
+        "pcon24_code": "W07000069",
+        "name": "Neath"
+      },
+      {
+        "pcon24_code": "W07000055",
+        "name": "Newport East"
+      },
+      {
+        "pcon24_code": "W07000056",
+        "name": "Newport West"
+      },
+      {
+        "pcon24_code": "W07000074",
+        "name": "Ogmore"
+      },
+      {
+        "pcon24_code": "W07000075",
+        "name": "Pontypridd"
+      },
+      {
+        "pcon24_code": "W07000065",
+        "name": "Preseli Pembrokeshire"
+      },
+      {
+        "pcon24_code": "W07000052",
+        "name": "Rhondda"
+      },
+      {
+        "pcon24_code": "W07000048",
+        "name": "Swansea East"
+      },
+      {
+        "pcon24_code": "W07000047",
+        "name": "Swansea West"
+      },
+      {
+        "pcon24_code": "W07000053",
+        "name": "Torfaen"
+      },
+      {
+        "pcon24_code": "W07000060",
+        "name": "Vale of Clwyd"
+      },
+      {
+        "pcon24_code": "W07000078",
+        "name": "Vale of Glamorgan"
+      },
+      {
+        "pcon24_code": "W07000044",
+        "name": "Wrexham"
+      },
+      {
+        "pcon24_code": "W07000041",
+        "name": "Ynys Mon"
+      }
+    ],
+    "Scotland": [
+      {
+        "pcon24_code": "S14000001",
+        "name": "Aberdeen North"
+      },
+      {
+        "pcon24_code": "S14000002",
+        "name": "Aberdeen South"
+      },
+      {
+        "pcon24_code": "S14000003",
+        "name": "Airdrie and Shotts"
+      },
+      {
+        "pcon24_code": "S14000004",
+        "name": "Angus"
+      },
+      {
+        "pcon24_code": "S14000005",
+        "name": "Argyll and Bute"
+      },
+      {
+        "pcon24_code": "S14000006",
+        "name": "Ayr, Carrick and Cumnock"
+      },
+      {
+        "pcon24_code": "S14000007",
+        "name": "Banff and Buchan"
+      },
+      {
+        "pcon24_code": "S14000008",
+        "name": "Berwickshire, Roxburgh and Selkirk"
+      },
+      {
+        "pcon24_code": "S14000009",
+        "name": "Caithness, Sutherland and Easter Ross"
+      },
+      {
+        "pcon24_code": "S14000010",
+        "name": "Central Ayrshire"
+      },
+      {
+        "pcon24_code": "S14000011",
+        "name": "Coatbridge, Chryston and Bellshill"
+      },
+      {
+        "pcon24_code": "S14000012",
+        "name": "Cumbernauld, Kilsyth and Kirkintilloch East"
+      },
+      {
+        "pcon24_code": "S14000013",
+        "name": "Dumfries and Galloway"
+      },
+      {
+        "pcon24_code": "S14000014",
+        "name": "Dumfriesshire, Clydesdale and Tweeddale"
+      },
+      {
+        "pcon24_code": "S14000015",
+        "name": "Dundee East"
+      },
+      {
+        "pcon24_code": "S14000016",
+        "name": "Dundee West"
+      },
+      {
+        "pcon24_code": "S14000017",
+        "name": "Dunfermline and West Fife"
+      },
+      {
+        "pcon24_code": "S14000018",
+        "name": "East Dunbartonshire"
+      },
+      {
+        "pcon24_code": "S14000019",
+        "name": "East Kilbride, Strathaven and Lesmahagow"
+      },
+      {
+        "pcon24_code": "S14000020",
+        "name": "East Lothian"
+      },
+      {
+        "pcon24_code": "S14000021",
+        "name": "East Renfrewshire"
+      },
+      {
+        "pcon24_code": "S14000022",
+        "name": "Edinburgh East"
+      },
+      {
+        "pcon24_code": "S14000023",
+        "name": "Edinburgh North and Leith"
+      },
+      {
+        "pcon24_code": "S14000024",
+        "name": "Edinburgh South"
+      },
+      {
+        "pcon24_code": "S14000025",
+        "name": "Edinburgh South West"
+      },
+      {
+        "pcon24_code": "S14000026",
+        "name": "Edinburgh West"
+      },
+      {
+        "pcon24_code": "S14000028",
+        "name": "Falkirk"
+      },
+      {
+        "pcon24_code": "S14000029",
+        "name": "Glasgow Central"
+      },
+      {
+        "pcon24_code": "S14000030",
+        "name": "Glasgow East"
+      },
+      {
+        "pcon24_code": "S14000031",
+        "name": "Glasgow North"
+      },
+      {
+        "pcon24_code": "S14000032",
+        "name": "Glasgow North East"
+      },
+      {
+        "pcon24_code": "S14000033",
+        "name": "Glasgow North West"
+      },
+      {
+        "pcon24_code": "S14000034",
+        "name": "Glasgow South"
+      },
+      {
+        "pcon24_code": "S14000035",
+        "name": "Glasgow South West"
+      },
+      {
+        "pcon24_code": "S14000036",
+        "name": "Glenrothes"
+      },
+      {
+        "pcon24_code": "S14000037",
+        "name": "Gordon"
+      },
+      {
+        "pcon24_code": "S14000038",
+        "name": "Inverclyde"
+      },
+      {
+        "pcon24_code": "S14000039",
+        "name": "Inverness, Nairn, Badenoch and Strathspey"
+      },
+      {
+        "pcon24_code": "S14000040",
+        "name": "Kilmarnock and Loudoun"
+      },
+      {
+        "pcon24_code": "S14000041",
+        "name": "Kirkcaldy and Cowdenbeath"
+      },
+      {
+        "pcon24_code": "S14000042",
+        "name": "Lanark and Hamilton East"
+      },
+      {
+        "pcon24_code": "S14000043",
+        "name": "Linlithgow and East Falkirk"
+      },
+      {
+        "pcon24_code": "S14000044",
+        "name": "Livingston"
+      },
+      {
+        "pcon24_code": "S14000045",
+        "name": "Midlothian"
+      },
+      {
+        "pcon24_code": "S14000046",
+        "name": "Moray"
+      },
+      {
+        "pcon24_code": "S14000047",
+        "name": "Motherwell and Wishaw"
+      },
+      {
+        "pcon24_code": "S14000027",
+        "name": "Na h-Eileanan an Iar"
+      },
+      {
+        "pcon24_code": "S14000048",
+        "name": "North Ayrshire and Arran"
+      },
+      {
+        "pcon24_code": "S14000049",
+        "name": "North East Fife"
+      },
+      {
+        "pcon24_code": "S14000050",
+        "name": "Ochil and South Perthshire"
+      },
+      {
+        "pcon24_code": "S14000051",
+        "name": "Orkney and Shetland"
+      },
+      {
+        "pcon24_code": "S14000052",
+        "name": "Paisley and Renfrewshire North"
+      },
+      {
+        "pcon24_code": "S14000053",
+        "name": "Paisley and Renfrewshire South"
+      },
+      {
+        "pcon24_code": "S14000054",
+        "name": "Perth and North Perthshire"
+      },
+      {
+        "pcon24_code": "S14000055",
+        "name": "Ross, Skye and Lochaber"
+      },
+      {
+        "pcon24_code": "S14000056",
+        "name": "Rutherglen and Hamilton West"
+      },
+      {
+        "pcon24_code": "S14000057",
+        "name": "Stirling"
+      },
+      {
+        "pcon24_code": "S14000058",
+        "name": "West Aberdeenshire and Kincardine"
+      },
+      {
+        "pcon24_code": "S14000059",
+        "name": "West Dunbartonshire"
+      }
+    ],
+    "Northern Ireland": [
+      {
+        "pcon24_code": "N06000001",
+        "name": "Belfast East"
+      },
+      {
+        "pcon24_code": "N06000002",
+        "name": "Belfast North"
+      },
+      {
+        "pcon24_code": "N06000003",
+        "name": "Belfast South"
+      },
+      {
+        "pcon24_code": "N06000004",
+        "name": "Belfast West"
+      },
+      {
+        "pcon24_code": "N06000005",
+        "name": "East Antrim"
+      },
+      {
+        "pcon24_code": "N06000006",
+        "name": "East Londonderry"
+      },
+      {
+        "pcon24_code": "N06000007",
+        "name": "Fermanagh and South Tyrone"
+      },
+      {
+        "pcon24_code": "N06000008",
+        "name": "Foyle"
+      },
+      {
+        "pcon24_code": "N06000009",
+        "name": "Lagan Valley"
+      },
+      {
+        "pcon24_code": "N06000010",
+        "name": "Mid Ulster"
+      },
+      {
+        "pcon24_code": "N06000011",
+        "name": "Newry and Armagh"
+      },
+      {
+        "pcon24_code": "N06000012",
+        "name": "North Antrim"
+      },
+      {
+        "pcon24_code": "N06000013",
+        "name": "North Down"
+      },
+      {
+        "pcon24_code": "N06000014",
+        "name": "South Antrim"
+      },
+      {
+        "pcon24_code": "N06000015",
+        "name": "South Down"
+      },
+      {
+        "pcon24_code": "N06000016",
+        "name": "Strangford"
+      },
+      {
+        "pcon24_code": "N06000017",
+        "name": "Upper Bann"
+      },
+      {
+        "pcon24_code": "N06000018",
+        "name": "West Tyrone"
+      }
+    ]
+  }
+}

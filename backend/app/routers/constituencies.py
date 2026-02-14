@@ -7,9 +7,11 @@ from app.database import get_db
 from app.schemas.constituency import (
     ConstituencyListResponse,
     ConstituencyResponse,
+    ConstituencySummaryListResponse,
 )
 from app.services.constituency_service import (
     get_all_constituencies,
+    get_all_constituencies_summary,
     get_constituency_by_id,
 )
 
@@ -22,8 +24,8 @@ def list_constituencies(
                                    description="Search constituency by name"),
         page: int = Query(1, ge=1),
         page_size: int = Query(50, ge=1, le=200),
-        sort_by: Literal["name", "total_votes", "winning_party"] | None = Query(
-            None, description="Sort field"),
+        sort_by: Literal["name", "total_votes", "winning_party"]
+    | None = Query(None, description="Sort field"),
         sort_dir: Literal["asc", "desc"] = Query("asc",
                                                  description="Sort direction"),
         db: Session = Depends(get_db),
@@ -39,6 +41,15 @@ def list_constituencies(
                                   page_size=page_size,
                                   sort_by=sort_by,
                                   sort_dir=sort_dir)
+
+
+@router.get("/summary", response_model=ConstituencySummaryListResponse)
+def list_constituencies_summary(db: Session = Depends(get_db)):
+    """Return all constituencies with id, name, and winning party code.
+
+    Lightweight unpaginated endpoint for the choropleth map.
+    """
+    return get_all_constituencies_summary(db)
 
 
 @router.get("/{constituency_id}", response_model=ConstituencyResponse)

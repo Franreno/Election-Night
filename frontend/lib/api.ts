@@ -3,8 +3,11 @@ import type {
   TotalResultsResponse,
   ConstituencyListResponse,
   ConstituencyResponse,
+  ConstituencySummaryListResponse,
   UploadResponse,
   UploadListResponse,
+  RegionListResponse,
+  RegionDetail,
 } from "./types";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
@@ -58,5 +61,14 @@ export const uploadFile = async (file: File): Promise<UploadResponse> => {
   return res.json();
 };
 
+export const fetchConstituenciesSummary = () =>
+  apiFetch<ConstituencySummaryListResponse>("/api/constituencies/summary");
+
 export const fetchHealth = () =>
   apiFetch<{ status: string }>("/api/health");
+
+export const fetchRegions = () =>
+  apiFetch<RegionListResponse>("/api/geography/regions");
+
+export const fetchRegionDetail = (id: number) =>
+  apiFetch<RegionDetail>(`/api/geography/regions/${id}`);

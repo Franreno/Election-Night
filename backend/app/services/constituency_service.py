@@ -38,7 +38,10 @@ def get_all_constituencies(
     sort_by: str | None = None,
     sort_dir: str = "asc",
 ) -> dict:
-    query = db.query(Constituency).options(joinedload(Constituency.results))
+    query = db.query(Constituency).options(
+        joinedload(Constituency.results),
+        joinedload(Constituency.region),
+    )
 
     if search:
         query = query.filter(Constituency.name.ilike(f"%{search}%"))
@@ -46,7 +49,8 @@ def get_all_constituencies(
     # Count before pagination (on the base query without joinedload for accuracy)
     count_query = db.query(Constituency)
     if search:
-        count_query = count_query.filter(Constituency.name.ilike(f"%{search}%"))
+        count_query = count_query.filter(
+            Constituency.name.ilike(f"%{search}%"))
     total = count_query.count()
 
     order = _build_sort_clause(sort_by, sort_dir)
@@ -62,10 +66,46 @@ def get_all_constituencies(
     }
 
 
+def get_all_constituencies_summary(db: Session) -> dict:
+    """Return all constituencies with just id, name, and winning party code."""
+    constituencies = (db.query(Constituency).options(
+        joinedload(Constituency.results),
+        joinedload(Constituency.region),
+    ).order_by(Constituency.name.asc()).all())
+
+    summaries = []
+    for c in constituencies:
+        winner_code = None
+        max_votes = -1
+        is_tied = False
+        for r in c.results:
+            if r.votes > max_votes:
+                max_votes = r.votes
+                winner_code = r.party_code
+                is_tied = False
+            elif r.votes == max_votes:
+                is_tied = True
+        if is_tied:
+            winner_code = None
+        summaries.append({
+            "id": c.id,
+            "name": c.name,
+            "pcon24_code": c.pcon24_code,
+            "region_name": c.region.name if c.region else None,
+            "winning_party_code": winner_code,
+        })
+
+    return {
+        "total": len(summaries),
+        "constituencies": summaries,
+    }
+
+
 def get_constituency_by_id(db: Session, constituency_id: int) -> dict | None:
     constituency = (db.query(Constituency).options(
-        joinedload(Constituency.results)).filter(
-            Constituency.id == constituency_id).first())
+        joinedload(Constituency.results),
+        joinedload(Constituency.region),
+    ).filter(Constituency.id == constituency_id).first())
     if not constituency:
         return None
     return _format_constituency(constituency)
@@ -84,10 +124,14 @@ def _format_constituency(constituency: Constituency) -> dict:
         pct = round(
             (r.votes / total_votes * 100), 2) if total_votes > 0 else 0.0
         parties.append({
-            "party_code": r.party_code,
-            "party_name": PARTY_CODE_MAP.get(r.party_code, r.party_code),
-            "votes": r.votes,
-            "percentage": pct,
+            "party_code":
+            r.party_code,
+            "party_name":
+            PARTY_CODE_MAP.get(r.party_code, r.party_code),
+            "votes":
+            r.votes,
+            "percentage":
+            pct,
         })
         if r.votes > max_votes:
             max_votes = r.votes
@@ -104,16 +148,21 @@ def _format_constituency(constituency: Constituency) -> dict:
 
     return {
         "id":
-            constituency.id,
+        constituency.id,
         "name":
-            constituency.name,
+        constituency.name,
+        "pcon24_code":
+        constituency.pcon24_code,
+        "region_id":
+        constituency.region_id,
+        "region_name":
+        constituency.region.name if constituency.region else None,
         "total_votes":
-            total_votes,
+        total_votes,
         "winning_party_code":
-            winner_code,
+        winner_code,
         "winning_party_name":
-            PARTY_CODE_MAP.get(winner_code, winner_code)
-            if winner_code else None,
+        PARTY_CODE_MAP.get(winner_code, winner_code) if winner_code else None,
         "parties":
-            parties,
+        parties,
     }

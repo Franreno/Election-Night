@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# raw geojson (too large for git, use optimized topojson instead)
+public/constituencies.geojson

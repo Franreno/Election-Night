@@ -60,13 +60,8 @@ def list_uploads(
     """List all upload logs, ordered newest first."""
     total = db.query(UploadLog).count()
     offset = (page - 1) * page_size
-    uploads = (
-        db.query(UploadLog)
-        .order_by(UploadLog.id.desc())
-        .offset(offset)
-        .limit(page_size)
-        .all()
-    )
+    uploads = (db.query(UploadLog).order_by(
+        UploadLog.id.desc()).offset(offset).limit(page_size).all())
     return UploadListResponse(
         total=total,
         page=page,

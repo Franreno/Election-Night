@@ -11,6 +11,9 @@ export interface ConstituencyResponse {
   total_votes: number;
   winning_party_code: string | null;
   winning_party_name: string | null;
+  pcon24_code: string | null;
+  region_id: number | null;
+  region_name: string | null;
   parties: PartyResult[];
 }
 
@@ -32,6 +35,44 @@ export interface TotalResultsResponse {
   total_constituencies: number;
   total_votes: number;
   parties: PartyTotals[];
+}
+
+export interface ConstituencySummary {
+  id: number;
+  name: string;
+  winning_party_code: string | null;
+  pcon24_code: string | null;
+  region_name: string | null;
+}
+
+export interface RegionSummary {
+  id: number;
+  name: string;
+  sort_order: number;
+  constituency_count: number;
+}
+
+export interface RegionListResponse {
+  regions: RegionSummary[];
+}
+
+export interface RegionConstituency {
+  id: number;
+  name: string;
+  pcon24_code: string | null;
+  winning_party_code: string | null;
+}
+
+export interface RegionDetail {
+  id: number;
+  name: string;
+  pcon24_codes: string[];
+  constituencies: RegionConstituency[];
+}
+
+export interface ConstituencySummaryListResponse {
+  total: number;
+  constituencies: ConstituencySummary[];
 }
 
 export interface UploadResponse {

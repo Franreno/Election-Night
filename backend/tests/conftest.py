@@ -11,6 +11,7 @@ os.environ["DATABASE_URL"] = "sqlite://"
 
 from app.database import Base, get_db
 from app.main import app
+from app.models.constituency import Constituency
 
 
 @pytest.fixture(scope="function")
@@ -63,3 +64,10 @@ def client(db_engine):
     with TestClient(app) as c:
         yield c
     app.dependency_overrides.clear()
+
+
+def seed_constituencies(db_session, names: list[str]) -> None:
+    """Pre-seed constituencies so upload can match them by name."""
+    for name in names:
+        db_session.add(Constituency(name=name))
+    db_session.commit()
