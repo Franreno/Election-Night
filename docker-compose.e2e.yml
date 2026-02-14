@@ -1,0 +1,54 @@
+# Isolated E2E test environment — uses different ports and volumes
+# so it never touches local development database.
+#
+# Usage: docker compose -f docker-compose.e2e.yml up -d
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: election_e2e
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata_e2e:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8000"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/election_e2e
+      CORS_ORIGINS: '["http://localhost:3001"]'
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./backend/app:/app/app
+      - ./backend/static:/app/static
+      - ./backend/alembic:/app/alembic
+    command: >
+      sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:8001
+    ports:
+      - "3001:3000"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata_e2e:
