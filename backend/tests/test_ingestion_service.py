@@ -88,6 +88,7 @@ class TestConstituencyMatcher:
 
 
 class TestIngestFile:
+
     def test_basic_ingestion(self, db_session):
         _seed_constituencies(db_session, ["Bedford"])
         content = "Bedford,6643,C,5276,L"
@@ -113,9 +114,8 @@ class TestIngestFile:
         # First upload
         ingest_file(db_session, "Bedford,1000,C,2000,L", "first.txt")
         c = db_session.query(Constituency).filter_by(name="Bedford").first()
-        result_c = db_session.query(Result).filter_by(
-            constituency_id=c.id, party_code="C"
-        ).first()
+        result_c = db_session.query(Result).filter_by(constituency_id=c.id,
+                                                      party_code="C").first()
         assert result_c.votes == 1000
 
         # Second upload - should update

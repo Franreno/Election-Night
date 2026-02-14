@@ -56,7 +56,8 @@ def get_all_constituencies(
         count_query = count_query.filter(
             Constituency.name.ilike(f"%{search}%"))
     if region_ids:
-        count_query = count_query.filter(Constituency.region_id.in_(region_ids))
+        count_query = count_query.filter(
+            Constituency.region_id.in_(region_ids))
     total = count_query.count()
 
     order = _build_sort_clause(sort_by, sort_dir)

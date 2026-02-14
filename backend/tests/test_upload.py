@@ -12,7 +12,7 @@ class TestUploadEndpoint:
             "/api/upload",
             files={
                 "file":
-                ("results.txt", io.BytesIO(content.encode()), "text/plain")
+                    ("results.txt", io.BytesIO(content.encode()), "text/plain")
             },
         )
         assert response.status_code == 201
@@ -44,7 +44,7 @@ class TestUploadEndpoint:
             "/api/upload",
             files={
                 "file":
-                ("mixed.txt", io.BytesIO(content.encode()), "text/plain")
+                    ("mixed.txt", io.BytesIO(content.encode()), "text/plain")
             },
         )
         assert response.status_code == 201
@@ -61,7 +61,7 @@ class TestUploadEndpoint:
             "/api/upload",
             files={
                 "file":
-                ("escaped.txt", io.BytesIO(content.encode()), "text/plain")
+                    ("escaped.txt", io.BytesIO(content.encode()), "text/plain")
             },
         )
         assert response.status_code == 201
@@ -89,8 +89,8 @@ class TestUploadEndpoint:
         # Upload twice
         client.post("/api/upload",
                     files={
-                        "file":
-                        ("r1.txt", io.BytesIO(content.encode()), "text/plain")
+                        "file": ("r1.txt", io.BytesIO(content.encode()),
+                                 "text/plain")
                     })
         response = client.post(
             "/api/upload",
@@ -111,7 +111,7 @@ class TestUploadEndpoint:
             "/api/upload",
             files={
                 "file":
-                ("r1.txt", io.BytesIO(b"Bedford,100,C,200,L"), "text/plain")
+                    ("r1.txt", io.BytesIO(b"Bedford,100,C,200,L"), "text/plain")
             },
         )
         # Second upload with updated votes for C
@@ -125,8 +125,7 @@ class TestUploadEndpoint:
         resp = client.get("/api/constituencies?search=Bedford")
         constituency = resp.json()["constituencies"][0]
         votes_by_party = {
-            p["party_code"]: p["votes"]
-            for p in constituency["parties"]
+            p["party_code"]: p["votes"] for p in constituency["parties"]
         }
         assert votes_by_party["C"] == 999
         assert votes_by_party["L"] == 200
@@ -151,8 +150,7 @@ class TestUploadEndpoint:
         resp = client.get("/api/constituencies?search=Bedford")
         constituency = resp.json()["constituencies"][0]
         votes_by_party = {
-            p["party_code"]: p["votes"]
-            for p in constituency["parties"]
+            p["party_code"]: p["votes"] for p in constituency["parties"]
         }
         assert votes_by_party["C"] == 150
         assert votes_by_party["L"] == 200
@@ -209,7 +207,8 @@ class TestUploadEndpoint:
         assert data["error_lines"] == 0
 
     def test_upload_comma_stripped_matching(self, client, db_session):
-        """'Birmingham, Hall Green' matches 'Birmingham Hall Green and Moseley'."""
+        """'Birmingham, Hall Green' matches 'Birmingham Hall 
+        Green and Moseley'."""
         seed_constituencies(db_session, ["Birmingham Hall Green and Moseley"])
         content = "Birmingham\\, Hall Green,500,C,300,L\n"
         response = client.post(
@@ -269,7 +268,7 @@ class TestListUploadsEndpoint:
             "/api/upload",
             files={
                 "file":
-                ("r.txt", io.BytesIO(b"Bedford,100,C,200,L"), "text/plain")
+                    ("r.txt", io.BytesIO(b"Bedford,100,C,200,L"), "text/plain")
             },
         )
         resp = client.get("/api/uploads")

@@ -29,6 +29,7 @@ def _seed_multi(db_session):
 
 
 class TestGetTotalResults:
+
     def test_total_constituencies(self, db_session):
         _seed_multi(db_session)
         result = get_total_results(db_session)
@@ -43,17 +44,17 @@ class TestGetTotalResults:
         _seed_multi(db_session)
         result = get_total_results(db_session)
         parties = {p["party_code"]: p for p in result["parties"]}
-        assert parties["C"]["total_votes"] == 9000   # 6000 + 3000
-        assert parties["L"]["total_votes"] == 17000   # 5000 + 8000 + 4000
+        assert parties["C"]["total_votes"] == 9000  # 6000 + 3000
+        assert parties["L"]["total_votes"] == 17000  # 5000 + 8000 + 4000
         assert parties["G"]["total_votes"] == 7000
 
     def test_seat_counts(self, db_session):
         _seed_multi(db_session)
         result = get_total_results(db_session)
         parties = {p["party_code"]: p for p in result["parties"]}
-        assert parties["C"]["seats"] == 1   # Won Bedford
-        assert parties["L"]["seats"] == 1   # Won Sheffield Hallam
-        assert parties["G"]["seats"] == 1   # Won Bristol West
+        assert parties["C"]["seats"] == 1  # Won Bedford
+        assert parties["L"]["seats"] == 1  # Won Sheffield Hallam
+        assert parties["G"]["seats"] == 1  # Won Bristol West
 
     def test_tied_constituency_awards_no_seat(self, db_session):
         c = Constituency(name="Tied Place")
@@ -83,7 +84,7 @@ class TestGetTotalResults:
         parties = result["parties"]
         for i in range(len(parties) - 1):
             current = (-parties[i]["seats"], -parties[i]["total_votes"])
-            next_p = (-parties[i+1]["seats"], -parties[i+1]["total_votes"])
+            next_p = (-parties[i + 1]["seats"], -parties[i + 1]["total_votes"])
             assert current <= next_p
 
     def test_party_name_mapping(self, db_session):

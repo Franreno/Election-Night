@@ -25,6 +25,7 @@ class UploadLogEntry(BaseModel):
     errors: list[Any] | None
     started_at: datetime | None
     completed_at: datetime | None
+    deleted_at: datetime | None = None
 
 
 class UploadListResponse(BaseModel):
@@ -32,3 +33,11 @@ class UploadListResponse(BaseModel):
     page: int
     page_size: int
     uploads: list[UploadLogEntry]
+
+
+class UploadStatsResponse(BaseModel):
+    total_uploads: int
+    completed: int
+    failed: int
+    success_rate: float
+    total_lines_processed: int

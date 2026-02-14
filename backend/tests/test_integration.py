@@ -6,9 +6,7 @@ upload file → parse → store → retrieve results via different endpoints.
 
 import io
 
-import pytest
 from tests.conftest import seed_constituencies
-
 
 CONSTITUENCIES = [
     "Bedford",
@@ -21,8 +19,7 @@ VALID_FILE = (
     "Bedford,6643,C,5276,L,2049,LD,266,Ind,2531,UKIP,2671,G\n"
     "Sheffield Hallam,8788,C,4277,L,3000,LD,500,Ind,1200,UKIP,900,G\n"
     "Bristol West,3000,C,9000,L,2000,LD,100,Ind,500,UKIP,4000,G\n"
-    "City Of Durham,4000,C,7000,L,1500,LD,300,Ind,800,UKIP,600,G\n"
-)
+    "City Of Durham,4000,C,7000,L,1500,LD,300,Ind,800,UKIP,600,G\n")
 
 
 class TestFullUploadToRetrieveFlow:
@@ -34,7 +31,10 @@ class TestFullUploadToRetrieveFlow:
         # Upload
         resp = client.post(
             "/api/upload",
-            files={"file": ("results.txt", io.BytesIO(VALID_FILE.encode()), "text/plain")},
+            files={
+                "file":
+                ("results.txt", io.BytesIO(VALID_FILE.encode()), "text/plain")
+            },
         )
         assert resp.status_code == 201
         upload_data = resp.json()
@@ -55,7 +55,10 @@ class TestFullUploadToRetrieveFlow:
 
         client.post(
             "/api/upload",
-            files={"file": ("results.txt", io.BytesIO(VALID_FILE.encode()), "text/plain")},
+            files={
+                "file":
+                ("results.txt", io.BytesIO(VALID_FILE.encode()), "text/plain")
+            },
         )
 
         # Check totals
@@ -77,7 +80,10 @@ class TestFullUploadToRetrieveFlow:
 
         client.post(
             "/api/upload",
-            files={"file": ("results.txt", io.BytesIO(VALID_FILE.encode()), "text/plain")},
+            files={
+                "file":
+                ("results.txt", io.BytesIO(VALID_FILE.encode()), "text/plain")
+            },
         )
 
         # Get list to find Bedford's ID
@@ -98,7 +104,10 @@ class TestFullUploadToRetrieveFlow:
 
         client.post(
             "/api/upload",
-            files={"file": ("results.txt", io.BytesIO(VALID_FILE.encode()), "text/plain")},
+            files={
+                "file":
+                ("results.txt", io.BytesIO(VALID_FILE.encode()), "text/plain")
+            },
         )
 
         # Check summary endpoint (used by map)
@@ -115,7 +124,10 @@ class TestFullUploadToRetrieveFlow:
 
         client.post(
             "/api/upload",
-            files={"file": ("results.txt", io.BytesIO(VALID_FILE.encode()), "text/plain")},
+            files={
+                "file":
+                ("results.txt", io.BytesIO(VALID_FILE.encode()), "text/plain")
+            },
         )
 
         # Check upload appears in history
@@ -139,7 +151,9 @@ class TestUpdateOverrideSemantics:
         file1 = "Bedford,1000,C,2000,L"
         client.post(
             "/api/upload",
-            files={"file": ("first.txt", io.BytesIO(file1.encode()), "text/plain")},
+            files={
+                "file": ("first.txt", io.BytesIO(file1.encode()), "text/plain")
+            },
         )
 
         resp = client.get("/api/constituencies?search=Bedford")
@@ -150,7 +164,10 @@ class TestUpdateOverrideSemantics:
         file2 = "Bedford,5000,C,3000,L"
         client.post(
             "/api/upload",
-            files={"file": ("second.txt", io.BytesIO(file2.encode()), "text/plain")},
+            files={
+                "file":
+                ("second.txt", io.BytesIO(file2.encode()), "text/plain")
+            },
         )
 
         resp = client.get("/api/constituencies?search=Bedford")
@@ -164,14 +181,19 @@ class TestUpdateOverrideSemantics:
         file1 = "Bedford,1000,C,2000,L,500,LD"
         client.post(
             "/api/upload",
-            files={"file": ("first.txt", io.BytesIO(file1.encode()), "text/plain")},
+            files={
+                "file": ("first.txt", io.BytesIO(file1.encode()), "text/plain")
+            },
         )
 
         # Second upload: only C and L (LD not mentioned)
         file2 = "Bedford,5000,C,3000,L"
         client.post(
             "/api/upload",
-            files={"file": ("second.txt", io.BytesIO(file2.encode()), "text/plain")},
+            files={
+                "file":
+                ("second.txt", io.BytesIO(file2.encode()), "text/plain")
+            },
         )
 
         resp = client.get("/api/constituencies?search=Bedford")
@@ -188,7 +210,10 @@ class TestUpdateOverrideSemantics:
         # First: C wins
         client.post(
             "/api/upload",
-            files={"file": ("f1.txt", io.BytesIO(b"Bedford,5000,C,3000,L"), "text/plain")},
+            files={
+                "file":
+                ("f1.txt", io.BytesIO(b"Bedford,5000,C,3000,L"), "text/plain")
+            },
         )
         resp = client.get("/api/constituencies?search=Bedford")
         assert resp.json()["constituencies"][0]["winning_party_code"] == "C"
@@ -196,7 +221,10 @@ class TestUpdateOverrideSemantics:
         # Second: L wins
         client.post(
             "/api/upload",
-            files={"file": ("f2.txt", io.BytesIO(b"Bedford,3000,C,8000,L"), "text/plain")},
+            files={
+                "file":
+                ("f2.txt", io.BytesIO(b"Bedford,3000,C,8000,L"), "text/plain")
+            },
         )
         resp = client.get("/api/constituencies?search=Bedford")
         assert resp.json()["constituencies"][0]["winning_party_code"] == "L"
@@ -209,7 +237,10 @@ class TestSearchAndPaginationFlow:
         seed_constituencies(db_session, CONSTITUENCIES)
         client.post(
             "/api/upload",
-            files={"file": ("r.txt", io.BytesIO(VALID_FILE.encode()), "text/plain")},
+            files={
+                "file":
+                ("r.txt", io.BytesIO(VALID_FILE.encode()), "text/plain")
+            },
         )
 
         resp = client.get("/api/constituencies?search=sheffield")
@@ -221,7 +252,10 @@ class TestSearchAndPaginationFlow:
         seed_constituencies(db_session, CONSTITUENCIES)
         client.post(
             "/api/upload",
-            files={"file": ("r.txt", io.BytesIO(VALID_FILE.encode()), "text/plain")},
+            files={
+                "file":
+                ("r.txt", io.BytesIO(VALID_FILE.encode()), "text/plain")
+            },
         )
 
         # Page 1 with size 2
@@ -241,10 +275,14 @@ class TestSearchAndPaginationFlow:
         seed_constituencies(db_session, CONSTITUENCIES)
         client.post(
             "/api/upload",
-            files={"file": ("r.txt", io.BytesIO(VALID_FILE.encode()), "text/plain")},
+            files={
+                "file":
+                ("r.txt", io.BytesIO(VALID_FILE.encode()), "text/plain")
+            },
         )
 
-        resp = client.get("/api/constituencies?sort_by=total_votes&sort_dir=desc")
+        resp = client.get(
+            "/api/constituencies?sort_by=total_votes&sort_dir=desc")
         data = resp.json()
         votes = [c["total_votes"] for c in data["constituencies"]]
         assert votes == sorted(votes, reverse=True)
@@ -259,7 +297,10 @@ class TestErrorHandlingFlow:
         content = "Bedford,6643,C,5276,L\nBadLine\nAlsoInvalid,abc,C"
         resp = client.post(
             "/api/upload",
-            files={"file": ("mixed.txt", io.BytesIO(content.encode()), "text/plain")},
+            files={
+                "file":
+                ("mixed.txt", io.BytesIO(content.encode()), "text/plain")
+            },
         )
         assert resp.status_code == 201
         data = resp.json()
@@ -273,7 +314,10 @@ class TestErrorHandlingFlow:
         content = "Bedford,1000,C,2000,L\nNonexistent,500,C,300,L"
         resp = client.post(
             "/api/upload",
-            files={"file": ("unmatched.txt", io.BytesIO(content.encode()), "text/plain")},
+            files={
+                "file":
+                ("unmatched.txt", io.BytesIO(content.encode()), "text/plain")
+            },
         )
         assert resp.status_code == 201
         data = resp.json()

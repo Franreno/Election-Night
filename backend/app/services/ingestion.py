@@ -127,7 +127,7 @@ def ingest_file(db: Session,
                 flag_modified(upload_log, "errors")
                 continue
 
-            _upsert_results(db, constituency, parsed)
+            _upsert_results(db, constituency, parsed, upload_log.id)
             upload_log.processed_lines += 1
 
         upload_log.status = "completed"
@@ -155,8 +155,10 @@ def ingest_file(db: Session,
     return upload_log
 
 
-def _upsert_results(db: Session, constituency: Constituency,
-                    parsed: ParsedConstituencyResult) -> None:
+def _upsert_results(db: Session,
+                    constituency: Constituency,
+                    parsed: ParsedConstituencyResult,
+                    upload_id: int | None = None) -> None:
     """Upsert party results for an existing constituency."""
     dialect = db.bind.dialect.name
 
@@ -166,12 +168,14 @@ def _upsert_results(db: Session, constituency: Constituency,
                 constituency_id=constituency.id,
                 party_code=party_code,
                 votes=votes,
+                upload_id=upload_id,
             )
             stmt = stmt.on_conflict_do_update(
                 constraint="uq_constituency_party",
                 set_={
                     "votes": votes,
                     "updated_at": func.now(),
+                    "upload_id": upload_id,
                 },
             )
             db.execute(stmt)
@@ -186,7 +190,9 @@ def _upsert_results(db: Session, constituency: Constituency,
                     constituency_id=constituency.id,
                     party_code=party_code,
                     votes=votes,
+                    upload_id=upload_id,
                 )
                 db.add(result)
             else:
                 result.votes = votes
+                result.upload_id = upload_id

@@ -4,6 +4,7 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     DATABASE_URL: str = "postgresql://postgres:postgres@db:5432/election"
     CORS_ORIGINS: list[str] = ["http://localhost:3000"]
+    MAX_UPLOAD_SIZE_BYTES: int = 100 * 1024 * 1024  # 100MB
 
     model_config = {"env_file": ".env"}
 

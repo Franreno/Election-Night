@@ -1,6 +1,5 @@
 """Unit tests for constituency_service module."""
 
-import pytest
 
 from app.models.constituency import Constituency
 from app.models.region import Region
@@ -21,7 +20,8 @@ def _seed(db_session, with_region=False):
         db_session.flush()
 
     c1 = Constituency(name="Bedford", region_id=region.id if region else None)
-    c2 = Constituency(name="Sheffield Hallam", region_id=region.id if region else None)
+    c2 = Constituency(name="Sheffield Hallam",
+                      region_id=region.id if region else None)
     c3 = Constituency(name="Empty Constituency")
     db_session.add_all([c1, c2, c3])
     db_session.flush()
@@ -37,6 +37,7 @@ def _seed(db_session, with_region=False):
 
 
 class TestGetAllConstituencies:
+
     def test_returns_all_constituencies(self, db_session):
         _seed(db_session)
         result = get_all_constituencies(db_session)
@@ -71,19 +72,25 @@ class TestGetAllConstituencies:
 
     def test_sort_by_name_asc(self, db_session):
         _seed(db_session)
-        result = get_all_constituencies(db_session, sort_by="name", sort_dir="asc")
+        result = get_all_constituencies(db_session,
+                                        sort_by="name",
+                                        sort_dir="asc")
         names = [c["name"] for c in result["constituencies"]]
         assert names == sorted(names)
 
     def test_sort_by_name_desc(self, db_session):
         _seed(db_session)
-        result = get_all_constituencies(db_session, sort_by="name", sort_dir="desc")
+        result = get_all_constituencies(db_session,
+                                        sort_by="name",
+                                        sort_dir="desc")
         names = [c["name"] for c in result["constituencies"]]
         assert names == sorted(names, reverse=True)
 
     def test_sort_by_total_votes(self, db_session):
         _seed(db_session)
-        result = get_all_constituencies(db_session, sort_by="total_votes", sort_dir="desc")
+        result = get_all_constituencies(db_session,
+                                        sort_by="total_votes",
+                                        sort_dir="desc")
         votes = [c["total_votes"] for c in result["constituencies"]]
         assert votes == sorted(votes, reverse=True)
 
@@ -111,6 +118,7 @@ class TestGetAllConstituencies:
 
 
 class TestGetAllConstituenciesSummary:
+
     def test_returns_summary(self, db_session):
         _seed(db_session, with_region=True)
         result = get_all_constituencies_summary(db_session)
@@ -120,7 +128,8 @@ class TestGetAllConstituenciesSummary:
     def test_summary_format(self, db_session):
         _seed(db_session, with_region=True)
         result = get_all_constituencies_summary(db_session)
-        bedford = next(c for c in result["constituencies"] if c["name"] == "Bedford")
+        bedford = next(c for c in result["constituencies"]
+                       if c["name"] == "Bedford")
         assert bedford["winning_party_code"] == "C"
         assert bedford["region_name"] == "East of England"
 
@@ -136,17 +145,20 @@ class TestGetAllConstituenciesSummary:
         db_session.commit()
 
         result = get_all_constituencies_summary(db_session)
-        tied = next(c for c in result["constituencies"] if c["name"] == "Tied Place")
+        tied = next(c for c in result["constituencies"]
+                    if c["name"] == "Tied Place")
         assert tied["winning_party_code"] is None
 
     def test_constituency_without_results(self, db_session):
         _seed(db_session)
         result = get_all_constituencies_summary(db_session)
-        empty = next(c for c in result["constituencies"] if c["name"] == "Empty Constituency")
+        empty = next(c for c in result["constituencies"]
+                     if c["name"] == "Empty Constituency")
         assert empty["winning_party_code"] is None
 
 
 class TestGetConstituencyById:
+
     def test_returns_constituency(self, db_session):
         c1, _, _, _ = _seed(db_session)
         result = get_constituency_by_id(db_session, c1.id)

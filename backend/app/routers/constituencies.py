@@ -22,8 +22,8 @@ router = APIRouter(prefix="/api/constituencies", tags=["constituencies"])
 def list_constituencies(
         search: str | None = Query(None,
                                    description="Search constituency by name"),
-        region_ids: str | None = Query(None,
-                                       description="Comma-separated region IDs to filter by"),
+        region_ids: str | None = Query(
+            None, description="Comma-separated region IDs to filter by"),
         page: int = Query(1, ge=1),
         page_size: int = Query(50, ge=1, le=200),
         sort_by: Literal["name", "total_votes", "winning_party"]
@@ -41,7 +41,9 @@ def list_constituencies(
     parsed_region_ids = None
     if region_ids:
         try:
-            parsed_region_ids = [int(id.strip()) for id in region_ids.split(",") if id.strip()]
+            parsed_region_ids = [
+                int(id.strip()) for id in region_ids.split(",") if id.strip()
+            ]
         except ValueError:
             parsed_region_ids = None
 

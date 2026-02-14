@@ -14,7 +14,9 @@ def _seed_regions(db_session):
     db_session.add_all([r1, r2, r3])
     db_session.flush()
 
-    c1 = Constituency(name="Westminster", pcon24_code="E14001", region_id=r1.id)
+    c1 = Constituency(name="Westminster",
+                      pcon24_code="E14001",
+                      region_id=r1.id)
     c2 = Constituency(name="Hackney", pcon24_code="E14002", region_id=r1.id)
     c3 = Constituency(name="Bedford", pcon24_code="E14003", region_id=r2.id)
     db_session.add_all([c1, c2, c3])
@@ -32,6 +34,7 @@ def _seed_regions(db_session):
 
 
 class TestGetAllRegions:
+
     def test_returns_all_regions(self, db_session):
         _seed_regions(db_session)
         result = get_all_regions(db_session)
@@ -66,6 +69,7 @@ class TestGetAllRegions:
 
 
 class TestGetRegionDetail:
+
     def test_returns_region_detail(self, db_session):
         r1, _, _, _, _, _ = _seed_regions(db_session)
         result = get_region_detail(db_session, r1.id)
