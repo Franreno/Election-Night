@@ -11,6 +11,11 @@ __pycache__/
 htmlcov/
 *.cover
 
+# Playwright
+frontend/test-results/
+frontend/playwright-report/
+frontend/blob-report/
+
 # Virtual environments
 venv/
 env/
