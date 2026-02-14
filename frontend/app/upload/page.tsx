@@ -1,10 +1,16 @@
 "use client";
 
+import { useState } from "react";
 import { FileDropzone } from "@/components/upload/file-dropzone";
 import { UploadHistoryTable } from "@/components/upload/upload-history-table";
+import { UploadStatsCard } from "@/components/upload/upload-stats";
+import { UploadFiltersBar } from "@/components/upload/upload-filters";
 import { Separator } from "@/components/ui/separator";
+import type { UploadFilters } from "@/hooks/use-uploads";
 
 export default function UploadPage() {
+  const [filters, setFilters] = useState<UploadFilters>({});
+
   return (
     <div>
       <h2 className="text-2xl font-semibold">Upload Results</h2>
@@ -18,10 +24,15 @@ export default function UploadPage() {
 
       <Separator className="my-8" />
 
-      <div>
-        <h3 className="text-lg font-semibold">Upload History</h3>
-        <div className="mt-4">
-          <UploadHistoryTable />
+      <div className="space-y-6">
+        <UploadStatsCard />
+
+        <div>
+          <h3 className="text-lg font-semibold">Upload History</h3>
+          <div className="mt-4 space-y-4">
+            <UploadFiltersBar filters={filters} onFiltersChange={setFilters} />
+            <UploadHistoryTable filters={filters} />
+          </div>
         </div>
       </div>
     </div>

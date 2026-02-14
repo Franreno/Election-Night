@@ -6,6 +6,7 @@ import type {
   ConstituencySummaryListResponse,
   UploadResponse,
   UploadListResponse,
+  UploadStatsResponse,
   RegionListResponse,
   RegionDetail,
 } from "./types";
@@ -39,12 +40,29 @@ export const fetchConstituency = (id: number) =>
 export const fetchUploads = (params?: {
   page?: number;
   page_size?: number;
+  status?: string;
+  search?: string;
 }) => {
   const qs = new URLSearchParams();
   if (params?.page) qs.set("page", String(params.page));
   if (params?.page_size) qs.set("page_size", String(params.page_size));
+  if (params?.status) qs.set("status", params.status);
+  if (params?.search) qs.set("search", params.search);
   return apiFetch<UploadListResponse>(`/api/uploads?${qs}`);
 };
+
+export const deleteUpload = async (id: number): Promise<void> => {
+  const res = await fetch(`${API_BASE}/api/uploads/${id}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new Error(body.detail || "Delete failed");
+  }
+};
+
+export const fetchUploadStats = () =>
+  apiFetch<UploadStatsResponse>("/api/uploads/stats");
 
 export const uploadFile = async (file: File): Promise<UploadResponse> => {
   const formData = new FormData();
