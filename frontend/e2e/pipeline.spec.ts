@@ -13,7 +13,11 @@ const FIXTURE_DIR = path.join(__dirname, "fixtures");
  *   4. Verify each constituency has correct data & winner
  *   5. Upload file 2 (6 updates + 6 new)
  *   6. Verify updates, untouched, and new constituencies
- *   7. Delete upload 1 → verify soft-delete invalidates results
+ *   7. Delete upload 2 → verify rollback restores file 1 values
+ *   8. Delete upload 1 → verify clean state (all 0 votes)
+ *   9. Re-upload both files
+ *  10. Delete upload 1 first → verify upload 2 values retained
+ *  11. Delete upload 2 → verify clean state
  */
 
 // --- Test Data ---
@@ -238,7 +242,7 @@ test.describe("Full pipeline", () => {
     }
   });
 
-  test("step 8: delete upload 1 from history", async ({ page }) => {
+  test("step 8: delete upload 2 — triggers rollback", async ({ page }) => {
     await page.goto("/upload");
     await page.waitForLoadState("networkidle");
 
@@ -248,11 +252,11 @@ test.describe("Full pipeline", () => {
     // Count rows before delete
     const rowsBefore = await table.locator("tbody tr").count();
 
-    // Find the first row with file 1 name and delete it
-    const file1Row = table.locator("tbody tr", { hasText: FILE_1_NAME }).first();
-    await expect(file1Row).toBeVisible();
+    // Find upload 2 row and delete it
+    const file2Row = table.locator("tbody tr", { hasText: FILE_2_NAME }).first();
+    await expect(file2Row).toBeVisible();
 
-    const deleteButton = file1Row.locator('button[title="Delete upload"]');
+    const deleteButton = file2Row.locator('button[title="Delete upload"]');
     await deleteButton.click();
 
     // Confirm deletion
@@ -267,13 +271,36 @@ test.describe("Full pipeline", () => {
     const rowsAfter = await table.locator("tbody tr").count();
     expect(rowsAfter).toBe(rowsBefore - 1);
 
-    // File 2 should still be there
-    await expect(table.getByText(FILE_2_NAME).first()).toBeVisible();
+    // Upload 1 should still be there
+    await expect(table.getByText(FILE_1_NAME).first()).toBeVisible();
   });
 
-  test("step 9a: after delete — upload-1-only constituencies have 0 votes", async ({ page }) => {
-    // The 6 constituencies that were only in upload 1 should now show 0 votes
-    // because their results are linked to the soft-deleted upload
+  test("step 9a: after delete 2 — overlapping constituencies roll back to file 1 values", async ({ page }) => {
+    // The 6 constituencies updated by file 2 should ROLL BACK to file 1 values
+    // because deleting upload 2 restores the previous history entry (upload 1)
+    const file1Originals = FILE_1_DATA.filter(
+      (c) => FILE_2_UPDATES.some((u) => u.name === c.name)
+    );
+    for (const c of file1Originals) {
+      await page.goto("/constituencies");
+      await page.waitForLoadState("networkidle");
+      await expect(page.locator("table")).toBeVisible({ timeout: 10_000 });
+
+      const searchInput = page.getByPlaceholder(/search/i);
+      await searchInput.fill(c.name);
+      await page.waitForTimeout(500);
+      await page.waitForLoadState("networkidle");
+
+      const row = page.locator("table tbody tr").first();
+      await expect(row.getByText(c.name)).toBeVisible({ timeout: 5_000 });
+      await expect(row.getByText(c.winner)).toBeVisible();
+      await expect(row.getByText(formatNumber(c.totalVotes))).toBeVisible();
+    }
+  });
+
+  test("step 9b: after delete 2 — upload-1-only constituencies unchanged", async ({ page }) => {
+    // The 6 constituencies only in upload 1 should still have file 1 values
+    // (they were never touched by upload 2)
     for (const c of FILE_1_ONLY) {
       await page.goto("/constituencies");
       await page.waitForLoadState("networkidle");
@@ -286,14 +313,122 @@ test.describe("Full pipeline", () => {
 
       const row = page.locator("table tbody tr").first();
       await expect(row.getByText(c.name)).toBeVisible({ timeout: 5_000 });
-      // Total votes should now be 0
+      await expect(row.getByText(c.winner)).toBeVisible();
+      await expect(row.getByText(formatNumber(c.totalVotes))).toBeVisible();
+    }
+  });
+
+  test("step 9c: after delete 2 — file-2-only constituencies have 0 votes", async ({ page }) => {
+    // The 6 new constituencies from file 2 should have 0 votes
+    // (no prior upload created them, so the results are deleted on rollback)
+    for (const c of FILE_2_NEW) {
+      await page.goto("/constituencies");
+      await page.waitForLoadState("networkidle");
+      await expect(page.locator("table")).toBeVisible({ timeout: 10_000 });
+
+      const searchInput = page.getByPlaceholder(/search/i);
+      await searchInput.fill(c.name);
+      await page.waitForTimeout(500);
+      await page.waitForLoadState("networkidle");
+
+      const row = page.locator("table tbody tr").first();
+      await expect(row.getByText(c.name)).toBeVisible({ timeout: 5_000 });
       await expect(row.getByText("0")).toBeVisible();
     }
   });
 
-  test("step 9b: after delete — updated constituencies keep file 2 values", async ({ page }) => {
-    // The 6 constituencies updated by file 2 should retain file 2 values
-    // because their results' upload_id points to upload 2 (not deleted)
+  test("step 10: delete upload 1 — clean state, all 0 votes", async ({ page }) => {
+    await page.goto("/upload");
+    await page.waitForLoadState("networkidle");
+
+    const table = page.locator("table");
+    await expect(table).toBeVisible({ timeout: 5_000 });
+
+    // Delete remaining upload 1
+    const file1Row = table.locator("tbody tr", { hasText: FILE_1_NAME }).first();
+    await expect(file1Row).toBeVisible();
+
+    const deleteButton = file1Row.locator('button[title="Delete upload"]');
+    await deleteButton.click();
+
+    await expect(page.getByText("Delete upload?")).toBeVisible();
+    await page.getByRole("button", { name: "Delete" }).click();
+
+    await page.waitForTimeout(2000);
+    await page.waitForLoadState("networkidle");
+
+
+    // Verify ALL constituencies are back to 0 votes
+    const allConstituencies = [...FILE_1_DATA, ...FILE_2_NEW];
+    for (const c of allConstituencies) {
+      await page.goto("/constituencies");
+      await page.waitForLoadState("networkidle");
+      await expect(page.locator("table")).toBeVisible({ timeout: 10_000 });
+
+      const searchInput = page.getByPlaceholder(/search/i);
+      await searchInput.fill(c.name);
+      await page.waitForTimeout(500);
+      await page.waitForLoadState("networkidle");
+
+      const row = page.locator("table tbody tr").first();
+      await expect(row.getByText(c.name)).toBeVisible({ timeout: 5_000 });
+      await expect(row.getByText("0")).toBeVisible();
+    }
+  });
+
+  // =========================================================================
+  // Reverse scenario: delete upload 1 first, verify upload 2 values retained
+  // =========================================================================
+
+  test("step 11: re-upload file 1", async ({ page }) => {
+    await page.goto("/upload");
+    await page.waitForLoadState("networkidle");
+
+    const fileInput = page.locator('input[type="file"]');
+    await fileInput.setInputFiles(path.join(FIXTURE_DIR, FILE_1_NAME));
+
+    await expect(page.getByText("Upload complete")).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText("12 lines processed")).toBeVisible();
+  });
+
+  test("step 12: re-upload file 2", async ({ page }) => {
+    await page.goto("/upload");
+    await page.waitForLoadState("networkidle");
+
+    const fileInput = page.locator('input[type="file"]');
+    await fileInput.setInputFiles(path.join(FIXTURE_DIR, FILE_2_NAME));
+
+    await expect(page.getByText("Upload complete")).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText("12 lines processed")).toBeVisible();
+  });
+
+  test("step 13: delete upload 1 (older) — upload 2 values retained", async ({ page }) => {
+    await page.goto("/upload");
+    await page.waitForLoadState("networkidle");
+
+    const table = page.locator("table");
+    await expect(table).toBeVisible({ timeout: 5_000 });
+
+    // Find and delete upload 1
+    const file1Row = table.locator("tbody tr", { hasText: FILE_1_NAME }).first();
+    await expect(file1Row).toBeVisible();
+
+    const deleteButton = file1Row.locator('button[title="Delete upload"]');
+    await deleteButton.click();
+
+    await expect(page.getByText("Delete upload?")).toBeVisible();
+    await page.getByRole("button", { name: "Delete" }).click();
+
+    await page.waitForTimeout(2000);
+    await page.waitForLoadState("networkidle");
+
+    // Upload 2 should still be there
+    await expect(table.getByText(FILE_2_NAME).first()).toBeVisible();
+  });
+
+  test("step 14a: after delete 1 — overlapping constituencies keep file 2 values", async ({ page }) => {
+    // The 6 constituencies updated by both uploads should keep file 2 values
+    // because upload 2 was the latest to touch them (upload_id = upload 2)
     for (const c of FILE_2_UPDATES) {
       await page.goto("/constituencies");
       await page.waitForLoadState("networkidle");
@@ -311,8 +446,27 @@ test.describe("Full pipeline", () => {
     }
   });
 
-  test("step 9c: after delete — new constituencies from file 2 unchanged", async ({ page }) => {
-    // The 6 new constituencies from file 2 should be completely unaffected
+  test("step 14b: after delete 1 — upload-1-only constituencies have 0 votes", async ({ page }) => {
+    // The 6 constituencies only in upload 1 should have 0 votes
+    // (upload 1 was the only upload to create them, so rollback deletes them)
+    for (const c of FILE_1_ONLY) {
+      await page.goto("/constituencies");
+      await page.waitForLoadState("networkidle");
+      await expect(page.locator("table")).toBeVisible({ timeout: 10_000 });
+
+      const searchInput = page.getByPlaceholder(/search/i);
+      await searchInput.fill(c.name);
+      await page.waitForTimeout(500);
+      await page.waitForLoadState("networkidle");
+
+      const row = page.locator("table tbody tr").first();
+      await expect(row.getByText(c.name)).toBeVisible({ timeout: 5_000 });
+      await expect(row.getByText("0")).toBeVisible();
+    }
+  });
+
+  test("step 14c: after delete 1 — file-2-only constituencies unchanged", async ({ page }) => {
+    // The 6 new constituencies from file 2 should be unaffected
     for (const c of FILE_2_NEW) {
       await page.goto("/constituencies");
       await page.waitForLoadState("networkidle");
@@ -330,43 +484,23 @@ test.describe("Full pipeline", () => {
     }
   });
 
-  test("step 10: cleanup — delete upload 2 to return to empty state", async ({ page }) => {
+  test("step 15: cleanup — delete upload 2, verify clean state", async ({ page }) => {
     await page.goto("/upload");
     await page.waitForLoadState("networkidle");
 
     const table = page.locator("table");
     await expect(table).toBeVisible({ timeout: 5_000 });
 
-    // Delete remaining upload(s) one by one
-    let deleteButton = table.locator('button[title="Delete upload"]').first();
-    while (await deleteButton.isVisible().catch(() => false)) {
-      await deleteButton.click();
-      await expect(page.getByText("Delete upload?")).toBeVisible();
-      await page.getByRole("button", { name: "Delete" }).click();
-      await page.waitForTimeout(2000);
-      await page.waitForLoadState("networkidle");
-      deleteButton = table.locator('button[title="Delete upload"]').first();
-    }
+    const file2Row = table.locator("tbody tr", { hasText: FILE_2_NAME }).first();
+    await expect(file2Row).toBeVisible();
 
-    // Verify empty state — no upload history
-    await expect(page.getByText("No uploads yet")).toBeVisible({ timeout: 5_000 });
+    const deleteButton = file2Row.locator('button[title="Delete upload"]');
+    await deleteButton.click();
 
-    // Verify ALL constituencies are back to 0 votes — check every constituency
-    // that was touched by either upload (file 1 + file 2 updates + file 2 new)
-    const allConstituencies = [...FILE_1_DATA, ...FILE_2_NEW];
-    for (const c of allConstituencies) {
-      await page.goto("/constituencies");
-      await page.waitForLoadState("networkidle");
-      await expect(page.locator("table")).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText("Delete upload?")).toBeVisible();
+    await page.getByRole("button", { name: "Delete" }).click();
 
-      const searchInput = page.getByPlaceholder(/search/i);
-      await searchInput.fill(c.name);
-      await page.waitForTimeout(500);
-      await page.waitForLoadState("networkidle");
-
-      const row = page.locator("table tbody tr").first();
-      await expect(row.getByText(c.name)).toBeVisible({ timeout: 5_000 });
-      await expect(row.getByText("0")).toBeVisible();
-    }
+    await page.waitForTimeout(2000);
+    await page.waitForLoadState("networkidle");
   });
 });
