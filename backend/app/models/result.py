@@ -39,6 +39,8 @@ class Result(Base):
 
     constituency = relationship("Constituency", back_populates="results")
     upload_log = relationship("UploadLog", back_populates="results")
+    history = relationship("ResultHistory", back_populates="result",
+                           cascade="all, delete-orphan")
 
     __table_args__ = (
         UniqueConstraint("constituency_id",

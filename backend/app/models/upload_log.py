@@ -19,3 +19,5 @@ class UploadLog(Base):
     deleted_at = Column(DateTime(timezone=True), nullable=True, index=True)
 
     results = relationship("Result", back_populates="upload_log")
+    result_history = relationship("ResultHistory",
+                                  back_populates="upload_log")
