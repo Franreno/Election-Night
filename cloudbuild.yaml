@@ -86,10 +86,10 @@ substitutions:
   _REGION: europe-west1
   _BACKEND_SERVICE: election-backend
   _FRONTEND_SERVICE: election-frontend
-  _BACKEND_URL: https://election-backend-HASH.europe-west1.run.app  # Set after first deploy
+  _BACKEND_URL: https://election-backend-247697904207.europe-west1.run.app
   _DB_SECRET: election-db-url
   _CLOUD_SQL_CONNECTION: personal-cloud-42:europe-west1:election-night-instance
-  _CORS_ORIGINS: "[]"  # Set to frontend URL after first deploy
+  _CORS_ORIGINS: '["https://election-frontend-247697904207.europe-west1.run.app"]'
 
 options:
   logging: CLOUD_LOGGING_ONLY
