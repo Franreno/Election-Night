@@ -96,9 +96,7 @@ class TestSoftDeleteEndpoint:
         db_session.flush()
         # Record history (as ingestion would)
         db_session.add(
-            ResultHistory(result_id=result.id,
-                          upload_id=upload.id,
-                          votes=100))
+            ResultHistory(result_id=result.id, upload_id=upload.id, votes=100))
         db_session.commit()
 
         # Delete upload
@@ -157,8 +155,8 @@ class TestSoftDeleteRollback:
         assert result.votes == 100
         assert result.upload_id == uid1
 
-    def test_delete_removes_result_with_no_prior_upload(self, client,
-                                                        db_session):
+    def test_delete_removes_result_with_no_prior_upload(
+            self, client, db_session):
         """Upload 1 creates a result. Delete upload 1 → result deleted."""
         uid1 = self._seed_and_upload(client, db_session, "TestPlace",
                                      b"TestPlace,500,C", "only.txt")
@@ -175,8 +173,8 @@ class TestSoftDeleteRollback:
         result = db_session.query(Result).filter_by(party_code="C").first()
         assert result is None
 
-    def test_delete_only_affects_results_from_that_upload(self, client,
-                                                          db_session):
+    def test_delete_only_affects_results_from_that_upload(
+            self, client, db_session):
         """Upload 1 sets A. Upload 2 sets B. Delete upload 2 → A unchanged."""
         uid1 = self._seed_and_upload(client, db_session, "PlaceA",
                                      b"PlaceA,100,L", "first.txt")
@@ -188,8 +186,7 @@ class TestSoftDeleteRollback:
 
         db_session.expire_all()
         # PlaceA result unchanged
-        c_a = db_session.query(Constituency).filter_by(
-            name="PlaceA").first()
+        c_a = db_session.query(Constituency).filter_by(name="PlaceA").first()
         result_a = db_session.query(Result).filter_by(
             constituency_id=c_a.id).first()
         assert result_a is not None
@@ -197,8 +194,7 @@ class TestSoftDeleteRollback:
         assert result_a.upload_id == uid1
 
         # PlaceB result deleted (no prior history)
-        c_b = db_session.query(Constituency).filter_by(
-            name="PlaceB").first()
+        c_b = db_session.query(Constituency).filter_by(name="PlaceB").first()
         result_b = db_session.query(Result).filter_by(
             constituency_id=c_b.id).first()
         assert result_b is None

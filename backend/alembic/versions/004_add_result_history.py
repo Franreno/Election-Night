@@ -43,9 +43,9 @@ def upgrade() -> None:
         sa.CheckConstraint("votes >= 0", name="ck_history_votes_non_negative"),
     )
     op.create_index("ix_result_history_result_id", "result_history",
-                     ["result_id"])
+                    ["result_id"])
     op.create_index("ix_result_history_upload_id", "result_history",
-                     ["upload_id"])
+                    ["upload_id"])
 
     # Backfill: create one history row per existing result that has an upload_id
     op.execute("""

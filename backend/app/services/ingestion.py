@@ -169,8 +169,8 @@ def _upsert_results(db: Session,
             if result is not None:
                 db.add(
                     ResultHistory(result_id=result.id,
-                                 upload_id=upload_id,
-                                 votes=votes))
+                                  upload_id=upload_id,
+                                  votes=votes))
     else:
         for party_code, votes in parsed.party_votes.items():
             result = (db.query(Result).filter(

@@ -147,8 +147,8 @@ class TestIngestFile:
         u2 = ingest_file(db_session, "Bedford,500,C", "second.txt")
 
         c = db_session.query(Constituency).filter_by(name="Bedford").first()
-        result = db_session.query(Result).filter_by(
-            constituency_id=c.id, party_code="C").first()
+        result = db_session.query(Result).filter_by(constituency_id=c.id,
+                                                    party_code="C").first()
 
         history = db_session.query(ResultHistory).filter_by(
             result_id=result.id).order_by(ResultHistory.id).all()

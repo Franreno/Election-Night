@@ -29,14 +29,15 @@ def _rollback_results(db: Session, upload_id: int) -> None:
             continue
 
         # Find the most recent history entry from a non-deleted upload
-        prev_history = (db.query(ResultHistory).outerjoin(
-            UploadLog, ResultHistory.upload_id == UploadLog.id).filter(
-                ResultHistory.result_id == result_id,
-                ResultHistory.upload_id != upload_id,
-                # Accept entries with no upload or with non-deleted uploads
-                (ResultHistory.upload_id.is_(None)
-                 | UploadLog.deleted_at.is_(None)),
-            ).order_by(ResultHistory.id.desc()).first())
+        prev_history = (
+            db.query(ResultHistory).outerjoin(
+                UploadLog, ResultHistory.upload_id == UploadLog.id).filter(
+                    ResultHistory.result_id == result_id,
+                    ResultHistory.upload_id != upload_id,
+                    # Accept entries with no upload or with non-deleted uploads
+                    (ResultHistory.upload_id.is_(None)
+                     | UploadLog.deleted_at.is_(None)),
+                ).order_by(ResultHistory.id.desc()).first())
 
         if prev_history is not None:
             result.votes = prev_history.votes

@@ -33,6 +33,5 @@ class ResultHistory(Base):
     result = relationship("Result", back_populates="history")
     upload_log = relationship("UploadLog", back_populates="result_history")
 
-    __table_args__ = (
-        CheckConstraint("votes >= 0", name="ck_history_votes_non_negative"),
-    )
+    __table_args__ = (CheckConstraint("votes >= 0",
+                                      name="ck_history_votes_non_negative"), )
