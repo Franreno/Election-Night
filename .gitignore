@@ -34,3 +34,11 @@ Thumbs.db
 
 # Jupyter
 .ipynb_checkpoints/
+*.ipynb
+
+# Local dev artifacts
+PROJECT_STATUS.md
+/test*.txt
+
+# Generated E2E fixtures
+frontend/e2e/fixtures/pipeline-upload-*.txt
