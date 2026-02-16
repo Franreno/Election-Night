@@ -48,8 +48,8 @@ C4Context
 
 ```bash
 # 1. Clone the repository
-git clone <repository-url>
-cd tech_blueoasis
+git clone git@github.com:Franreno/Election-Night.git
+cd Election-Night
 
 # 2. Start all services (builds images, runs migrations automatically)
 make up
