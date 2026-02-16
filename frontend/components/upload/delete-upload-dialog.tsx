@@ -47,7 +47,7 @@ export function DeleteUploadDialog({
             This will remove{" "}
             <span className="font-medium">{filename || "this upload"}</span>{" "}
             from the upload history. Election results already processed by this
-            upload will remain in the system.
+            upload will NOT remain in the system.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
