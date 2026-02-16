@@ -136,7 +136,9 @@ Excludes soft-deleted uploads.
 
 ### `DELETE /api/uploads/{upload_id}`
 
-Soft-delete an upload (sets `deleted_at` timestamp).
+Soft-delete an upload (sets `deleted_at` timestamp) and roll back any results it last modified.
+
+When an upload is deleted, any results it last modified are rolled back to their previous values from the next most recent upload. If no prior upload exists for a result, the result is removed entirely.
 
 **Path Parameters**
 

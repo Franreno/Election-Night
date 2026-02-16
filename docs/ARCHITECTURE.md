@@ -128,9 +128,11 @@ Region filter selections on the constituencies page are stored in URL query para
 - Browser back/forward navigation preserves filters
 - Page refreshes don't lose filter state
 
-### Soft Delete
+### Soft Delete with Result Rollback
 
 Upload logs are never physically deleted. Setting `deleted_at` provides an audit trail while hiding deleted records from the UI and API responses.
+
+When an upload is soft-deleted, the system also rolls back any results that were last modified by that upload. A `result_history` table records every vote snapshot per upload, enabling the system to restore results to their previous values. If no prior upload exists for a result, it is removed entirely. This ensures that deleting an upload cleanly reverts the election state rather than leaving orphaned or zeroed-out results.
 
 ## Technology Choices
 

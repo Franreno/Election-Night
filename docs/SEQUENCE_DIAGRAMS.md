@@ -33,3 +33,11 @@ How the interactive choropleth map loads data and renders UK constituency bounda
 How a user drills into a single constituency from the table or map.
 
 ![Sequence diagram of constituency detail flow](./assets/constituency_detail_flow.svg)
+
+---
+
+## 5. Upload Delete with Rollback Flow
+
+How deleting an upload rolls back affected results to their previous values using the result history table.
+
+![Sequence diagram of upload delete with rollback flow](./assets/upload_delete_rollback_flow.svg)
