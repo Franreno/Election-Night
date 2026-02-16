@@ -91,7 +91,7 @@ export default function DashboardPage() {
       {/* KPI Strip */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <StatCard
-          title="Constituencies Declared"
+          title="Constituencies"
           value={numberFormatter.format(data.total_constituencies)}
         />
         <StatCard

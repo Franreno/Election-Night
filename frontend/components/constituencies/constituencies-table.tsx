@@ -87,7 +87,7 @@ export function ConstituenciesTable({
                   {c.winning_party_code ? (
                     <PartyBadge partyCode={c.winning_party_code} />
                   ) : (
-                    <span className="text-muted-foreground">Tied</span>
+                    <span className="text-muted-foreground">No Data</span>
                   )}
                 </TableCell>
                 <TableCell className="text-right">
