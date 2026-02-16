@@ -2,6 +2,7 @@
 
 from app.models.constituency import Constituency
 from app.models.result import Result
+from app.models.result_history import ResultHistory
 from app.services.ingestion import ConstituencyMatcher, ingest_file
 
 
@@ -128,3 +129,31 @@ class TestIngestFile:
         assert upload.id is not None
         assert upload.filename == "test.txt"
         assert upload.total_lines == 1
+
+    def test_ingest_creates_history_entry(self, db_session):
+        """Each upserted result should have a corresponding history row."""
+        _seed_constituencies(db_session, ["Bedford"])
+        upload = ingest_file(db_session, "Bedford,100,C,200,L", "test.txt")
+        history = db_session.query(ResultHistory).filter_by(
+            upload_id=upload.id).all()
+        assert len(history) == 2
+        votes_set = {h.votes for h in history}
+        assert votes_set == {100, 200}
+
+    def test_upsert_creates_new_history_entry(self, db_session):
+        """Two uploads touching the same result create two history rows."""
+        _seed_constituencies(db_session, ["Bedford"])
+        u1 = ingest_file(db_session, "Bedford,100,C", "first.txt")
+        u2 = ingest_file(db_session, "Bedford,500,C", "second.txt")
+
+        c = db_session.query(Constituency).filter_by(name="Bedford").first()
+        result = db_session.query(Result).filter_by(constituency_id=c.id,
+                                                    party_code="C").first()
+
+        history = db_session.query(ResultHistory).filter_by(
+            result_id=result.id).order_by(ResultHistory.id).all()
+        assert len(history) == 2
+        assert history[0].upload_id == u1.id
+        assert history[0].votes == 100
+        assert history[1].upload_id == u2.id
+        assert history[1].votes == 500

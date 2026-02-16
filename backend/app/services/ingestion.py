@@ -7,6 +7,7 @@ from sqlalchemy.orm.attributes import flag_modified
 
 from app.models.constituency import Constituency
 from app.models.result import Result
+from app.models.result_history import ResultHistory
 from app.models.upload_log import UploadLog
 from app.services.parser import ParsedConstituencyResult, parse_file
 
@@ -160,6 +161,16 @@ def _upsert_results(db: Session,
                 },
             )
             db.execute(stmt)
+            # Record history: look up the result_id and insert a history row
+            result = (db.query(Result).filter(
+                Result.constituency_id == constituency.id,
+                Result.party_code == party_code,
+            ).first())
+            if result is not None:
+                db.add(
+                    ResultHistory(result_id=result.id,
+                                  upload_id=upload_id,
+                                  votes=votes))
     else:
         for party_code, votes in parsed.party_votes.items():
             result = (db.query(Result).filter(
@@ -174,6 +185,11 @@ def _upsert_results(db: Session,
                     upload_id=upload_id,
                 )
                 db.add(result)
+                db.flush()
             else:
                 result.votes = votes
                 result.upload_id = upload_id
+            db.add(
+                ResultHistory(result_id=result.id,
+                              upload_id=upload_id,
+                              votes=votes))

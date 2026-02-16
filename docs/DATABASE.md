@@ -45,9 +45,19 @@ erDiagram
         timestamptz deleted_at "Nullable — soft delete"
     }
 
+    result_history {
+        int id PK
+        int result_id FK "NOT NULL"
+        int upload_id FK "Nullable"
+        int votes "NOT NULL, >= 0"
+        timestamptz created_at "DEFAULT now()"
+    }
+
     regions ||--o{ constituencies : "has"
     constituencies ||--o{ results : "has"
     upload_logs ||--o{ results : "created"
+    results ||--o{ result_history : "has"
+    upload_logs ||--o{ result_history : "created"
 ``` -->
 
 ![ER Diagram](./assets/er_diagram.svg)
@@ -110,6 +120,27 @@ Stores vote counts per party per constituency. The core data table.
 
 ---
 
+### `result_history`
+
+Tracks every vote snapshot per result per upload, enabling rollback when an upload is soft-deleted.
+
+| Column | Type | Constraints | Description |
+|--------|------|------------|-------------|
+| `id` | INTEGER | PK, auto-increment | History entry ID |
+| `result_id` | INTEGER | FK → results.id (CASCADE), NOT NULL, indexed | Parent result |
+| `upload_id` | INTEGER | FK → upload_logs.id (SET NULL), nullable, indexed | Upload that set this value |
+| `votes` | INTEGER | NOT NULL, CHECK >= 0 | Vote count at the time of this upload |
+| `created_at` | TIMESTAMPTZ | DEFAULT now() | Record creation time |
+
+**Constraints**:
+- `ck_history_votes_non_negative` — CHECK(votes >= 0): prevents negative vote counts
+
+**Relationship**: belongs to one `result`, optionally linked to one `upload_log`.
+
+Each time a result is created or updated by an upload, a history row is inserted recording the new vote value and the upload ID. When an upload is soft-deleted, affected results are rolled back to their most recent prior history entry. If no prior history exists, the result is removed.
+
+---
+
 ### `upload_logs`
 
 Tracks every file upload with processing statistics and soft-delete support.
@@ -144,6 +175,9 @@ Tracks every file upload with processing statistics and soft-delete support.
 | results | idx | constituency_id | Foreign key |
 | results | idx | party_code | Lookup |
 | results | idx | upload_id | Foreign key |
+| result_history | PK | id | Primary |
+| result_history | idx | result_id | Foreign key |
+| result_history | idx | upload_id | Foreign key |
 | upload_logs | PK | id | Primary |
 | upload_logs | idx | deleted_at | Soft-delete filter |
 
@@ -170,6 +204,12 @@ Creates the three core tables:
 - Adds `deleted_at` to `upload_logs` for soft-delete support
 - Adds `upload_id` foreign key to `results` for tracking which upload created/updated each result
 
+### Migration 004 — Result History
+
+- Creates the `result_history` table for tracking vote snapshots per upload
+- Backfills one history row per existing result that has an `upload_id`
+- Enables rollback of results when an upload is soft-deleted
+
 ## Seed Data
 
 The migration pipeline (002) pre-seeds the database with:
@@ -192,3 +232,15 @@ When a result file is uploaded:
 4. Party results from previous uploads that are **not** in the current file remain unchanged
 
 This ensures the database always represents the latest known state while preserving results from earlier uploads that haven't been superseded.
+
+### Delete Semantics (Rollback)
+
+When an upload is soft-deleted:
+
+1. All results whose `upload_id` matches the deleted upload are identified via `result_history`
+2. For each affected result, the most recent history entry from a **non-deleted** upload is found
+3. If a prior entry exists, the result's `votes` and `upload_id` are restored to those values
+4. If no prior entry exists (i.e., this was the first upload to create the result), the result row is deleted
+5. History rows for the deleted upload are cleaned up
+
+This ensures that deleting an upload reverts the election state to what it was before that upload, rather than leaving orphaned or zeroed-out results.
