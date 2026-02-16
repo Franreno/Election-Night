@@ -82,7 +82,7 @@ steps:
     waitFor: [push-frontend]
 
 substitutions:
-  _AR_REPO: europe-west1-docker.pkg.dev/personal-cloud-42/election-night
+  _AR_REPO: europe-west1-docker.pkg.dev/personal-cloud-42/elec-night
   _REGION: europe-west1
   _BACKEND_SERVICE: election-backend
   _FRONTEND_SERVICE: election-frontend
