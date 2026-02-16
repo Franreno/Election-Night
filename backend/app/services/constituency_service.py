@@ -1,9 +1,18 @@
-from sqlalchemy import func, select
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy import func, or_, select
+from sqlalchemy.orm import Session, joinedload, subqueryload
 
 from app.constants import PARTY_CODE_MAP
 from app.models.constituency import Constituency
 from app.models.result import Result
+from app.models.upload_log import UploadLog
+
+
+def _active_results(results):
+    """Exclude results whose upload has been soft-deleted."""
+    return [
+        r for r in results if r.upload_id is None or r.upload_log is None
+        or r.upload_log.deleted_at is None
+    ]
 
 
 def _build_sort_clause(sort_by: str | None, sort_dir: str):
@@ -11,18 +20,24 @@ def _build_sort_clause(sort_by: str | None, sort_dir: str):
     is_desc = sort_dir == "desc"
 
     if sort_by == "total_votes":
-        sub = (select(func.coalesce(
-            func.sum(Result.votes),
-            0)).where(Result.constituency_id == Constituency.id).correlate(
-                Constituency).scalar_subquery())
+        sub = (select(func.coalesce(func.sum(
+            Result.votes), 0)).select_from(Result).outerjoin(
+                UploadLog, Result.upload_id == UploadLog.id).where(
+                    Result.constituency_id == Constituency.id,
+                    or_(Result.upload_id.is_(None),
+                        UploadLog.deleted_at.is_(None)),
+                ).correlate(Constituency).scalar_subquery())
         return sub.desc() if is_desc else sub.asc()
 
     if sort_by == "winning_party":
         # Subquery: party_code of the result with the most votes
-        sub = (select(Result.party_code).where(
-            Result.constituency_id == Constituency.id).correlate(
-                Constituency).order_by(
-                    Result.votes.desc()).limit(1).scalar_subquery())
+        sub = (select(Result.party_code).select_from(Result).outerjoin(
+            UploadLog, Result.upload_id == UploadLog.id).where(
+                Result.constituency_id == Constituency.id,
+                or_(Result.upload_id.is_(None),
+                    UploadLog.deleted_at.is_(None)),
+            ).correlate(Constituency).order_by(
+                Result.votes.desc()).limit(1).scalar_subquery())
         return sub.desc() if is_desc else sub.asc()
 
     # Default: sort by name
@@ -40,7 +55,7 @@ def get_all_constituencies(
     sort_dir: str = "asc",
 ) -> dict:
     query = db.query(Constituency).options(
-        joinedload(Constituency.results),
+        subqueryload(Constituency.results).joinedload(Result.upload_log),
         joinedload(Constituency.region),
     )
 
@@ -76,7 +91,7 @@ def get_all_constituencies(
 def get_all_constituencies_summary(db: Session) -> dict:
     """Return all constituencies with just id, name, and winning party code."""
     constituencies = (db.query(Constituency).options(
-        joinedload(Constituency.results),
+        subqueryload(Constituency.results).joinedload(Result.upload_log),
         joinedload(Constituency.region),
     ).order_by(Constituency.name.asc()).all())
 
@@ -85,7 +100,7 @@ def get_all_constituencies_summary(db: Session) -> dict:
         winner_code = None
         max_votes = -1
         is_tied = False
-        for r in c.results:
+        for r in _active_results(c.results):
             if r.votes > max_votes:
                 max_votes = r.votes
                 winner_code = r.party_code
@@ -111,7 +126,7 @@ def get_all_constituencies_summary(db: Session) -> dict:
 
 def get_constituency_by_id(db: Session, constituency_id: int) -> dict | None:
     constituency = (db.query(Constituency).options(
-        joinedload(Constituency.results),
+        subqueryload(Constituency.results).joinedload(Result.upload_log),
         joinedload(Constituency.region),
     ).filter(Constituency.id == constituency_id).first())
     if not constituency:
@@ -121,14 +136,15 @@ def get_constituency_by_id(db: Session, constituency_id: int) -> dict | None:
 
 def _format_constituency(constituency: Constituency) -> dict:
     """Format a constituency with computed vote percentages and winner."""
-    total_votes = sum(r.votes for r in constituency.results)
+    active = _active_results(constituency.results)
+    total_votes = sum(r.votes for r in active)
 
     parties = []
     max_votes = -1
     winner_code = None
     is_tied = False
 
-    for r in constituency.results:
+    for r in active:
         pct = round(
             (r.votes / total_votes * 100), 2) if total_votes > 0 else 0.0
         parties.append({

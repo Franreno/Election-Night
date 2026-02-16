@@ -3,6 +3,15 @@ from sqlalchemy.orm import Session, joinedload
 
 from app.models.constituency import Constituency
 from app.models.region import Region
+from app.models.result import Result
+
+
+def _active_results(results):
+    """Exclude results whose upload has been soft-deleted."""
+    return [
+        r for r in results if r.upload_id is None or r.upload_log is None
+        or r.upload_log.deleted_at is None
+    ]
 
 
 def get_all_regions(db: Session) -> dict:
@@ -25,8 +34,9 @@ def get_all_regions(db: Session) -> dict:
 
 def get_region_detail(db: Session, region_id: int) -> dict | None:
     region = (db.query(Region).options(
-        joinedload(Region.constituencies).joinedload(
-            Constituency.results)).filter(Region.id == region_id).first())
+        joinedload(Region.constituencies).subqueryload(
+            Constituency.results).joinedload(
+                Result.upload_log)).filter(Region.id == region_id).first())
     if not region:
         return None
 
@@ -40,7 +50,7 @@ def get_region_detail(db: Session, region_id: int) -> dict | None:
         winner_code = None
         max_votes = -1
         is_tied = False
-        for r in c.results:
+        for r in _active_results(c.results):
             if r.votes > max_votes:
                 max_votes = r.votes
                 winner_code = r.party_code

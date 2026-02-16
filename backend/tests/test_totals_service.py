@@ -2,6 +2,7 @@
 
 from app.models.constituency import Constituency
 from app.models.result import Result
+from app.models.upload_log import UploadLog
 from app.services.totals_service import get_total_results
 
 
@@ -94,3 +95,133 @@ class TestGetTotalResults:
         assert parties["C"]["party_name"] == "Conservative Party"
         assert parties["L"]["party_name"] == "Labour Party"
         assert parties["G"]["party_name"] == "Green Party"
+
+
+class TestTotalsSoftDeleteFiltering:
+    """Totals should exclude results from soft-deleted uploads."""
+
+    def test_votes_exclude_soft_deleted(self, db_session):
+        from datetime import datetime, timezone  # noqa: PLC0415
+
+        deleted_upload = UploadLog(
+            filename="deleted.txt",
+            status="completed",
+            total_lines=1,
+            processed_lines=1,
+            error_lines=0,
+            deleted_at=datetime.now(timezone.utc),
+        )
+        active_upload = UploadLog(
+            filename="active.txt",
+            status="completed",
+            total_lines=1,
+            processed_lines=1,
+            error_lines=0,
+        )
+        db_session.add_all([deleted_upload, active_upload])
+        db_session.flush()
+
+        c = Constituency(name="TestPlace")
+        db_session.add(c)
+        db_session.flush()
+
+        db_session.add_all([
+            Result(constituency_id=c.id,
+                   party_code="C",
+                   votes=9000,
+                   upload_id=deleted_upload.id),
+            Result(constituency_id=c.id,
+                   party_code="L",
+                   votes=3000,
+                   upload_id=active_upload.id),
+        ])
+        db_session.commit()
+
+        result = get_total_results(db_session)
+        # Only the active upload's votes should count
+        assert result["total_votes"] == 3000
+        parties = {p["party_code"]: p for p in result["parties"]}
+        assert "C" not in parties
+        assert parties["L"]["total_votes"] == 3000
+
+    def test_seats_exclude_soft_deleted(self, db_session):
+        from datetime import datetime, timezone  # noqa: PLC0415
+
+        deleted_upload = UploadLog(
+            filename="deleted.txt",
+            status="completed",
+            total_lines=1,
+            processed_lines=1,
+            error_lines=0,
+            deleted_at=datetime.now(timezone.utc),
+        )
+        db_session.add(deleted_upload)
+        db_session.flush()
+
+        c = Constituency(name="SeatTest")
+        db_session.add(c)
+        db_session.flush()
+
+        # C has most votes but from deleted upload — should NOT get a seat
+        db_session.add_all([
+            Result(constituency_id=c.id,
+                   party_code="C",
+                   votes=10000,
+                   upload_id=deleted_upload.id),
+            Result(constituency_id=c.id, party_code="L", votes=5000),
+        ])
+        db_session.commit()
+
+        result = get_total_results(db_session)
+        parties = {p["party_code"]: p for p in result["parties"]}
+        # L should win the seat since C's results are from a deleted upload
+        assert parties["L"]["seats"] == 1
+        assert parties.get("C", {}).get("seats", 0) == 0
+
+    def test_all_results_deleted_shows_zero(self, db_session):
+        from datetime import datetime, timezone  # noqa: PLC0415
+
+        deleted_upload = UploadLog(
+            filename="deleted.txt",
+            status="completed",
+            total_lines=1,
+            processed_lines=1,
+            error_lines=0,
+            deleted_at=datetime.now(timezone.utc),
+        )
+        db_session.add(deleted_upload)
+        db_session.flush()
+
+        c = Constituency(name="AllGone")
+        db_session.add(c)
+        db_session.flush()
+
+        db_session.add(
+            Result(constituency_id=c.id,
+                   party_code="C",
+                   votes=8000,
+                   upload_id=deleted_upload.id))
+        db_session.commit()
+
+        result = get_total_results(db_session)
+        assert result["total_votes"] == 0
+        assert result["parties"] == []
+
+    def test_results_without_upload_included(self, db_session):
+        """Legacy results (no upload_id) should always be included."""
+        c = Constituency(name="Legacy")
+        db_session.add(c)
+        db_session.flush()
+
+        db_session.add(
+            Result(constituency_id=c.id,
+                   party_code="LD",
+                   votes=4000,
+                   upload_id=None))
+        db_session.commit()
+
+        result = get_total_results(db_session)
+        assert result["total_votes"] == 4000
+        parties = {p["party_code"]: p for p in result["parties"]}
+        assert parties["LD"]["total_votes"] == 4000
+        assert parties["LD"]["seats"] == 1

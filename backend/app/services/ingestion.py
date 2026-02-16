@@ -34,7 +34,8 @@ class ConstituencyMatcher:
     1. Exact match (case-sensitive)
     2. Case-insensitive exact match
     3. Normalized match: lowercase + strip commas + strip diacritics
-       e.g. "Ynys Mon" → "Ynys Môn", "BIRMINGHAM HALL GREEN" → "Birmingham, Hall Green"
+       e.g. "Ynys Mon" → "Ynys Môn", "BIRMINGHAM HALL GREEN" → 
+       "Birmingham, Hall Green"
     """
 
     def __init__(self, db: Session):
@@ -101,7 +102,8 @@ def ingest_file(db: Session,
                     "line":
                     0,
                     "error":
-                    f"No matching constituency for '{parsed.constituency_name}'"
+                    f"No matching constituency for "
+                    f"'{parsed.constituency_name}'"
                 }]
                 flag_modified(upload_log, "errors")
                 continue

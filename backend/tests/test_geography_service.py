@@ -3,6 +3,7 @@
 from app.models.constituency import Constituency
 from app.models.region import Region
 from app.models.result import Result
+from app.models.upload_log import UploadLog
 from app.services.geography_service import get_all_regions, get_region_detail
 
 
@@ -106,3 +107,92 @@ class TestGetRegionDetail:
         assert result is not None
         assert result["constituencies"] == []
         assert result["pcon24_codes"] == []
+
+
+class TestRegionDetailSoftDeleteFiltering:
+    """Region detail should exclude results from soft-deleted uploads."""
+
+    def test_winner_excludes_soft_deleted(self, db_session):
+        from datetime import datetime, timezone  # noqa: PLC0415
+
+        deleted_upload = UploadLog(
+            filename="deleted.txt",
+            status="completed",
+            total_lines=1,
+            processed_lines=1,
+            error_lines=0,
+            deleted_at=datetime.now(timezone.utc),
+        )
+        active_upload = UploadLog(
+            filename="active.txt",
+            status="completed",
+            total_lines=1,
+            processed_lines=1,
+            error_lines=0,
+        )
+        db_session.add_all([deleted_upload, active_upload])
+        db_session.flush()
+
+        region = Region(name="TestRegion", sort_order=1)
+        db_session.add(region)
+        db_session.flush()
+
+        c = Constituency(name="TestConst",
+                         pcon24_code="E99999",
+                         region_id=region.id)
+        db_session.add(c)
+        db_session.flush()
+
+        db_session.add_all([
+            # C has most votes but from deleted upload
+            Result(constituency_id=c.id,
+                   party_code="C",
+                   votes=10000,
+                   upload_id=deleted_upload.id),
+            # L has fewer votes but from active upload
+            Result(constituency_id=c.id,
+                   party_code="L",
+                   votes=5000,
+                   upload_id=active_upload.id),
+        ])
+        db_session.commit()
+
+        result = get_region_detail(db_session, region.id)
+        const = result["constituencies"][0]
+        # L should win because C's votes are from a deleted upload
+        assert const["winning_party_code"] == "L"
+
+    def test_all_deleted_no_winner(self, db_session):
+        from datetime import datetime, timezone  # noqa: PLC0415
+
+        deleted_upload = UploadLog(
+            filename="deleted.txt",
+            status="completed",
+            total_lines=1,
+            processed_lines=1,
+            error_lines=0,
+            deleted_at=datetime.now(timezone.utc),
+        )
+        db_session.add(deleted_upload)
+        db_session.flush()
+
+        region = Region(name="TestRegion2", sort_order=1)
+        db_session.add(region)
+        db_session.flush()
+
+        c = Constituency(name="AllGone",
+                         pcon24_code="E99998",
+                         region_id=region.id)
+        db_session.add(c)
+        db_session.flush()
+
+        db_session.add(
+            Result(constituency_id=c.id,
+                   party_code="C",
+                   votes=8000,
+                   upload_id=deleted_upload.id))
+        db_session.commit()
+
+        result = get_region_detail(db_session, region.id)
+        const = result["constituencies"][0]
+        assert const["winning_party_code"] is None
