@@ -122,6 +122,21 @@ test-backend: ## Run backend pytest suite
 test-frontend: ## Run frontend vitest suite
 	cd frontend && npm test
 
+# ─── Coverage ──────────────────────────────
+
+.PHONY: coverage
+coverage: coverage-backend coverage-frontend ## Run all coverage reports
+
+.PHONY: coverage-backend
+coverage-backend: ## Run backend tests with coverage (opens HTML report)
+	cd backend && python -m pytest --cov --cov-report=term --cov-report=html -q
+	@echo "📊 Backend report: backend/htmlcov/index.html"
+
+.PHONY: coverage-frontend
+coverage-frontend: ## Run frontend tests with coverage (opens HTML report)
+	cd frontend && npx vitest run --coverage
+	@echo "📊 Frontend report: frontend/coverage/index.html"
+
 # ─── E2E Tests (isolated stack) ─────────────
 
 .PHONY: e2e-up

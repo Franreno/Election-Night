@@ -5,11 +5,12 @@ __pycache__/
 *.so
 .Python
 
-# Testing
+# Testing & Coverage
 .pytest_cache/
 .coverage
 htmlcov/
 *.cover
+frontend/coverage/
 
 # Playwright
 frontend/test-results/

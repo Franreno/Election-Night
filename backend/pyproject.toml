@@ -49,3 +49,14 @@ dummy-variable-rgx="^\\*{0,2}(_$|unused_|dummy_)"
 [tool.ruff.lint.isort]
 known-first-party = ["app"]
 
+[tool.coverage.run]
+source = ["app"]
+omit = ["app/__init__.py"]
+
+[tool.coverage.report]
+show_missing = true
+skip_empty = true
+
+[tool.coverage.html]
+directory = "htmlcov"
+
