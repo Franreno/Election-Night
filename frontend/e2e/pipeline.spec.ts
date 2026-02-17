@@ -41,7 +41,7 @@ const FILE_1_DATA: ConstituencyExpectation[] = [
   { name: "Aldershot", regionId: 8, winner: "Conservative Party", totalVotes: 19500 },
   { name: "Bath", regionId: 9, winner: "Liberal Democrats", totalVotes: 18100 },
   { name: "Aberavon", regionId: 10, winner: "Labour Party", totalVotes: 15650 },
-  { name: "Aberdeen North", regionId: 11, winner: "SNP", totalVotes: 17000 },
+  { name: "Aberdeen North", regionId: 11, winner: "SN", totalVotes: 17000 },
   { name: "Belfast East", regionId: 12, winner: "Conservative Party", totalVotes: 16500 },
 ];
 
