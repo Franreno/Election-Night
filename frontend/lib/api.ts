@@ -10,6 +10,7 @@ import type {
   RegionListResponse,
   RegionDetail,
   SSEEvent,
+  DeleteSSEEvent,
 } from "./types";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
@@ -94,24 +95,11 @@ export const fetchRegions = () =>
 export const fetchRegionDetail = (id: number) =>
   apiFetch<RegionDetail>(`/api/geography/regions/${id}`);
 
-export async function uploadFileStream(
-  file: File,
-  onEvent: (event: SSEEvent) => void,
+export async function parseSSEStream<T>(
+  response: Response,
+  onEvent: (event: T) => void,
 ): Promise<void> {
-  const formData = new FormData();
-  formData.append("file", file);
-
-  const res = await fetch(`${API_BASE}/api/upload/stream`, {
-    method: "POST",
-    body: formData,
-  });
-
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({ detail: res.statusText }));
-    throw new Error(body.detail || "Upload failed");
-  }
-
-  const reader = res.body!.getReader();
+  const reader = response.body!.getReader();
   const decoder = new TextDecoder();
   let buffer = "";
 
@@ -129,8 +117,44 @@ export async function uploadFileStream(
       const dataLine = part.split("\n").find((l) => l.startsWith("data: "));
       if (dataLine) {
         const json = JSON.parse(dataLine.slice(6));
-        onEvent(json as SSEEvent);
+        onEvent(json as T);
       }
     }
   }
+}
+
+export async function uploadFileStream(
+  file: File,
+  onEvent: (event: SSEEvent) => void,
+): Promise<void> {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const res = await fetch(`${API_BASE}/api/upload/stream`, {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new Error(body.detail || "Upload failed");
+  }
+
+  await parseSSEStream<SSEEvent>(res, onEvent);
+}
+
+export async function deleteUploadStream(
+  id: number,
+  onEvent: (event: DeleteSSEEvent) => void,
+): Promise<void> {
+  const res = await fetch(`${API_BASE}/api/uploads/${id}/stream`, {
+    method: "DELETE",
+  });
+
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new Error(body.detail || "Delete failed");
+  }
+
+  await parseSSEStream<DeleteSSEEvent>(res, onEvent);
 }

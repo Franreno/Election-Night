@@ -14,7 +14,7 @@ export const PARTY_NAMES: Record<string, string> = {
   LD: "Liberal Democrats",
   UKIP: "UKIP",
   G: "Green Party",
-  SNP: "SNP",
+  SNP: "SN",
   Ind: "Independent",
 };
 

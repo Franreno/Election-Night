@@ -12,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Progress } from "@/components/ui/progress";
 import { UploadStatusBadge } from "./upload-status-badge";
 import { ErrorDetails } from "./error-details";
 import { DeleteUploadDialog } from "./delete-upload-dialog";
@@ -65,7 +66,7 @@ interface UploadHistoryTableProps {
 
 export function UploadHistoryTable({ filters }: UploadHistoryTableProps) {
   const { data, isLoading, error } = useUploads(1, 20, filters);
-  const { deleteUpload } = useDeleteUpload();
+  const { deleteUpload, isDeleting, progress: deleteProgress } = useDeleteUpload();
   const [sortField, setSortField] = useState<SortField | null>(null);
   const [sortDir, setSortDir] = useState<SortDir>("asc");
 
@@ -163,41 +164,61 @@ export function UploadHistoryTable({ filters }: UploadHistoryTableProps) {
           {sorted.map((upload, i) => {
             const prevStatus = i > 0 ? sorted[i - 1].status : null;
             const isNewGroup = showGroupSeparator && upload.status !== prevStatus;
+            const isRowDeleting = isDeleting && deleteProgress?.uploadId === upload.id;
 
             return (
               <TableRow
                 key={upload.id}
                 className={isNewGroup && i > 0 ? "border-t-2 border-primary/30" : ""}
               >
-                <TableCell className="font-medium">
-                  {upload.filename || "—"}
-                </TableCell>
-                <TableCell>
-                  <UploadStatusBadge status={upload.status} />
-                </TableCell>
-                <TableCell className="text-right font-mono">
-                  {upload.processed_lines ?? "—"}
-                </TableCell>
-                <TableCell className="text-right">
-                  {upload.errors && upload.errors.length > 0 ? (
-                    <ErrorDetails errors={upload.errors} />
-                  ) : (
-                    <span className="font-mono">{upload.error_lines ?? 0}</span>
-                  )}
-                </TableCell>
-                <TableCell className="text-muted-foreground">
-                  {upload.started_at
-                    ? new Date(upload.started_at).toLocaleString("en-GB")
-                    : "—"}
-                </TableCell>
-                <TableCell>
-                  <DeleteUploadDialog
-                    uploadId={upload.id}
-                    filename={upload.filename}
-                    disabled={upload.status === "processing"}
-                    onConfirm={handleDelete}
-                  />
-                </TableCell>
+                {isRowDeleting ? (
+                  <TableCell colSpan={6}>
+                    <div className="flex items-center gap-3 py-1">
+                      <span className="text-sm text-muted-foreground shrink-0">
+                        Deleting {upload.filename || "upload"}...
+                      </span>
+                      <Progress
+                        value={deleteProgress?.percentage ?? 0}
+                        className="flex-1 h-2"
+                      />
+                      <span className="text-xs text-muted-foreground tabular-nums shrink-0">
+                        {deleteProgress?.percentage ?? 0}%
+                      </span>
+                    </div>
+                  </TableCell>
+                ) : (
+                  <>
+                    <TableCell className="font-medium">
+                      {upload.filename || "—"}
+                    </TableCell>
+                    <TableCell>
+                      <UploadStatusBadge status={upload.status} />
+                    </TableCell>
+                    <TableCell className="text-right font-mono">
+                      {upload.processed_lines ?? "—"}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {upload.errors && upload.errors.length > 0 ? (
+                        <ErrorDetails errors={upload.errors} />
+                      ) : (
+                        <span className="font-mono">{upload.error_lines ?? 0}</span>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {upload.started_at
+                        ? new Date(upload.started_at).toLocaleString("en-GB")
+                        : "—"}
+                    </TableCell>
+                    <TableCell>
+                      <DeleteUploadDialog
+                        uploadId={upload.id}
+                        filename={upload.filename}
+                        disabled={upload.status === "processing" || isDeleting}
+                        onConfirm={handleDelete}
+                      />
+                    </TableCell>
+                  </>
+                )}
               </TableRow>
             );
           })}
