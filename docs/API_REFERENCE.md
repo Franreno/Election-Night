@@ -73,6 +73,75 @@ When errors occur during parsing, the upload still completes but `error_lines > 
 
 ---
 
+### `POST /api/upload/stream`
+
+Upload a result file with real-time progress streaming via Server-Sent Events (SSE).
+
+Accepts the same input as `POST /api/upload` but returns a `text/event-stream` response instead of JSON. The frontend uses this endpoint to show a dynamic progress bar during processing.
+
+**Content-Type**: `multipart/form-data`
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `file` | File | A `.txt` result file (max 100 MB) |
+
+**Response** `200 OK` — `Content-Type: text/event-stream`
+
+The stream emits the following events in order:
+
+#### `created`
+
+Emitted immediately after the upload log is created in the database. The frontend uses this to add the upload to the history table with "processing" status.
+
+```
+event: created
+data: {"event": "created", "upload_id": 1, "total_lines": 650}
+```
+
+#### `progress`
+
+Emitted periodically as lines are processed (every 10 lines by default, and on the final line). Allows the frontend to update a progress bar.
+
+```
+event: progress
+data: {"event": "progress", "processed_count": 100, "total": 650, "percentage": 15}
+```
+
+#### `complete`
+
+Emitted after all lines are processed and the transaction is committed. Contains the same fields as the `POST /api/upload` response.
+
+```
+event: complete
+data: {"event": "complete", "upload_id": 1, "status": "completed", "total_lines": 650, "processed_lines": 648, "error_lines": 2, "errors": [...]}
+```
+
+#### `error`
+
+Emitted if a database error occurs during processing. The upload is marked as "failed".
+
+```
+event: error
+data: {"event": "error", "upload_id": 2, "detail": "File processing failed due to a database error"}
+```
+
+**Error Responses** (returned as standard HTTP errors, not SSE)
+
+| Status | Condition |
+|--------|-----------|
+| `400` | No filename, non-UTF-8 encoding, or empty file |
+| `413` | File exceeds 100 MB |
+
+**Response Headers**
+
+| Header | Value | Purpose |
+|--------|-------|---------|
+| `Cache-Control` | `no-cache` | Prevent proxy caching |
+| `Connection` | `keep-alive` | Keep SSE connection open |
+| `X-Accel-Buffering` | `no` | Disable nginx response buffering |
+
+---
+
 ### `GET /api/uploads`
 
 List upload history with pagination and optional filters.
