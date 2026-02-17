@@ -9,6 +9,7 @@ import type {
   UploadStatsResponse,
   RegionListResponse,
   RegionDetail,
+  SSEEvent,
 } from "./types";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
@@ -92,3 +93,44 @@ export const fetchRegions = () =>
 
 export const fetchRegionDetail = (id: number) =>
   apiFetch<RegionDetail>(`/api/geography/regions/${id}`);
+
+export async function uploadFileStream(
+  file: File,
+  onEvent: (event: SSEEvent) => void,
+): Promise<void> {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const res = await fetch(`${API_BASE}/api/upload/stream`, {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({ detail: res.statusText }));
+    throw new Error(body.detail || "Upload failed");
+  }
+
+  const reader = res.body!.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    buffer += decoder.decode(value, { stream: true });
+
+    const parts = buffer.split("\n\n");
+    buffer = parts.pop()!;
+
+    for (const part of parts) {
+      if (!part.trim()) continue;
+      const dataLine = part.split("\n").find((l) => l.startsWith("data: "));
+      if (dataLine) {
+        const json = JSON.parse(dataLine.slice(6));
+        onEvent(json as SSEEvent);
+      }
+    }
+  }
+}
