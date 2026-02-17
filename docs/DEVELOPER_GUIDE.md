@@ -120,8 +120,9 @@ The upload pipeline has two main components:
 - Returns `(results: list[ParsedConstituencyResult], errors: list[ParseError])`
 
 **Ingestion** (`app/services/ingestion.py`):
-- `ingest_file(db, content, filename)` → orchestrates the full pipeline
-- Creates an `UploadLog` record, invokes the parser, matches constituencies, upserts results, finalises the upload log
+- `ingest_file(db, content, filename)` → orchestrates the full pipeline synchronously (used by `make seed` and backward-compatible API)
+- `ingest_file_streaming(db, content, filename, batch_size)` → generator that yields SSE progress events (`created`, `progress`, `complete`, `error`) as it processes lines. Used by `POST /api/upload/stream`
+- Both create an `UploadLog` record, invoke the parser, match constituencies, upsert results, and finalise the upload log
 - Wraps everything in a transaction — rolls back on error
 
 ### Fuzzy Constituency Matching
@@ -170,7 +171,9 @@ docker compose exec backend python -m pytest --cov=app
 |------|-------|
 | `test_parser.py` | Line parsing, escaped commas, validation |
 | `test_ingestion_service.py` | Full ingestion pipeline, fuzzy matching |
+| `test_ingestion_streaming.py` | Streaming generator events, progress batching |
 | `test_upload.py` | Upload endpoint (HTTP level) |
+| `test_upload_stream.py` | SSE streaming endpoint |
 | `test_upload_service.py` | Upload stats, soft delete |
 | `test_constituency_service.py` | Constituency queries, sorting, filtering |
 | `test_constituencies.py` | Constituency endpoints |

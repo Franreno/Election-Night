@@ -112,3 +112,46 @@ export interface UploadStatsResponse {
   success_rate: number;
   total_lines_processed: number;
 }
+
+// SSE streaming upload events
+
+export interface SSECreatedEvent {
+  event: "created";
+  upload_id: number;
+  total_lines: number;
+}
+
+export interface SSEProgressEvent {
+  event: "progress";
+  processed_count: number;
+  total: number;
+  percentage: number;
+}
+
+export interface SSECompleteEvent {
+  event: "complete";
+  upload_id: number;
+  status: string;
+  total_lines: number;
+  processed_lines: number;
+  error_lines: number;
+  errors: Array<{ line: number; error: string }> | null;
+}
+
+export interface SSEErrorEvent {
+  event: "error";
+  upload_id: number;
+  detail: string;
+}
+
+export type SSEEvent =
+  | SSECreatedEvent
+  | SSEProgressEvent
+  | SSECompleteEvent
+  | SSEErrorEvent;
+
+export interface UploadProgress {
+  stage: "uploading" | "processing" | "complete" | "error";
+  percentage: number;
+  uploadId?: number;
+}

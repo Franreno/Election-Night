@@ -3,13 +3,15 @@
 import { useCallback, useRef, useState } from "react";
 import { FileUp, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import { useUploadFile } from "@/hooks/use-upload-file";
 import { cn } from "@/lib/utils";
 
 export function FileDropzone() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragOver, setIsDragOver] = useState(false);
-  const { upload, isUploading, error, result, reset } = useUploadFile();
+  const { upload, isUploading, error, result, progress, reset } =
+    useUploadFile();
 
   const handleFile = useCallback(
     async (file: File) => {
@@ -77,10 +79,22 @@ export function FileDropzone() {
       />
 
       {isUploading ? (
-        <>
-          <Loader2 className="h-10 w-10 animate-spin text-primary" />
-          <p className="mt-3 text-sm text-muted-foreground">Uploading...</p>
-        </>
+        progress?.stage === "processing" ? (
+          <>
+            <Progress
+              value={progress.percentage}
+              className="w-full max-w-xs h-2"
+            />
+            <p className="mt-3 text-sm text-muted-foreground">
+              Processing... <span>{progress.percentage}%</span>
+            </p>
+          </>
+        ) : (
+          <>
+            <Loader2 className="h-10 w-10 animate-spin text-primary" />
+            <p className="mt-3 text-sm text-muted-foreground">Uploading...</p>
+          </>
+        )
       ) : result ? (
         <>
           <CheckCircle2 className="h-10 w-10 text-emerald-500" />
