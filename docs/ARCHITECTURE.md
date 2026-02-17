@@ -73,15 +73,21 @@ Browser → Next.js page → SWR hook (polling every 30s)
        → JSON response → SWR cache → React re-render
 ```
 
-### Write Path (Upload)
+### Write Path (Upload with SSE Streaming)
 
 ```
 Browser → FileDropzone → useUploadFile hook
-       → POST /api/upload (FormData) → FastAPI router
-       → Ingestion service → Parser → ConstituencyMatcher
-       → Upsert results → PostgreSQL
-       → UploadResponse → SWR cache invalidation → all data refreshes
+       → POST /api/upload/stream (FormData) → FastAPI router
+       → StreamingResponse (text/event-stream)
+       → ingest_file_streaming() generator yields:
+           1. "created" event  → SWR revalidation → upload appears in table
+           2. "progress" events → Progress bar updates in real-time
+           3. "complete" event  → SWR revalidation → all data refreshes
+       → Frontend reads via fetch + ReadableStream
+       → Minimum 800ms animation ensures visible feedback even for fast uploads
 ```
+
+The `POST /api/upload` endpoint is preserved for backward compatibility (e.g., API-only consumers or the `make seed` command). The frontend exclusively uses the streaming endpoint.
 
 ### Map Rendering
 
@@ -112,6 +118,17 @@ The `ConstituencyMatcher` in `ingestion.py` uses a 3-tier strategy to match uplo
 1. **Exact match** — Case-sensitive string comparison
 2. **Case-insensitive match** — Lowercased comparison
 3. **Normalized match** — NFD Unicode normalisation, diacritic removal, comma stripping, and lowercasing (e.g., `"Ynys Mon"` → matches `"Ynys Môn"`, `"BIRMINGHAM HALL GREEN"` → matches `"Birmingham, Hall Green"`)
+
+### SSE Streaming for Upload Progress
+
+The upload endpoint uses Server-Sent Events (SSE) via FastAPI's `StreamingResponse` to provide real-time progress feedback. The `ingest_file_streaming()` generator in `ingestion.py` yields events as it processes lines, and the router formats them as SSE (`event: type\ndata: json\n\n`).
+
+The frontend consumes the stream using `fetch` + `ReadableStream` (not `EventSource`, which only supports GET). Key events:
+- **created**: Upload appears in the history table immediately with "processing" status
+- **progress**: Progress bar updates with percentage (emitted every 10 lines)
+- **complete/error**: Final result triggers SWR cache invalidation
+
+A minimum 800ms animation delay in the hook ensures the progress bar is always visible, even for small files that process instantly.
 
 ### SWR Polling for Near-Real-Time Updates
 

@@ -4,11 +4,12 @@ Key system flows illustrated as sequence diagrams.
 
 ---
 
-## 1. Upload Flow
+## 1. Upload Flow (SSE Streaming)
 
-End-to-end flow when a data supplier uploads a result file.
+End-to-end flow when a data supplier uploads a result file. The backend streams progress events via Server-Sent Events (SSE) so the frontend can show a real-time progress bar and immediately add the upload to the history table.
 
-![Sequence diagram of upload flow](./assets/upload_flow.svg)
+
+![Sequence diagram of upload flow with SSE streaming](./assets/upload_flow_sse.svg)
 
 ---
 
