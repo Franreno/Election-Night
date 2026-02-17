@@ -1,4 +1,7 @@
+import json
+
 from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile
+from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
 from app.config import settings
@@ -10,22 +13,17 @@ from app.schemas.upload import (
     UploadResponse,
     UploadStatsResponse,
 )
-from app.services.ingestion import ingest_file
+from app.services.ingestion import ingest_file, ingest_file_streaming
 from app.services.upload_service import get_upload_stats, soft_delete_upload
 
 router = APIRouter(prefix="/api", tags=["upload"])
 
 
-@router.post("/upload", response_model=UploadResponse, status_code=201)
-async def upload_results(
-        file: UploadFile = File(...),
-        db: Session = Depends(get_db),
-):
-    """Upload an election results file for processing.
+async def _read_and_validate(file: UploadFile) -> str:
+    """Read an uploaded file and validate constraints.
 
-    Accepts a text file where each line contains a constituency name
-    followed by vote/party code pairs. The file is parsed and results
-    are upserted into the database atomically.
+    Returns the decoded text content.
+    Raises HTTPException on validation failure.
     """
     if not file.filename:
         raise HTTPException(status_code=400, detail="No filename provided")
@@ -47,6 +45,22 @@ async def upload_results(
     if not text.strip():
         raise HTTPException(status_code=400, detail="File is empty")
 
+    return text
+
+
+@router.post("/upload", response_model=UploadResponse, status_code=201)
+async def upload_results(
+        file: UploadFile = File(...),
+        db: Session = Depends(get_db),
+):
+    """Upload an election results file for processing.
+
+    Accepts a text file where each line contains a constituency name
+    followed by vote/party code pairs. The file is parsed and results
+    are upserted into the database atomically.
+    """
+    text = await _read_and_validate(file)
+
     upload_log = ingest_file(db, text, filename=file.filename)
 
     if upload_log.status == "failed":
@@ -62,6 +76,39 @@ async def upload_results(
         processed_lines=upload_log.processed_lines,
         error_lines=upload_log.error_lines,
         errors=upload_log.errors,
+    )
+
+
+@router.post("/upload/stream")
+async def upload_results_stream(
+        file: UploadFile = File(...),
+        db: Session = Depends(get_db),
+):
+    """Upload with SSE progress streaming.
+
+    Returns a text/event-stream with events:
+      - created: upload_id and total_lines
+      - progress: processing percentage
+      - complete: final upload result
+      - error: failure details
+    """
+    text = await _read_and_validate(file)
+
+    def event_generator():
+        for event_data in ingest_file_streaming(db,
+                                                text,
+                                                filename=file.filename):
+            event_type = event_data.get("event", "message")
+            yield f"event: {event_type}\ndata: {json.dumps(event_data)}\n\n"
+
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",
+        },
     )
 
 
