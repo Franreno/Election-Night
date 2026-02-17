@@ -5,7 +5,7 @@ from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
 from app.config import settings
-from app.database import get_db
+from app.database import SessionLocal, get_db
 from app.models.upload_log import UploadLog
 from app.schemas.upload import (
     UploadListResponse,
@@ -14,7 +14,11 @@ from app.schemas.upload import (
     UploadStatsResponse,
 )
 from app.services.ingestion import ingest_file, ingest_file_streaming
-from app.services.upload_service import get_upload_stats, soft_delete_upload
+from app.services.upload_service import (
+    get_upload_stats,
+    soft_delete_upload,
+    soft_delete_upload_streaming,
+)
 
 router = APIRouter(prefix="/api", tags=["upload"])
 
@@ -80,10 +84,7 @@ async def upload_results(
 
 
 @router.post("/upload/stream")
-async def upload_results_stream(
-        file: UploadFile = File(...),
-        db: Session = Depends(get_db),
-):
+async def upload_results_stream(file: UploadFile = File(...), ):
     """Upload with SSE progress streaming.
 
     Returns a text/event-stream with events:
@@ -91,15 +92,22 @@ async def upload_results_stream(
       - progress: processing percentage
       - complete: final upload result
       - error: failure details
+
+    Note: Uses its own DB session inside the generator because FastAPI
+    cleans up Depends(get_db) before StreamingResponse bodies execute.
     """
     text = await _read_and_validate(file)
 
     def event_generator():
-        for event_data in ingest_file_streaming(db,
-                                                text,
-                                                filename=file.filename):
-            event_type = event_data.get("event", "message")
-            yield f"event: {event_type}\ndata: {json.dumps(event_data)}\n\n"
+        db = SessionLocal()
+        try:
+            for event_data in ingest_file_streaming(db,
+                                                    text,
+                                                    filename=file.filename):
+                event_type = event_data.get("event", "message")
+                yield f"event: {event_type}\ndata: {json.dumps(event_data)}\n\n"
+        finally:
+            db.close()
 
     return StreamingResponse(
         event_generator(),
@@ -153,3 +161,47 @@ def delete_upload(upload_id: int, db: Session = Depends(get_db)):
     if upload is None:
         raise HTTPException(status_code=404, detail="Upload not found")
     return {"message": "Upload deleted"}
+
+
+@router.delete("/uploads/{upload_id}/stream")
+def delete_upload_stream(upload_id: int, db: Session = Depends(get_db)):
+    """Soft-delete with SSE progress streaming.
+
+    Returns a text/event-stream with events:
+      - started: upload_id and total_affected count
+      - progress: rollback percentage
+      - complete: final result with rolled_back count
+      - error: failure details
+
+    Note: Validates existence with the injected session, then the generator
+    manages its own session because FastAPI cleans up Depends(get_db)
+    before StreamingResponse bodies execute.
+    """
+    # Check existence with the injected session (still alive at this point)
+    upload = (db.query(UploadLog).filter(
+        UploadLog.id == upload_id, UploadLog.deleted_at.is_(None)).first())
+    if upload is None:
+        raise HTTPException(status_code=404, detail="Upload not found")
+
+    def event_generator():
+        gen_db = SessionLocal()
+        try:
+            gen = soft_delete_upload_streaming(gen_db, upload_id)
+            if gen is None:
+                # Race condition: deleted between check and generator start
+                return
+            for event_data in gen:
+                event_type = event_data.get("event", "message")
+                yield f"event: {event_type}\ndata: {json.dumps(event_data)}\n\n"
+        finally:
+            gen_db.close()
+
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",
+        },
+    )

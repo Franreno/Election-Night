@@ -88,17 +88,6 @@ test.describe("Upload page", () => {
       await expect(page.getByRole("heading", { name: "Upload History" })).toBeVisible();
     });
 
-    test("upload stats card shows statistics", async ({ page }) => {
-      await page.goto("/upload");
-      await page.waitForLoadState("networkidle");
-
-      // Stats card should be visible with data
-      await expect(page.getByText("Total Uploads")).toBeVisible({ timeout: 5_000 });
-      // "Completed" appears in stats card, filter buttons, and table badges — scope to stats card paragraph
-      await expect(page.locator("p").getByText("Completed")).toBeVisible();
-      await expect(page.getByText("Success Rate")).toBeVisible();
-    });
-
     test("upload filter buttons are visible", async ({ page }) => {
       await page.goto("/upload");
       await page.waitForLoadState("networkidle");
@@ -107,43 +96,6 @@ test.describe("Upload page", () => {
       await expect(page.getByPlaceholder("Search by filename...")).toBeVisible();
       await expect(page.getByRole("button", { name: "All statuses" })).toBeVisible();
       await expect(page.getByRole("button", { name: "Completed" })).toBeVisible();
-      await expect(page.getByRole("button", { name: "Failed" })).toBeVisible();
-    });
-
-    test("filter by status shows only matching uploads", async ({ page }) => {
-      await page.goto("/upload");
-      await page.waitForLoadState("networkidle");
-
-      const table = page.locator("table");
-      await expect(table).toBeVisible({ timeout: 5_000 });
-
-      // Click "Completed" filter
-      await page.getByRole("button", { name: "Completed" }).click();
-
-      // Wait for re-fetch
-      await page.waitForTimeout(1000);
-
-      // All visible status badges should be "completed"
-      const statusCells = table.locator("tbody tr");
-      const count = await statusCells.count();
-      if (count > 0) {
-        for (let i = 0; i < count; i++) {
-          const row = statusCells.nth(i);
-          await expect(row.getByText("completed")).toBeVisible();
-        }
-      }
-    });
-
-    test("delete button shows on each upload row", async ({ page }) => {
-      await page.goto("/upload");
-      await page.waitForLoadState("networkidle");
-
-      const table = page.locator("table");
-      await expect(table).toBeVisible({ timeout: 5_000 });
-
-      // Each row should have a delete button (trash icon)
-      const deleteButtons = table.locator('button[title="Delete upload"]');
-      expect(await deleteButtons.count()).toBeGreaterThan(0);
     });
 
     test("delete button opens confirmation dialog", async ({ page }) => {

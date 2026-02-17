@@ -89,6 +89,22 @@ Browser → FileDropzone → useUploadFile hook
 
 The `POST /api/upload` endpoint is preserved for backward compatibility (e.g., API-only consumers or the `make seed` command). The frontend exclusively uses the streaming endpoint.
 
+### Delete Path (Upload Delete with SSE Streaming)
+
+```
+Browser → UploadHistoryTable → useDeleteUpload hook
+       → DELETE /api/uploads/{id}/stream → FastAPI router
+       → StreamingResponse (text/event-stream)
+       → soft_delete_upload_streaming() generator yields:
+           1. "started" event  → Progress bar appears in table row
+           2. "progress" events → Progress bar updates as results roll back
+           3. "complete" event  → SWR revalidation → all data refreshes
+       → Frontend reads via fetch + ReadableStream
+       → Minimum 800ms animation ensures visible feedback even for fast deletes
+```
+
+The `DELETE /api/uploads/{id}` endpoint is preserved for backward compatibility. The frontend exclusively uses the streaming endpoint.
+
 ### Map Rendering
 
 ```
@@ -119,16 +135,25 @@ The `ConstituencyMatcher` in `ingestion.py` uses a 3-tier strategy to match uplo
 2. **Case-insensitive match** — Lowercased comparison
 3. **Normalized match** — NFD Unicode normalisation, diacritic removal, comma stripping, and lowercasing (e.g., `"Ynys Mon"` → matches `"Ynys Môn"`, `"BIRMINGHAM HALL GREEN"` → matches `"Birmingham, Hall Green"`)
 
-### SSE Streaming for Upload Progress
+### SSE Streaming for Long-Running Operations
 
-The upload endpoint uses Server-Sent Events (SSE) via FastAPI's `StreamingResponse` to provide real-time progress feedback. The `ingest_file_streaming()` generator in `ingestion.py` yields events as it processes lines, and the router formats them as SSE (`event: type\ndata: json\n\n`).
+Both upload and delete endpoints use Server-Sent Events (SSE) via FastAPI's `StreamingResponse` to provide real-time progress feedback. Python generators in the service layer yield progress dicts, and the router formats them as SSE (`event: type\ndata: json\n\n`).
 
-The frontend consumes the stream using `fetch` + `ReadableStream` (not `EventSource`, which only supports GET). Key events:
+The frontend consumes streams using `fetch` + `ReadableStream` (not `EventSource`, which only supports GET) via a shared `parseSSEStream<T>()` helper.
+
+**Upload** (`ingest_file_streaming()` in `ingestion.py`):
 - **created**: Upload appears in the history table immediately with "processing" status
 - **progress**: Progress bar updates with percentage (emitted every 10 lines)
 - **complete/error**: Final result triggers SWR cache invalidation
 
-A minimum 800ms animation delay in the hook ensures the progress bar is always visible, even for small files that process instantly.
+**Delete** (`soft_delete_upload_streaming()` in `upload_service.py`):
+- **started**: Table row switches to inline progress bar
+- **progress**: Progress bar updates as results are rolled back (every 10 results)
+- **complete/error**: All SWR caches revalidated (uploads, totals, constituencies, map)
+
+A minimum 800ms animation delay in both hooks ensures progress bars are always visible, even for instant operations.
+
+**Important**: Streaming generators manage their own database sessions (`SessionLocal()`) rather than using FastAPI's `Depends(get_db)`. This is because FastAPI cleans up dependency-injected sessions before `StreamingResponse` bodies execute, which would roll back uncommitted transactions.
 
 ### SWR Polling for Near-Real-Time Updates
 
@@ -150,6 +175,8 @@ Region filter selections on the constituencies page are stored in URL query para
 Upload logs are never physically deleted. Setting `deleted_at` provides an audit trail while hiding deleted records from the UI and API responses.
 
 When an upload is soft-deleted, the system also rolls back any results that were last modified by that upload. A `result_history` table records every vote snapshot per upload, enabling the system to restore results to their previous values. If no prior upload exists for a result, it is removed entirely. This ensures that deleting an upload cleanly reverts the election state rather than leaving orphaned or zeroed-out results.
+
+The frontend uses the streaming delete endpoint (`DELETE /api/uploads/{id}/stream`) to show real-time rollback progress in the table row being deleted, with all other delete buttons disabled during the operation.
 
 ## Technology Choices
 

@@ -175,6 +175,8 @@ docker compose exec backend python -m pytest --cov=app
 | `test_upload.py` | Upload endpoint (HTTP level) |
 | `test_upload_stream.py` | SSE streaming endpoint |
 | `test_upload_service.py` | Upload stats, soft delete |
+| `test_upload_service_streaming.py` | Streaming delete generator events, progress batching |
+| `test_delete_stream.py` | SSE streaming delete endpoint |
 | `test_constituency_service.py` | Constituency queries, sorting, filtering |
 | `test_constituencies.py` | Constituency endpoints |
 | `test_totals_service.py` | Vote aggregation, seat allocation, ties |

@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { FileDropzone } from "@/components/upload/file-dropzone";
 import { UploadHistoryTable } from "@/components/upload/upload-history-table";
-import { UploadStatsCard } from "@/components/upload/upload-stats";
 import { UploadFiltersBar } from "@/components/upload/upload-filters";
 import { Separator } from "@/components/ui/separator";
 import type { UploadFilters } from "@/hooks/use-uploads";
@@ -25,7 +24,7 @@ export default function UploadPage() {
       <Separator className="my-8" />
 
       <div className="space-y-6">
-        <UploadStatsCard />
+        {/* <UploadStatsCard /> */}
 
         <div>
           <h3 className="text-lg font-semibold">Upload History</h3>

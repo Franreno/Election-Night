@@ -9,6 +9,7 @@ from sqlalchemy.pool import StaticPool
 # Override before importing app modules
 os.environ["DATABASE_URL"] = "sqlite://"
 
+import app.routers.upload as upload_module
 from app.database import Base, get_db
 from app.main import app
 from app.models.constituency import Constituency
@@ -61,9 +62,13 @@ def client(db_engine):
             db.close()
 
     app.dependency_overrides[get_db] = override_get_db
+    # Patch SessionLocal used by streaming endpoints so they use the test DB
+    original_session_local = upload_module.SessionLocal
+    upload_module.SessionLocal = testing_session_local
     with TestClient(app) as c:
         yield c
     app.dependency_overrides.clear()
+    upload_module.SessionLocal = original_session_local
 
 
 def seed_constituencies(db_session, names: list[str]) -> None:

@@ -37,8 +37,8 @@ How a user drills into a single constituency from the table or map.
 
 ---
 
-## 5. Upload Delete with Rollback Flow
+## 5. Upload Delete with Rollback Flow (SSE Streaming)
 
-How deleting an upload rolls back affected results to their previous values using the result history table.
+How deleting an upload rolls back affected results to their previous values using the result history table. The backend streams progress events via Server-Sent Events (SSE) so the frontend can show a real-time progress bar in the table row being deleted.
 
 ![Sequence diagram of upload delete with rollback flow](./assets/upload_delete_rollback_flow.svg)

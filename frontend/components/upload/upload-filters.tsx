@@ -9,7 +9,7 @@ import type { UploadFilters } from "@/hooks/use-uploads";
 const STATUS_OPTIONS = [
   { value: "", label: "All statuses" },
   { value: "completed", label: "Completed" },
-  { value: "failed", label: "Failed" },
+  // { value: "failed", label: "Failed" },
   { value: "processing", label: "Processing" },
 ];
 

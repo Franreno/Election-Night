@@ -50,7 +50,7 @@ export default function DashboardPage() {
     );
   }
 
-  if (!data || data.total_constituencies === 0) {
+  if (!data || data.total_votes === 0) {
     return (
       <div>
         <div className="mb-6">
@@ -130,7 +130,7 @@ export default function DashboardPage() {
             <CardContent className="space-y-1.5 pb-3">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">
-                  Majority threshold:
+                  Seats needed for majority:
                 </span>
                 <span className="font-medium">{MAJORITY_THRESHOLD} seats</span>
               </div>
@@ -138,7 +138,7 @@ export default function DashboardPage() {
                 <>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">
-                      Leading party:
+                      Party with most seats:
                     </span>
                     <span className="font-medium">
                       {leadingParty.seats} seats
@@ -147,8 +147,8 @@ export default function DashboardPage() {
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">
                       {leadingParty.seats >= MAJORITY_THRESHOLD
-                        ? "Majority by:"
-                        : "Seats to majority:"}
+                        ? "Majority margin:"
+                        : "Seats needed to reach majority:"}
                     </span>
                     <span className="font-medium">
                       {leadingParty.seats >= MAJORITY_THRESHOLD
@@ -160,7 +160,7 @@ export default function DashboardPage() {
                     <div className="pt-1.5 mt-1.5 border-t">
                       <div className="flex items-center gap-2 text-sm font-medium text-green-600">
                         <span>✓</span>
-                        <span>Majority government possible</span>
+                        <span>Can form majority government</span>
                       </div>
                     </div>
                   )}
