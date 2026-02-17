@@ -28,8 +28,8 @@ test.describe("Dashboard", () => {
       await expect(page.getByText(/\d+.*constituencies declared/)).toBeVisible({ timeout: 10_000 });
 
       // Stat cards are visible but total votes should be 0
-      await expect(page.getByText("Total Votes Cast")).toBeVisible();
-      await expect(page.getByText("Leading Party")).toBeVisible();
+      await expect(page.getByText("No election data yet")).toBeVisible();
+      await expect(page.getByText("Go to Upload")).toBeVisible();
     });
   });
 
@@ -51,7 +51,7 @@ test.describe("Dashboard", () => {
       await expect(page.getByText(/\d+.*constituencies declared/)).toBeVisible({ timeout: 10_000 });
 
       await expect(page.getByText("Government Status")).toBeVisible();
-      await expect(page.getByText("Majority threshold")).toBeVisible();
+      await expect(page.getByText("Seats needed for majority")).toBeVisible();
     });
   });
 });
