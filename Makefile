@@ -5,8 +5,10 @@
 COMPOSE      = docker compose
 BACKEND      = $(COMPOSE) exec backend
 SEED_FILE    = election-results-sample.txt
-API_URL      = http://localhost:8000
-FRONTEND_URL = http://localhost:3000
+BACKEND_PORT  ?= 8000
+FRONTEND_PORT ?= 3000
+API_URL      = http://localhost:$(BACKEND_PORT)
+FRONTEND_URL = http://localhost:$(FRONTEND_PORT)
 
 # E2E uses an isolated compose stack on different ports
 E2E_COMPOSE      = docker compose -f docker-compose.e2e.yml -p e2e

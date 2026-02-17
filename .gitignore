@@ -36,6 +36,9 @@ Thumbs.db
 .ipynb_checkpoints/
 *.ipynb
 
+# Environment overrides
+.env
+
 # Local dev artifacts
 PROJECT_STATUS.md
 /test*.txt

@@ -155,3 +155,43 @@ export interface UploadProgress {
   percentage: number;
   uploadId?: number;
 }
+
+// SSE streaming delete events
+
+export interface DeleteSSEStartedEvent {
+  event: "started";
+  upload_id: number;
+  total_affected: number;
+}
+
+export interface DeleteSSEProgressEvent {
+  event: "progress";
+  processed: number;
+  total: number;
+  percentage: number;
+}
+
+export interface DeleteSSECompleteEvent {
+  event: "complete";
+  upload_id: number;
+  message: string;
+  rolled_back: number;
+}
+
+export interface DeleteSSEErrorEvent {
+  event: "error";
+  upload_id: number;
+  detail: string;
+}
+
+export type DeleteSSEEvent =
+  | DeleteSSEStartedEvent
+  | DeleteSSEProgressEvent
+  | DeleteSSECompleteEvent
+  | DeleteSSEErrorEvent;
+
+export interface DeleteProgress {
+  stage: "deleting" | "rolling_back" | "complete" | "error";
+  percentage: number;
+  uploadId?: number;
+}

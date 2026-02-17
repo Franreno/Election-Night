@@ -5,7 +5,7 @@ PARTY_CODE_MAP: dict[str, str] = {
     "LD": "Liberal Democrats",
     "G": "Green Party",
     "Ind": "Independent",
-    "SNP": "SNP",
+    "SNP": "SN",
 }
 
 VALID_PARTY_CODES: set[str] = set(PARTY_CODE_MAP.keys())
