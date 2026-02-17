@@ -231,6 +231,74 @@ When an upload is deleted, any results it last modified are rolled back to their
 
 ---
 
+### `DELETE /api/uploads/{upload_id}/stream`
+
+Soft-delete an upload with real-time progress streaming via Server-Sent Events (SSE).
+
+Accepts the same path parameter as `DELETE /api/uploads/{upload_id}` but returns a `text/event-stream` response instead of JSON. The frontend uses this endpoint to show a dynamic progress bar during the result rollback process.
+
+**Path Parameters**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `upload_id` | int | Upload ID to delete |
+
+**Response** `200 OK` — `Content-Type: text/event-stream`
+
+The stream emits the following events in order:
+
+#### `started`
+
+Emitted immediately after `deleted_at` is set, before rollback begins.
+
+```
+event: started
+data: {"event": "started", "upload_id": 1, "total_affected": 42}
+```
+
+#### `progress`
+
+Emitted periodically as results are rolled back (every 10 results by default, and on the final result).
+
+```
+event: progress
+data: {"event": "progress", "processed": 20, "total": 42, "percentage": 47}
+```
+
+#### `complete`
+
+Emitted after all results are rolled back and the transaction is committed.
+
+```
+event: complete
+data: {"event": "complete", "upload_id": 1, "message": "Upload deleted", "rolled_back": 42}
+```
+
+#### `error`
+
+Emitted if a database error occurs during rollback.
+
+```
+event: error
+data: {"event": "error", "upload_id": 1, "detail": "Delete failed due to a database error"}
+```
+
+**Error Responses** (returned as standard HTTP errors, not SSE)
+
+| Status | Condition |
+|--------|-----------|
+| `404` | Upload not found |
+
+**Response Headers**
+
+| Header | Value | Purpose |
+|--------|-------|------------|
+| `Cache-Control` | `no-cache` | Prevent proxy caching |
+| `Connection` | `keep-alive` | Keep SSE connection open |
+| `X-Accel-Buffering` | `no` | Disable nginx response buffering |
+
+---
+
 ## Constituencies
 
 ### `GET /api/constituencies`
