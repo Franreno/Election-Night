@@ -61,17 +61,44 @@ make seed
 open http://localhost:3000
 ```
 
-| Service | URL |
-|---------|-----|
+| Service | Default URL |
+|---------|-------------|
 | Frontend (Dashboard) | http://localhost:3000 |
 | Backend API | http://localhost:8000 |
 | Swagger / OpenAPI Docs | http://localhost:8000/docs |
 | PostgreSQL | localhost:5432 (user: `postgres`, password: `postgres`, db: `election`) |
 
+> **Port conflict?** If ports 3000, 8000, or 5432 are already in use, see [Changing Ports](#changing-ports) below.
+
 To stop everything:
 
 ```bash
 make down
+```
+
+### Changing Ports
+
+The default ports are **3000** (frontend), **8000** (backend), and **5432** (database). If any of these conflict with services already running on your machine, create a `.env` file in the project root:
+
+```bash
+# .env (project root)
+FRONTEND_PORT=3100
+BACKEND_PORT=8100
+DB_PORT=5433
+```
+
+Then rebuild and start:
+
+```bash
+make rebuild
+```
+
+Docker Compose and the Makefile will both pick up these values automatically. The frontend build will be configured to call the backend at the correct port, and the backend CORS will allow the frontend origin.
+
+Alternatively, you can pass them inline without a `.env` file:
+
+```bash
+FRONTEND_PORT=3100 BACKEND_PORT=8100 make rebuild
 ```
 
 ## How Result Files Are Uploaded
