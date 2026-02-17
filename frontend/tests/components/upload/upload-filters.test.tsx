@@ -24,7 +24,6 @@ describe("UploadFiltersBar", () => {
     );
     expect(screen.getByRole("button", { name: "All statuses" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Completed" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Failed" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Processing" })).toBeInTheDocument();
   });
 
@@ -85,11 +84,11 @@ describe("UploadFiltersBar", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: "Failed" }));
+    await user.click(screen.getByRole("button", { name: "Processing" }));
 
     expect(onFiltersChange).toHaveBeenCalledWith({
       search: "test",
-      status: "failed",
+      status: "processing",
     });
   });
 });
