@@ -1,5 +1,8 @@
 # Election Night Results System
 
+![Backend Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Franreno/9ebef0583b853227647e73fd282f814e/raw/backend-coverage.json)
+![Frontend Coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Franreno/9ebef0583b853227647e73fd282f814e/raw/frontend-coverage.json)
+
 A full-stack application for ingesting, processing, and visualising UK general election results in real time. Built as a data-intensive pipeline that accepts continuously updated result files from a data supplier and presents live constituency-level and national-level insights through an interactive web dashboard.
 
 <!-- Architecture diagram -->
